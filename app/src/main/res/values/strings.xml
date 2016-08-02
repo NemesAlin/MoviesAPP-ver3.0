@@ -4,5 +4,10 @@
     <string name="action_refresh" translatable="true">Refresh</string>
     <string name="title_activity_detail" translatable="true">Details</string>
     <string name="title_activity_settings" translatable="true">Settings</string>
+    <string name="pref_sorting_key">sorting</string>
+    <string name="pref_sorting_defaul">popular</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

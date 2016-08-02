@@ -35,10 +35,6 @@ public class MainActivity extends AppCompatActivity {
                     .add(R.id.container, new MovieListFragment())
                     .commit();
         }
-
-        if(!UtilityClass.isOnline(this)){
-            Toast.makeText(MainActivity.this, "No internet connection!", Toast.LENGTH_LONG).show();
-        }
     }
 
     @Override

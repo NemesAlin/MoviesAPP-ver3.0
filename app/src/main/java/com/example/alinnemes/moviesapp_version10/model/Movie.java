@@ -11,8 +11,9 @@ public class Movie {
     private String poster_path;
     private double vote_average;
     private double popularity;
+    private boolean favorite;
 
-    public Movie(long id, String title, String overview, String release_date, String poster_path, double vote_average, double popularity) {
+    public Movie(long id, String title, String overview, String release_date, String poster_path, double vote_average, double popularity, boolean favorite) {
         this.id = id;
         this.title = title;
         this.overview = overview;
@@ -20,6 +21,7 @@ public class Movie {
         this.poster_path = poster_path;
         this.vote_average = vote_average;
         this.popularity = popularity;
+        this.favorite = favorite;
     }
 
     public long getId() {
@@ -78,6 +80,14 @@ public class Movie {
         this.popularity = popularity;
     }
 
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
+
     @Override
     public String toString() {
         return "Movie{" +
@@ -88,6 +98,7 @@ public class Movie {
                 ", poster_path='" + poster_path + '\'' +
                 ", vote_average=" + vote_average +
                 ", popularity=" + popularity +
+                ", favorite=" + favorite+
                 '}';
     }
 }

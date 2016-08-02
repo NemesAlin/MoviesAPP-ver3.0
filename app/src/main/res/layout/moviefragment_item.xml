@@ -5,11 +5,14 @@
     android:orientation="horizontal">
 
     <GridView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:columnWidth="150dp"
+        android:verticalSpacing="0dp"
+        android:horizontalSpacing="0dp"
         android:id="@+id/moviesPosterGridView"
         android:layout_gravity="center"
         android:stretchMode="columnWidth"
-        android:numColumns="2" />
+        android:numColumns="auto_fit" />
 
 </RelativeLayout>
