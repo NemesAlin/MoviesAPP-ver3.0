@@ -15,4 +15,21 @@
         android:stretchMode="columnWidth"
         android:numColumns="auto_fit" />
 
+    <ImageView
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:id = "@+id/noInternetIcon"
+        android:src="@drawable/no_internet_connection"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/no_internet_connection"
+        android:id="@+id/noInternettextView"
+        android:layout_below="@+id/noInternetIcon"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>

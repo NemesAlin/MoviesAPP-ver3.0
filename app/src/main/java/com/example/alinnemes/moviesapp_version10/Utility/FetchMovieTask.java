@@ -1,5 +1,6 @@
 package com.example.alinnemes.moviesapp_version10.Utility;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -18,6 +19,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Vector;
 
 /**
  * Created by alin.nemes on 02-Aug-16.
@@ -116,6 +118,8 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         JSONObject moviesJson = new JSONObject(moviesJsonSTRING);
         JSONArray moviesResultsArray = moviesJson.getJSONArray("results");
 
+//        Vector<ContentValues> cVVector = new Vector<ContentValues>(moviesResultsArray.length());
+
         for (int i = 0; i < moviesResultsArray.length(); i++) {
 
             String title;
@@ -134,11 +138,25 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             vote_average = movieJSONObject.getDouble(OWN_VOTEAVERAGE);
             popularity = movieJSONObject.getDouble(OWN_POPULARITY);
 
+//            ContentValues movieValues = new ContentValues();
+//
+//            movieValues.put(MoviesDB.COLUMN_TITLE, title);
+//            movieValues.put(MoviesDB.COLUMN_OVERVIEW, overview);
+//            movieValues.put(MoviesDB.COLUMN_RELEASE_DATE, release_date);
+//            movieValues.put(MoviesDB.COLUMN_POSTER_PATH, poster_path);
+//            movieValues.put(MoviesDB.COLUMN_VOTE_AVERAGE, vote_average);
+//            movieValues.put(MoviesDB.COLUMN_POPULARITY, popularity);
+//            movieValues.put(MoviesDB.COLUMN_FAVORITE, false);
+//
+//            cVVector.add(movieValues);
+//
+
             MoviesDB moviesDB = new MoviesDB(mContext);
             moviesDB.open();
-            moviesDB.createMovie(title, overview, release_date, poster_path, vote_average, popularity, false);
+            if (moviesDB.getMovie(title) == null) {
+                moviesDB.createMovie(title, overview, release_date, poster_path, vote_average, popularity, false);
+            }
             moviesDB.close();
-
         }
     }
 }

@@ -16,20 +16,20 @@ import java.util.ArrayList;
  */
 public class MoviesDB {
     private static final String DATABASE_NAME = "moviesapp.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 4;
 
     private static final String MOVIE_TABLE = "movie";
 
-    private static final String COLUMN_ID = "_id";
-    private static final String COLUMN_TITLE = "title";
-    private static final String COLUMN_OVERVIEW = "overview";
-    private static final String COLUMN_RELEASE_DATE = "release_date";
-    private static final String COLUMN_POSTER_PATH = "poster_path";
-    private static final String COLUMN_VOTE_AVERAGE = "vote_average";
-    private static final String COLUMN_POPULARITY = "popularity";
-    private static final String COLUMN_FAVORITE = "favorite";
+    public static final String COLUMN_ID = "_id";
+    public static final String COLUMN_TITLE = "title";
+    public static final String COLUMN_OVERVIEW = "overview";
+    public static final String COLUMN_RELEASE_DATE = "release_date";
+    public static final String COLUMN_POSTER_PATH = "poster_path";
+    public static final String COLUMN_VOTE_AVERAGE = "vote_average";
+    public static final String COLUMN_POPULARITY = "popularity";
+    public static final String COLUMN_FAVORITE = "favorite";
     private static final String CREATE_TABLE = "CREATE TABLE " + MOVIE_TABLE + " ( " +
-            COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            COLUMN_ID + " INTEGER PRIMARY KEY, " +
             COLUMN_TITLE + " TEXT NOT NULL, " +
             COLUMN_OVERVIEW + " TEXT NOT NULL, " +
             COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
@@ -98,12 +98,12 @@ public class MoviesDB {
 
         //grall all the information from your dataBase
         Cursor cursor = sqLiteDatabase.query(MOVIE_TABLE, allColumns, null, null, null, null, null);
-        cursor.moveToLast();
+        cursor.moveToFirst();
 
-        while (!cursor.isBeforeFirst()) {
+        while (!cursor.isAfterLast()) {
             Movie note = cursorToMovie(cursor);
             allMoviews.add(note);
-            cursor.moveToPrevious();
+            cursor.moveToNext();
         }
         cursor.close();
         return allMoviews;
@@ -118,7 +118,12 @@ public class MoviesDB {
     }
 
     private Movie cursorToMovie(Cursor cursor) {
-        Movie newMovie = new Movie(cursor.getLong(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), cursor.getDouble(6), Boolean.parseBoolean(cursor.getString(7)));
+        Movie newMovie = null;
+        try {
+            newMovie = new Movie(cursor.getLong(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), cursor.getDouble(6), Boolean.parseBoolean(cursor.getString(7)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return newMovie;
     }
 

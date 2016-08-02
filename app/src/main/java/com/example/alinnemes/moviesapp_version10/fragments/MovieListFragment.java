@@ -1,5 +1,6 @@
 package com.example.alinnemes.moviesapp_version10.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,12 +10,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.alinnemes.moviesapp_version10.R;
 import com.example.alinnemes.moviesapp_version10.Utility.FetchMovieTask;
 import com.example.alinnemes.moviesapp_version10.Utility.GridViewAdapter;
 import com.example.alinnemes.moviesapp_version10.Utility.UtilityClass;
+import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
 import com.example.alinnemes.moviesapp_version10.model.Movie;
 
@@ -46,32 +50,35 @@ public class MovieListFragment extends Fragment {
         View rootview = inflater.inflate(R.layout.moviefragment_item, container, false);
 
         GridView gridView = (GridView) rootview.findViewById(R.id.moviesPosterGridView);
+        ImageView noInternetimageView = (ImageView) rootview.findViewById(R.id.noInternetIcon);
+        TextView noInternetTextView = (TextView) rootview.findViewById(R.id.noInternettextView);
 
         if (UtilityClass.isOnline(getActivity())) {
+            noInternetimageView.setVisibility(View.GONE);
+            noInternetTextView.setVisibility(View.GONE);
+
             String sorting = UtilityClass.getPreferredSorting(getActivity());
+
             new FetchMovieTask(getActivity()).execute(sorting);
+
             MoviesDB moviesDB = new MoviesDB(getActivity());
             moviesDB.open();
             ArrayList<Movie> movies = moviesDB.getAllMovies();
-//        movies.add(new Movie(3,"d","d","d","http://image.tmdb.org/t/p/w342/6FxOPJ9Ysilpq0IgkrMJ7PubFhq.jpg", 8.4, 16.688744));
-//        movies.add(new Movie(157336, "Interstellar", "Interstellar chronicles the adventures of a group of explorers who make use of a newly discovered wormhole to surpass the limitations on human space travel and conquer the vast distances involved in an interstellar voyage.", "2014-11-05", "http://image.tmdb.org/t/p/w342/nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg", 8.4, 16.688744));
-//        movies.add(new Movie(3,"d","d","d","http://image.tmdb.org/t/p/w342/811DjJTon9gD6hZ8nCjSitaIXFQ.jpg", 8.4, 16.688744));
-//        movies.add(new Movie(3,"d","d","d","http://image.tmdb.org/t/p/w342/lFSSLTlFozwpaGlO31OoUeirBgQ.jpg", 8.4, 16.688744));
-//        movies.add(new Movie(3,"d","d","d","http://image.tmdb.org/t/p/w342/jjBgi2r5cRt36xF6iNUEhzscEcb.jpg", 8.4, 16.688744));
-//        movies.add(new Movie(3,"d","d","d","http://image.tmdb.org/t/p/w342/inVq3FRqcYIRl2la8iZikYYxFNR.jpg", 8.4, 16.688744));
-//        movies.add(new Movie(3,"d","d","d","http://image.tmdb.org/t/p/w342/bIXbMvEKhlLnhdXttTf2ZKvLZEP.jpg", 8.4, 16.688744));
-//        movies.add(new Movie(3,"d","d","d","http://image.tmdb.org/t/p/w342/kqjL17yufvn9OVLyXYpvtyrFfak.jpg", 8.4, 16.688744));
-//        movies.add(new Movie(3,"d","d","d","http://image.tmdb.org/t/p/w342/5N20rQURev5CNDcMjHVUZhpoCNC.jpg", 8.4, 16.688744));
-//        movies.add(new Movie(3,"d","d","d","http://image.tmdb.org/t/p/w342/5JU9ytZJyR3zmClGmVm9q4Geqbd.jpg", 8.4, 16.688744));
+            moviesDB.close();
 
             gridView.setAdapter(new GridViewAdapter(getContext(), movies));
         } else {
-            Toast.makeText(getActivity(), "No internet connection!", Toast.LENGTH_LONG).show();
+            noInternetimageView.setVisibility(View.VISIBLE);
+            noInternetTextView.setVisibility(View.VISIBLE);
+            Toast.makeText(getActivity(), getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
         }
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
+                Intent intent = new Intent(getActivity(), DetailActivity.class);
+                startActivity(intent);
                 Toast.makeText(getActivity(), "" + position,
                         Toast.LENGTH_SHORT).show();
             }
