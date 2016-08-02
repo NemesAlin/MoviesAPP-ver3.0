@@ -3,8 +3,10 @@ package com.example.alinnemes.moviesapp_version10.activities;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.alinnemes.moviesapp_version10.R;
+import com.example.alinnemes.moviesapp_version10.Utility.UtilityClass;
 import com.example.alinnemes.moviesapp_version10.fragments.MovieListFragment;
 
 /*TODO: Your app will:
@@ -32,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new MovieListFragment())
                     .commit();
+        }
+
+        if(!UtilityClass.isOnline(this)){
+            Toast.makeText(MainActivity.this, "No internet connection!", Toast.LENGTH_LONG).show();
         }
     }
 
