@@ -81,6 +81,7 @@ public class MovieListFragment extends Fragment {
             noInternetTextView.setVisibility(View.GONE);
 
             String sorting = UtilityClass.getPreferredSorting(getActivity());
+            boolean favorite = UtilityClass.getPreferredFavorite(getActivity());
 
             new FetchMovieTask(getActivity()).execute(sorting);
 
