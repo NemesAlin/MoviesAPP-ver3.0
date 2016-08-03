@@ -80,6 +80,7 @@ public class MovieListFragment extends Fragment {
             noInternetimageView.setVisibility(View.GONE);
             noInternetTextView.setVisibility(View.GONE);
 
+            ArrayList<Movie> movies;
             String sorting = UtilityClass.getPreferredSorting(getActivity());
             boolean favorite = UtilityClass.getPreferredFavorite(getActivity());
 
@@ -87,10 +88,17 @@ public class MovieListFragment extends Fragment {
 
             MoviesDB moviesDB = new MoviesDB(getActivity());
             moviesDB.open();
-            ArrayList<Movie> movies = moviesDB.getAllMovies();
+            if (favorite) {
+                movies = moviesDB.getFavoriteMovies();
+            } else if (sorting.equals(getString(R.string.pref_sorting_default))) {
+                movies = moviesDB.getPopularMovies();
+            } else {
+                movies = moviesDB.getTopRatedMovies();
+            }
             moviesDB.close();
-
-            gridView.setAdapter(new GridViewAdapter(getContext(), movies));
+            GridViewAdapter gridViewAdapter = new GridViewAdapter(getContext(), movies);
+            gridViewAdapter.notifyDataSetChanged();
+            gridView.setAdapter(gridViewAdapter);
         } else {
             noInternetimageView.setVisibility(View.VISIBLE);
             noInternetTextView.setVisibility(View.VISIBLE);

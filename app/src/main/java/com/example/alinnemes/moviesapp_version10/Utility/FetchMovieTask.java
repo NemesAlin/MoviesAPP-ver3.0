@@ -1,12 +1,12 @@
 package com.example.alinnemes.moviesapp_version10.Utility;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.alinnemes.moviesapp_version10.BuildConfig;
+import com.example.alinnemes.moviesapp_version10.R;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
 
 import org.json.JSONArray;
@@ -19,7 +19,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Vector;
 
 /**
  * Created by alin.nemes on 02-Aug-16.
@@ -81,7 +80,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
                 return null;
             }
             moviesJsonSTRING = buffer.toString();
-            getDataFromJson(moviesJsonSTRING);
+            getDataFromJson(moviesJsonSTRING, params[0]);
         } catch (IOException io) {
             Log.e("IOExpection", "Error ", io);
         } catch (JSONException e) {
@@ -103,8 +102,8 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         return null;
     }
 
-    private void getDataFromJson(String moviesJsonSTRING) throws JSONException {
-
+    private void getDataFromJson(String moviesJsonSTRING, String params) throws JSONException {
+        MoviesDB moviesDB = new MoviesDB(mContext);
 
         //movie information
         final String OWN_TITLE = "title";
@@ -118,7 +117,14 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         JSONObject moviesJson = new JSONObject(moviesJsonSTRING);
         JSONArray moviesResultsArray = moviesJson.getJSONArray("results");
 
-//        Vector<ContentValues> cVVector = new Vector<ContentValues>(moviesResultsArray.length());
+        //refresh the lists
+        moviesDB.open();
+        if (params.equals(mContext.getString(R.string.pref_sorting_default))) {
+            moviesDB.deletePopularList();
+        } else {
+            moviesDB.deleteTopRatedList();
+        }
+        moviesDB.close();
 
         for (int i = 0; i < moviesResultsArray.length(); i++) {
 
@@ -138,23 +144,15 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             vote_average = movieJSONObject.getDouble(OWN_VOTEAVERAGE);
             popularity = movieJSONObject.getDouble(OWN_POPULARITY);
 
-//            ContentValues movieValues = new ContentValues();
-//
-//            movieValues.put(MoviesDB.COLUMN_TITLE, title);
-//            movieValues.put(MoviesDB.COLUMN_OVERVIEW, overview);
-//            movieValues.put(MoviesDB.COLUMN_RELEASE_DATE, release_date);
-//            movieValues.put(MoviesDB.COLUMN_POSTER_PATH, poster_path);
-//            movieValues.put(MoviesDB.COLUMN_VOTE_AVERAGE, vote_average);
-//            movieValues.put(MoviesDB.COLUMN_POPULARITY, popularity);
-//            movieValues.put(MoviesDB.COLUMN_FAVORITE, false);
-//
-//            cVVector.add(movieValues);
-//
 
-            MoviesDB moviesDB = new MoviesDB(mContext);
             moviesDB.open();
             if (moviesDB.getMovie(title) == null) {
                 moviesDB.createMovie(title, overview, release_date, poster_path, vote_average, popularity, false);
+            }
+            if (params.equals(mContext.getString(R.string.pref_sorting_default))) {
+                moviesDB.createPopularList(title, overview, release_date, poster_path, vote_average, popularity, false);
+            } else {
+                moviesDB.createTopRatedList(title, overview, release_date, poster_path, vote_average, popularity, false);
             }
             moviesDB.close();
         }
