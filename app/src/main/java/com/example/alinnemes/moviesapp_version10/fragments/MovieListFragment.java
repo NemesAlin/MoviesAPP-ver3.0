@@ -26,11 +26,11 @@ import java.util.ArrayList;
 
 public class MovieListFragment extends Fragment {
 
+    //Views
+    private GridView gridView;
+    private ImageView noInternetimageView;
+    private TextView noInternetTextView;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public MovieListFragment() {
     }
 
@@ -49,10 +49,33 @@ public class MovieListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootview = inflater.inflate(R.layout.moviefragment_item, container, false);
 
-        GridView gridView = (GridView) rootview.findViewById(R.id.moviesPosterGridView);
-        ImageView noInternetimageView = (ImageView) rootview.findViewById(R.id.noInternetIcon);
-        TextView noInternetTextView = (TextView) rootview.findViewById(R.id.noInternettextView);
+        gridView = (GridView) rootview.findViewById(R.id.moviesPosterGridView);
+        noInternetimageView = (ImageView) rootview.findViewById(R.id.noInternetIcon);
+        noInternetTextView = (TextView) rootview.findViewById(R.id.noInternettextView);
 
+        listMovies();
+
+        noInternetimageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listMovies();
+            }
+        });
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                Intent intent = new Intent(getActivity(), DetailActivity.class);
+                startActivity(intent);
+                Toast.makeText(getActivity(), "" + position,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+        return rootview;
+    }
+
+    public void listMovies() {
         if (UtilityClass.isOnline(getActivity())) {
             noInternetimageView.setVisibility(View.GONE);
             noInternetTextView.setVisibility(View.GONE);
@@ -72,17 +95,6 @@ public class MovieListFragment extends Fragment {
             noInternetTextView.setVisibility(View.VISIBLE);
             Toast.makeText(getActivity(), getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
         }
-
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                Intent intent = new Intent(getActivity(), DetailActivity.class);
-                startActivity(intent);
-                Toast.makeText(getActivity(), "" + position,
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-        return rootview;
     }
+
 }

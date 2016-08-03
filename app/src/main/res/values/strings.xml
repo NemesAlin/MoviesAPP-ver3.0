@@ -7,6 +7,7 @@
     <string name="pref_sorting_key">sorting</string>
     <string name="pref_sorting_defaul">popular</string>
 
+    <string name="no_internet_connection_tap_to_refresh">No internet connection!\nTap to refresh</string>
     <string name="no_internet_connection">No internet connection!</string>
 
     <!-- Strings related to Settings -->
