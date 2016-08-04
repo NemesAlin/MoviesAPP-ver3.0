@@ -1,15 +1,18 @@
 package com.example.alinnemes.moviesapp_version10.model;
 
+import java.io.Serializable;
+
 /**
  * Created by alin.nemes on 01-Aug-16.
  */
-public class Movie {
+public class Movie implements Serializable {
     long id;
     private String title;
     private String overview;
     private String release_date;
     private String poster_path;
     private double vote_average;
+    private int runtime;
     private double popularity;
     private boolean favorite;
 
@@ -76,6 +79,14 @@ public class Movie {
         return popularity;
     }
 
+    public int getRuntime() {
+        return runtime;
+    }
+
+    public void setRuntime(int runtime) {
+        this.runtime = runtime;
+    }
+
     public void setPopularity(double popularity) {
         this.popularity = popularity;
     }
@@ -97,8 +108,10 @@ public class Movie {
                 ", release_date='" + release_date + '\'' +
                 ", poster_path='" + poster_path + '\'' +
                 ", vote_average=" + vote_average +
+                ", runtime=" + runtime +
                 ", popularity=" + popularity +
-                ", favorite=" + favorite+
+                ", favorite=" + favorite +
                 '}';
     }
+
 }

@@ -46,10 +46,14 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             final String API_BASE_URL = "https://api.themoviedb.org/3/movie/";
             final String apiKey_PARAM = "api_key";
 
-            //http://api.themoviedb.org/3/movie/popular?api_key=08d0ea437dc686b11c92b0fefc432d09
-            Uri builtUri = Uri.parse(API_BASE_URL).buildUpon()
-                    .appendPath(params[0])
-                    .appendQueryParameter(apiKey_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
+            //http://api.themoviedb.org/3/movie/popular?api_key = {MY_API_KEY}
+            //http://api.themoviedb.org/3/movie/id/videos?api_key = {MY_API_KEY}
+            Uri.Builder builtUri = Uri.parse(API_BASE_URL).buildUpon()
+                    .appendPath(params[0]);
+                    if(isNumeric(params[0])){
+                        builtUri.appendPath("videos");
+                    }
+                    builtUri.appendQueryParameter(apiKey_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
                     .build();
 
             URL url = new URL(builtUri.toString());
@@ -80,7 +84,11 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
                 return null;
             }
             moviesJsonSTRING = buffer.toString();
-            getDataFromJson(moviesJsonSTRING, params[0]);
+            if (isNumeric(params[0])) {
+                getDataFromJsonMovieTrailers(moviesJsonSTRING, params[0]);
+            } else {
+                getDataFromJson(moviesJsonSTRING, params[0]);
+            }
         } catch (IOException io) {
             Log.e("IOExpection", "Error ", io);
         } catch (JSONException e) {
@@ -106,17 +114,18 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         MoviesDB moviesDB = new MoviesDB(mContext);
 
         //movie information
+        final String OWN_ID = "id";
         final String OWN_TITLE = "title";
         final String OWN_OVERVIEW = "overview";
         final String OWN_RELEASEDATE = "release_date";
         final String OWN_POSTER_PATH = "poster_path";
         final String OWN_VOTEAVERAGE = "vote_average";
         final String OWN_POPULARITY = "popularity";
+        final String OWN_RUNTIME = "runtime";
 
 
         JSONObject moviesJson = new JSONObject(moviesJsonSTRING);
         JSONArray moviesResultsArray = moviesJson.getJSONArray("results");
-
         //refresh the lists
         moviesDB.open();
         if (params.equals(mContext.getString(R.string.pref_sorting_default))) {
@@ -128,33 +137,47 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
 
         for (int i = 0; i < moviesResultsArray.length(); i++) {
 
+            long id;
             String title;
             String overview;
             String release_date;
             String poster_path;
             double vote_average;
             double popularity;
+            int runtime;
 
             JSONObject movieJSONObject = moviesResultsArray.getJSONObject(i);
 
+            id = movieJSONObject.getLong(OWN_ID);
             title = movieJSONObject.getString(OWN_TITLE);
             overview = movieJSONObject.getString(OWN_OVERVIEW);
             release_date = movieJSONObject.getString(OWN_RELEASEDATE);
             poster_path = String.format("http://image.tmdb.org/t/p/w342%s", movieJSONObject.getString(OWN_POSTER_PATH));
             vote_average = movieJSONObject.getDouble(OWN_VOTEAVERAGE);
             popularity = movieJSONObject.getDouble(OWN_POPULARITY);
-
+//            if (isNumeric(params)) {
+//                runtime = movieJSONObject.getInt(OWN_RUNTIME);
+//            }
 
             moviesDB.open();
             if (moviesDB.getMovie(title) == null) {
-                moviesDB.createMovie(title, overview, release_date, poster_path, vote_average, popularity, false);
+                moviesDB.createMovie(id, title, overview, release_date, poster_path, vote_average, popularity, false);
             }
             if (params.equals(mContext.getString(R.string.pref_sorting_default))) {
-                moviesDB.createPopularList(title, overview, release_date, poster_path, vote_average, popularity, false);
+                moviesDB.createPopularList(id, title, overview, release_date, poster_path, vote_average, popularity, false);
             } else {
-                moviesDB.createTopRatedList(title, overview, release_date, poster_path, vote_average, popularity, false);
+                moviesDB.createTopRatedList(id, title, overview, release_date, poster_path, vote_average, popularity, false);
             }
             moviesDB.close();
         }
     }
+
+    private void getDataFromJsonMovieTrailers(String moviesJsonSTRING, String params) throws JSONException {
+
+    }
+
+    public boolean isNumeric(String s) {
+        return java.util.regex.Pattern.matches("\\d+", s);
+    }
+
 }

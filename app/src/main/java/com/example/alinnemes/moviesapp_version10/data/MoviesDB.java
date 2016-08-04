@@ -80,8 +80,9 @@ public class MoviesDB {
         myMovieDbHelper.close();
     }
 
-    public Movie createMovie(String title, String overview, String release_date, String poster_path, double vote_average, double popularity, boolean favorite) {
+    public Movie createMovie(long _id, String title, String overview, String release_date, String poster_path, double vote_average, double popularity, boolean favorite) {
         ContentValues values = new ContentValues();
+        values.put(COLUMN_ID,_id);
         values.put(COLUMN_TITLE, title);
         values.put(COLUMN_OVERVIEW, overview);
         values.put(COLUMN_RELEASE_DATE, release_date);
@@ -100,15 +101,16 @@ public class MoviesDB {
         return newMovie;
     }
 
-    public Movie createPopularList(String title, String overview, String release_date, String poster_path, double vote_average, double popularity, boolean favorite) {
+    public Movie createPopularList(long _id, String title, String overview, String release_date, String poster_path, double vote_average, double popularity, boolean favorite) {
         ContentValues values = new ContentValues();
+        values.put(COLUMN_ID,_id);
         values.put(COLUMN_TITLE, title);
         values.put(COLUMN_OVERVIEW, overview);
         values.put(COLUMN_RELEASE_DATE, release_date);
         values.put(COLUMN_POSTER_PATH, poster_path);
         values.put(COLUMN_VOTE_AVERAGE, vote_average);
         values.put(COLUMN_POPULARITY, popularity);
-        values.put(COLUMN_FAVORITE, favorite);
+        values.put(COLUMN_FAVORITE, String.valueOf(favorite));
 
         long insertId = sqLiteDatabase.insert(POPULAR_MOVIE_TABLE, null, values);
 
@@ -120,15 +122,16 @@ public class MoviesDB {
         return newMovie;
     }
 
-    public Movie createTopRatedList(String title, String overview, String release_date, String poster_path, double vote_average, double popularity, boolean favorite) {
+    public Movie createTopRatedList(long _id, String title, String overview, String release_date, String poster_path, double vote_average, double popularity, boolean favorite) {
         ContentValues values = new ContentValues();
+        values.put(COLUMN_ID,_id);
         values.put(COLUMN_TITLE, title);
         values.put(COLUMN_OVERVIEW, overview);
         values.put(COLUMN_RELEASE_DATE, release_date);
         values.put(COLUMN_POSTER_PATH, poster_path);
         values.put(COLUMN_VOTE_AVERAGE, vote_average);
         values.put(COLUMN_POPULARITY, popularity);
-        values.put(COLUMN_FAVORITE, favorite);
+        values.put(COLUMN_FAVORITE, String.valueOf(favorite));
 
         long insertId = sqLiteDatabase.insert(TOPRATED_MOVIE_TABLE, null, values);
 
@@ -174,7 +177,7 @@ public class MoviesDB {
 
     }
 
-    public long updateMovie(long idToUpdate, String newTitle, String newOverview, String newReleaseDate, String newPosterPath, double newVoteAverage, double newPopularity) {
+    public long updateMovie(long idToUpdate, String newTitle, String newOverview, String newReleaseDate, String newPosterPath, double newVoteAverage, double newPopularity,boolean newFavorite) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_TITLE, newTitle);
         values.put(COLUMN_OVERVIEW, newOverview);
@@ -182,6 +185,7 @@ public class MoviesDB {
         values.put(COLUMN_POSTER_PATH, newPosterPath);
         values.put(COLUMN_VOTE_AVERAGE, newVoteAverage);
         values.put(COLUMN_POPULARITY, newPopularity);
+        values.put(COLUMN_FAVORITE, String.valueOf(newFavorite));
 
         return sqLiteDatabase.update(MOVIE_TABLE, values, COLUMN_ID + " = " + idToUpdate, null);
     }

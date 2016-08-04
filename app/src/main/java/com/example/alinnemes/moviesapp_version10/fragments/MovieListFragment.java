@@ -19,6 +19,7 @@ import com.example.alinnemes.moviesapp_version10.Utility.FetchMovieTask;
 import com.example.alinnemes.moviesapp_version10.Utility.GridViewAdapter;
 import com.example.alinnemes.moviesapp_version10.Utility.UtilityClass;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
+import com.example.alinnemes.moviesapp_version10.activities.MainActivity;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
 import com.example.alinnemes.moviesapp_version10.model.Movie;
 
@@ -30,6 +31,9 @@ public class MovieListFragment extends Fragment {
     private GridView gridView;
     private ImageView noInternetimageView;
     private TextView noInternetTextView;
+    //array data
+    private ArrayList<Movie> movies;
+    private String sorting;
 
     public MovieListFragment() {
     }
@@ -38,6 +42,8 @@ public class MovieListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        sorting = UtilityClass.getPreferredSorting(getActivity());
+        new FetchMovieTask(getActivity()).execute(sorting);
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -62,16 +68,7 @@ public class MovieListFragment extends Fragment {
             }
         });
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                Intent intent = new Intent(getActivity(), DetailActivity.class);
-                startActivity(intent);
-                Toast.makeText(getActivity(), "" + position,
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
         return rootview;
     }
 
@@ -80,11 +77,7 @@ public class MovieListFragment extends Fragment {
             noInternetimageView.setVisibility(View.GONE);
             noInternetTextView.setVisibility(View.GONE);
 
-            ArrayList<Movie> movies;
-            String sorting = UtilityClass.getPreferredSorting(getActivity());
             boolean favorite = UtilityClass.getPreferredFavorite(getActivity());
-
-            new FetchMovieTask(getActivity()).execute(sorting);
 
             MoviesDB moviesDB = new MoviesDB(getActivity());
             moviesDB.open();
@@ -104,6 +97,20 @@ public class MovieListFragment extends Fragment {
             noInternetTextView.setVisibility(View.VISIBLE);
             Toast.makeText(getActivity(), getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
         }
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+
+                Movie movieToIntent = movies.get(position);
+                Intent intent = new Intent(getActivity(), DetailActivity.class);
+                intent.putExtra(MainActivity.MOVIE_OBJECT,movieToIntent);
+                startActivity(intent);
+                Toast.makeText(getActivity(), "" + position,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
 }

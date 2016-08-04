@@ -4,12 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.example.alinnemes.moviesapp_version10.R;
-import com.example.alinnemes.moviesapp_version10.Utility.UtilityClass;
+import com.example.alinnemes.moviesapp_version10.Utility.FetchMovieTask;
 import com.example.alinnemes.moviesapp_version10.fragments.MovieListFragment;
-
 /*TODO: Your app will:
         ● Upon launch, present the user with an grid arrangement of movie posters.
         ● Allow your user to change sort order via a setting:
@@ -23,6 +21,7 @@ import com.example.alinnemes.moviesapp_version10.fragments.MovieListFragment;
 */
 
 public class MainActivity extends AppCompatActivity {
+    public static final String MOVIE_OBJECT = "movie_object";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            startActivity(new Intent(this,SettingsActivity.class));
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
 
