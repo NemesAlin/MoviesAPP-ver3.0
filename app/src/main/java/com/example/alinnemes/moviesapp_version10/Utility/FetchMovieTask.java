@@ -195,6 +195,28 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
 
     private void getDataFromJsonMovieTrailers(String moviesJsonSTRING, String params) throws JSONException {
 
+        final String OWN_site = "site";
+        final String OWN_key = "key";
+        final String OWN_name = "name";
+
+
+        JSONObject moviesJson = new JSONObject(moviesJsonSTRING);
+        JSONArray moviesResultsArray = moviesJson.getJSONArray("results");
+
+        for (int i = 0; i < moviesResultsArray.length(); i++) {
+
+            final String site;
+            final String key;
+            final String name;
+
+            JSONObject movieJSONObject = moviesResultsArray.getJSONObject(i);
+
+            site = movieJSONObject.getString(OWN_site);
+            key = movieJSONObject.getString(OWN_key);
+            name = movieJSONObject.getString(OWN_name);
+
+        }
+
     }
 
     public boolean isNumeric(String s) {
