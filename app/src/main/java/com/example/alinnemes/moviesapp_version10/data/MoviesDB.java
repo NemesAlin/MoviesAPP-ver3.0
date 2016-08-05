@@ -15,14 +15,6 @@ import java.util.ArrayList;
  * Created by alin.nemes on 02-Aug-16.
  */
 public class MoviesDB {
-    private static final String DATABASE_NAME = "moviesapp.db";
-    private static final int DATABASE_VERSION = 7;
-
-    private static final String MOVIE_TABLE = "movie";
-    private static final String POPULAR_MOVIE_TABLE = "popular";
-    private static final String TOPRATED_MOVIE_TABLE = "top_rated";
-
-
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_TITLE = "title";
     public static final String COLUMN_OVERVIEW = "overview";
@@ -32,6 +24,14 @@ public class MoviesDB {
     public static final String COLUMN_RUNTIME = "runtime";
     public static final String COLUMN_POPULARITY = "popularity";
     public static final String COLUMN_FAVORITE = "favorite";
+
+    private static final String DATABASE_NAME = "moviesapp.db";
+    private static final int DATABASE_VERSION = 7;
+
+    private static final String MOVIE_TABLE = "movie";
+    private static final String POPULAR_MOVIE_TABLE = "popular";
+    private static final String TOPRATED_MOVIE_TABLE = "top_rated";
+
     private static final String CREATE_TABLE = "CREATE TABLE " + MOVIE_TABLE + " ( " +
             COLUMN_ID + " INTEGER PRIMARY KEY, " +
             COLUMN_TITLE + " TEXT NOT NULL, " +
@@ -128,7 +128,7 @@ public class MoviesDB {
         return newMovie;
     }
 
-    public Movie createTopRatedList(long _id, String title, String overview, String release_date, String poster_path, double vote_average,int runtime, double popularity, boolean favorite) {
+    public Movie createTopRatedList(long _id, String title, String overview, String release_date, String poster_path, double vote_average, int runtime, double popularity, boolean favorite) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_ID, _id);
         values.put(COLUMN_TITLE, title);

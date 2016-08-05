@@ -16,7 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.alinnemes.moviesapp_version10.R;
-import com.example.alinnemes.moviesapp_version10.Utility.FetchMovieTask;
 import com.example.alinnemes.moviesapp_version10.Utility.GridViewAdapter;
 import com.example.alinnemes.moviesapp_version10.Utility.UtilityClass;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
@@ -105,12 +104,12 @@ public class MovieListFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 MoviesDB moviesDB = new MoviesDB(getActivity());
-                        moviesDB.open();
+                moviesDB.open();
                 Movie movieToIntent = movies.get(position);
                 movieToIntent = moviesDB.getMovie(movieToIntent.getTitle());
 //                new FetchMovieTask(getActivity()).execute(String.valueOf(movieToIntent.getId()),DetailActivity.MOVIE_DETAIL_QUERTY);
                 Intent intent = new Intent(getActivity(), DetailActivity.class);
-                intent.putExtra(MainActivity.MOVIE_OBJECT,movieToIntent);
+                intent.putExtra(MainActivity.MOVIE_OBJECT, movieToIntent);
                 startActivity(intent);
                 Toast.makeText(getActivity(), "" + position,
                         Toast.LENGTH_SHORT).show();

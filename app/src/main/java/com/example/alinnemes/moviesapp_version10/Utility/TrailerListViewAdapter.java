@@ -6,38 +6,39 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.alinnemes.moviesapp_version10.R;
-import com.example.alinnemes.moviesapp_version10.model.Movie;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 /**
- * Created by alin.nemes on 01-Aug-16.
+ * Created by alin.nemes on 05-Aug-16.
  */
-public class GridViewAdapter extends ArrayAdapter<Movie> {
+public class TrailerListViewAdapter extends ArrayAdapter<String> {
 
-    ArrayList<Movie> movies;
-    private Context ctx;
+    ArrayList<String> strs;
+    private Context context;
 
-    public GridViewAdapter(Context context, ArrayList<Movie> movies) {
-        super(context, 0, movies);
-        this.ctx = context;
-        this.movies = movies;
+    public TrailerListViewAdapter(Context context, ArrayList<String> strs) {
+        super(context, 0, strs);
+        this.context = context;
+        this.strs = strs;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Movie movie = getItem(position);
+        String str = getItem(position);
 
         ViewHolder holder;
 
         if (convertView == null) {
             //instance the newViewHolder to hold the references
             holder = new ViewHolder();
-            convertView = LayoutInflater.from(ctx).inflate(R.layout.moviefragment_item_list, parent, false);
-            holder.moviePoster = (ImageView) convertView.findViewById(R.id.posterImageView);
+            convertView = LayoutInflater.from(context).inflate(R.layout.fragment_detail_item_trailer_list, parent, false);
+            holder.playButton = (ImageView) convertView.findViewById(R.id.playIconImageView);
+            holder.trailerTitle = (TextView) convertView.findViewById(R.id.trailerTitleView);
 
             //set tag to remember in holder the references for the widgets :)
             convertView.setTag(holder);
@@ -45,14 +46,13 @@ public class GridViewAdapter extends ArrayAdapter<Movie> {
             holder = (ViewHolder) convertView.getTag();
         }
 
-
-        //fill each new reference view with concrete data
-        Picasso.with(ctx).load(movie.getPoster_path()).into(holder.moviePoster);
-
+        Picasso.with(context).load(R.mipmap.play_icon).into(holder.playButton);
+        holder.trailerTitle.setText(str);
         return convertView;
     }
 
     public static class ViewHolder {
-        ImageView moviePoster;
+        ImageView playButton;
+        TextView trailerTitle;
     }
 }

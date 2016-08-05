@@ -6,8 +6,8 @@
     <item>
         <bitmap
             android:antialias="true"
-            android:gravity="center"
             android:autoMirrored="true"
+            android:gravity="center"
             android:src="@drawable/movie_icon" />
     </item>
 </layer-list>

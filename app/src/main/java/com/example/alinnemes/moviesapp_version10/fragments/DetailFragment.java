@@ -6,16 +6,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.alinnemes.moviesapp_version10.R;
-import com.example.alinnemes.moviesapp_version10.Utility.FetchMovieTask;
+import com.example.alinnemes.moviesapp_version10.Utility.TrailerListViewAdapter;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
 import com.example.alinnemes.moviesapp_version10.model.Movie;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class DetailFragment extends Fragment {
@@ -28,6 +31,7 @@ public class DetailFragment extends Fragment {
     private TextView movieOverviewTV;
     private ImageView moviePosterIV;
     private ImageView favoriteMovieIV;
+    private ListView movieTrailersList;
     //data
     private Movie movie;
 
@@ -62,6 +66,7 @@ public class DetailFragment extends Fragment {
         movieOverviewTV = (TextView) view.findViewById(R.id.movieOverviewDETAILVIEW);
         moviePosterIV = (ImageView) view.findViewById(R.id.moviePosterImageViewDETAILVIEW);
         favoriteMovieIV = (ImageView) view.findViewById(R.id.favoriteMovieDETAILVIEW);
+        movieTrailersList = (ListView) view.findViewById(R.id.movieTrailersListDETAILVIEW);
 
         movieTitleTV.setText(movie.getTitle());
         releaseDateTV.setText(movie.getRelease_date());
@@ -69,12 +74,25 @@ public class DetailFragment extends Fragment {
         runTimeTV.setText(String.format(Locale.US, "%dmin", movie.getRuntime()));
         movieOverviewTV.setText(movie.getOverview());
         Picasso.with(getActivity()).load(movie.getPoster_path()).into(moviePosterIV);
+
         if (movie.isFavorite()) {
             Picasso.with(getActivity()).load(R.drawable.favorite_icon).into(favoriteMovieIV);
         } else {
             Picasso.with(getActivity()).load(R.drawable.unfavorite_icon).into(favoriteMovieIV);
         }
 
+
+        ArrayList<String> strings = new ArrayList<>();
+        strings.add("Trailer 1");
+        strings.add("Trailer 2");
+        strings.add("Trailer 3");
+        strings.add("Trailer 4");
+        strings.add("Trailer 5");
+        strings.add("Trailer 6");
+        strings.add("Trailer 7");
+        TrailerListViewAdapter adapter = new TrailerListViewAdapter(getActivity(), strings);
+        movieTrailersList.setAdapter(adapter);
+        justifyListViewHeightBasedOnChildren(movieTrailersList);
 
         favoriteMovieIV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,5 +115,26 @@ public class DetailFragment extends Fragment {
         });
 
         return view;
+    }
+
+    public void justifyListViewHeightBasedOnChildren(ListView listView) {
+
+        ListAdapter adapter = listView.getAdapter();
+
+        if (adapter == null) {
+            return;
+        }
+        ViewGroup vg = listView;
+        int totalHeight = 100;
+        for (int i = 0; i < adapter.getCount(); i++) {
+            View listItem = adapter.getView(i, null, vg);
+            listItem.measure(0, 0);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams par = listView.getLayoutParams();
+        par.height = totalHeight + (listView.getDividerHeight() * (adapter.getCount() - 1));
+        listView.setLayoutParams(par);
+        listView.requestLayout();
     }
 }

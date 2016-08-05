@@ -4,8 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
 
 import com.example.alinnemes.moviesapp_version10.BuildConfig;
 import com.example.alinnemes.moviesapp_version10.R;
@@ -23,7 +21,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Locale;
 
 /**
  * Created by alin.nemes on 02-Aug-16.
@@ -165,7 +162,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             vote_average = movieJSONObject.getDouble(OWN_VOTEAVERAGE);
             popularity = movieJSONObject.getDouble(OWN_POPULARITY);
 
-            new FetchMovieTask(mContext).execute(String.valueOf(id),DetailActivity.MOVIE_DETAIL_QUERTY);
+            new FetchMovieTask(mContext).execute(String.valueOf(id), DetailActivity.MOVIE_DETAIL_QUERTY);
 
             moviesDB.open();
             if (moviesDB.getMovie(title) == null) {

@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="16dp"
     tools:context="com.example.alinnemes.moviesapp_version10.fragments.DetailFragment">
 
     <TextView
@@ -10,25 +11,25 @@
         android:layout_height="88dp"
         android:layout_centerHorizontal="true"
         android:background="@color/abc_search_url_text_normal"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:foregroundTint="#ffffff"
+        android:marqueeRepeatLimit="marquee_forever"
         android:paddingLeft="20dp"
         android:paddingStart="20dp"
         android:paddingTop="20dp"
-        android:text="Movie Title"
-        android:ellipsize="marquee"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:focusable="true"
         android:scrollHorizontally="true"
         android:singleLine="true"
-        android:focusableInTouchMode="true"
+        android:text="Movie Title"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#ffffff"
         android:textSize="@dimen/abc_alert_dialog_button_bar_height" />
 
     <ScrollView
-        android:id="@+id/scrollView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/DetailScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
@@ -37,91 +38,94 @@
         android:layout_below="@+id/movieTitleDETAILVIEW">
 
         <RelativeLayout
+            android:id="@+id/relativeLayoutSCROLLABLE"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/moviePosterImageViewDETAILVIEW"
                 android:layout_width="200dp"
-                android:layout_height="200dp"
+                android:layout_height="220dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
                 android:layout_marginLeft="25dp"
                 android:layout_marginStart="25dp"
-                android:src = "@drawable/movie_icon"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
+                android:layout_marginTop="25dp"
                 android:scaleType="fitXY"
-                android:layout_alignParentStart="true"
-                android:layout_marginTop="25dp" />
+                android:src="@drawable/movie_icon" />
 
             <TextView
+                android:id="@+id/release_dateDETAILVIEW"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="New Text"
-                android:id="@+id/release_dateDETAILVIEW"
-                android:layout_toRightOf="@+id/moviePosterImageViewDETAILVIEW"
-                android:layout_toEndOf="@+id/moviePosterImageViewDETAILVIEW"
+                android:layout_alignTop="@+id/moviePosterImageViewDETAILVIEW"
                 android:layout_marginLeft="20dp"
                 android:layout_marginStart="16dp"
-                android:layout_alignTop="@+id/moviePosterImageViewDETAILVIEW"
-                android:textSize="20dp"
-                android:textIsSelectable="true" />
+                android:layout_toEndOf="@+id/moviePosterImageViewDETAILVIEW"
+                android:layout_toRightOf="@+id/moviePosterImageViewDETAILVIEW"
+                android:text="New Text"
+                android:textIsSelectable="true"
+                android:textSize="20dp" />
 
             <TextView
+                android:id="@+id/runtimeDETAILVIEW"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="New Text"
-                android:id="@+id/runtimeDETAILVIEW"
-                android:layout_below="@+id/release_dateDETAILVIEW"
                 android:layout_alignLeft="@+id/release_dateDETAILVIEW"
                 android:layout_alignStart="@+id/release_dateDETAILVIEW"
+                android:layout_below="@+id/release_dateDETAILVIEW"
                 android:paddingTop="10dp"
-                android:textStyle="bold|italic"
-                android:textSize="16dp" />
+                android:text="New Text"
+                android:textSize="16dp"
+                android:textStyle="bold|italic" />
 
             <TextView
+                android:id="@+id/voteAverageDETAILVIEW"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Medium Text"
-                android:id="@+id/voteAverageDETAILVIEW"
-                android:layout_below="@+id/runtimeDETAILVIEW"
                 android:layout_alignLeft="@+id/runtimeDETAILVIEW"
                 android:layout_alignStart="@+id/runtimeDETAILVIEW"
+                android:layout_below="@+id/runtimeDETAILVIEW"
                 android:paddingTop="16dp"
+                android:text="Medium Text"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#000000" />
 
             <TextView
+                android:id="@+id/movieOverviewDETAILVIEW"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Medium Text"
-                android:id="@+id/movieOverviewDETAILVIEW"
-                android:paddingTop="25dp"
-                android:layout_alignParentBottom="true"
-                android:layout_below="@+id/moviePosterImageViewDETAILVIEW"
                 android:layout_alignLeft="@+id/moviePosterImageViewDETAILVIEW"
                 android:layout_alignStart="@+id/moviePosterImageViewDETAILVIEW"
+                android:layout_below="@+id/favoriteMovieDETAILVIEW"
                 android:paddingRight="16dp"
-                android:textAlignment="inherit" />
+                android:paddingTop="25dp"
+                android:text="Medium Text"
+                android:textAlignment="inherit"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <ListView
+                android:id="@+id/movieTrailersListDETAILVIEW"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignWithParentIfMissing="true"
+                android:layout_below="@id/movieOverviewDETAILVIEW"
+                android:fitsSystemWindows="true"
+                android:paddingTop="16dp" />
 
             <ImageView
+                android:id="@+id/favoriteMovieDETAILVIEW"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/favoriteMovieDETAILVIEW"
-                android:src = "@drawable/favorite_icon"
-                android:paddingTop="16dp"
                 android:layout_alignBottom="@+id/moviePosterImageViewDETAILVIEW"
+                android:layout_alignEnd="@+id/runtimeDETAILVIEW"
                 android:layout_alignLeft="@+id/voteAverageDETAILVIEW"
+                android:layout_alignRight="@+id/runtimeDETAILVIEW"
                 android:layout_alignStart="@+id/voteAverageDETAILVIEW"
                 android:layout_below="@+id/voteAverageDETAILVIEW"
-                android:layout_alignRight="@+id/runtimeDETAILVIEW"
-                android:layout_alignEnd="@+id/runtimeDETAILVIEW" />
-
-
+                android:paddingTop="16dp"
+                android:src="@drawable/favorite_icon" />
         </RelativeLayout>
-
-
     </ScrollView>
-
-
 </RelativeLayout>

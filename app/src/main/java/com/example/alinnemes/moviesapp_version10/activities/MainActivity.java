@@ -1,12 +1,9 @@
 package com.example.alinnemes.moviesapp_version10.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
 
 import com.example.alinnemes.moviesapp_version10.R;
-import com.example.alinnemes.moviesapp_version10.Utility.FetchMovieTask;
 import com.example.alinnemes.moviesapp_version10.fragments.MovieListFragment;
 /*TODO: Your app will:
         ● Upon launch, present the user with an grid arrangement of movie posters.

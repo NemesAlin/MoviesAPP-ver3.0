@@ -20,14 +20,14 @@ public class UtilityClass {
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
-    public static String getPreferredSorting(Context context){
+    public static String getPreferredSorting(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getString(context.getString(R.string.pref_sorting_key),context.getString(R.string.pref_sorting_default));
+        return prefs.getString(context.getString(R.string.pref_sorting_key), context.getString(R.string.pref_sorting_default));
     }
 
-    public static boolean getPreferredFavorite(Context context){
+    public static boolean getPreferredFavorite(Context context) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        return pref.getBoolean(context.getString(R.string.pref_favorite_key),false);
+        return pref.getBoolean(context.getString(R.string.pref_favorite_key), false);
     }
 
 }

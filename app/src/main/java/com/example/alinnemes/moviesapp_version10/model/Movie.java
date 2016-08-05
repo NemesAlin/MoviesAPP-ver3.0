@@ -80,16 +80,16 @@ public class Movie implements Serializable {
         return popularity;
     }
 
+    public void setPopularity(double popularity) {
+        this.popularity = popularity;
+    }
+
     public int getRuntime() {
         return runtime;
     }
 
     public void setRuntime(int runtime) {
         this.runtime = runtime;
-    }
-
-    public void setPopularity(double popularity) {
-        this.popularity = popularity;
     }
 
     public boolean isFavorite() {

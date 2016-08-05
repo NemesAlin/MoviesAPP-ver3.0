@@ -5,32 +5,32 @@
     android:orientation="horizontal">
 
     <GridView
+        android:id="@+id/moviesPosterGridView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:columnWidth="150dp"
-        android:verticalSpacing="0dp"
-        android:horizontalSpacing="0dp"
-        android:id="@+id/moviesPosterGridView"
         android:layout_gravity="center"
+        android:columnWidth="150dp"
+        android:horizontalSpacing="0dp"
+        android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
-        android:numColumns="auto_fit" />
+        android:verticalSpacing="0dp" />
 
     <ImageView
+        android:id="@+id/noInternetIcon"
         android:layout_width="300dp"
         android:layout_height="300dp"
-        android:id = "@+id/noInternetIcon"
-        android:src="@drawable/no_internet_connection"
+        android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:src="@drawable/no_internet_connection" />
 
     <TextView
+        android:id="@+id/noInternettextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/no_internet_connection_tap_to_refresh"
-        android:gravity="center"
-        android:id="@+id/noInternettextView"
         android:layout_below="@+id/noInternetIcon"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:text="@string/no_internet_connection_tap_to_refresh"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>

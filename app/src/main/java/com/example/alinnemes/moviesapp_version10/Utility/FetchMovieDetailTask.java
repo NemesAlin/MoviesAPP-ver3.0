@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 /**
  * Created by alin.nemes on 04-Aug-16.
  */
-public class FetchMovieDetailTask extends AsyncTask<Void,Void,Void>{
+public class FetchMovieDetailTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
         return null;
