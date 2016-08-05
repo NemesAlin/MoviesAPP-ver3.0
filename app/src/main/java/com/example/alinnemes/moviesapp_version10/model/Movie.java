@@ -16,13 +16,14 @@ public class Movie implements Serializable {
     private double popularity;
     private boolean favorite;
 
-    public Movie(long id, String title, String overview, String release_date, String poster_path, double vote_average, double popularity, boolean favorite) {
+    public Movie(long id, String title, String overview, String release_date, String poster_path, double vote_average, int runtime, double popularity, boolean favorite) {
         this.id = id;
         this.title = title;
         this.overview = overview;
         this.release_date = release_date;
         this.poster_path = poster_path;
         this.vote_average = vote_average;
+        this.runtime = runtime;
         this.popularity = popularity;
         this.favorite = favorite;
     }

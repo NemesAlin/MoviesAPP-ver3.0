@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public class MoviesDB {
     private static final String DATABASE_NAME = "moviesapp.db";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 7;
 
     private static final String MOVIE_TABLE = "movie";
     private static final String POPULAR_MOVIE_TABLE = "popular";
@@ -29,6 +29,7 @@ public class MoviesDB {
     public static final String COLUMN_RELEASE_DATE = "release_date";
     public static final String COLUMN_POSTER_PATH = "poster_path";
     public static final String COLUMN_VOTE_AVERAGE = "vote_average";
+    public static final String COLUMN_RUNTIME = "runtime";
     public static final String COLUMN_POPULARITY = "popularity";
     public static final String COLUMN_FAVORITE = "favorite";
     private static final String CREATE_TABLE = "CREATE TABLE " + MOVIE_TABLE + " ( " +
@@ -38,6 +39,7 @@ public class MoviesDB {
             COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
             COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
             COLUMN_VOTE_AVERAGE + " REAL, " +
+            COLUMN_RUNTIME + " INTEGER, " +
             COLUMN_POPULARITY + " REAL, " +
             COLUMN_FAVORITE + " TEXT NOT NULL " +
             ");";
@@ -48,6 +50,7 @@ public class MoviesDB {
             COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
             COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
             COLUMN_VOTE_AVERAGE + " REAL, " +
+            COLUMN_RUNTIME + " INTEGER, " +
             COLUMN_POPULARITY + " REAL, " +
             COLUMN_FAVORITE + " TEXT NOT NULL " +
             ");";
@@ -58,10 +61,11 @@ public class MoviesDB {
             COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
             COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
             COLUMN_VOTE_AVERAGE + " REAL, " +
+            COLUMN_RUNTIME + " INTEGER, " +
             COLUMN_POPULARITY + " REAL, " +
             COLUMN_FAVORITE + " TEXT NOT NULL " +
             ");";
-    private String[] allColumns = {COLUMN_ID, COLUMN_TITLE, COLUMN_OVERVIEW, COLUMN_RELEASE_DATE, COLUMN_POSTER_PATH, COLUMN_VOTE_AVERAGE, COLUMN_POPULARITY, COLUMN_FAVORITE};
+    private String[] allColumns = {COLUMN_ID, COLUMN_TITLE, COLUMN_OVERVIEW, COLUMN_RELEASE_DATE, COLUMN_POSTER_PATH, COLUMN_VOTE_AVERAGE, COLUMN_RUNTIME, COLUMN_POPULARITY, COLUMN_FAVORITE};
     private SQLiteDatabase sqLiteDatabase;
     private Context context;
     private MyMovieDbHelper myMovieDbHelper;
@@ -80,14 +84,15 @@ public class MoviesDB {
         myMovieDbHelper.close();
     }
 
-    public Movie createMovie(long _id, String title, String overview, String release_date, String poster_path, double vote_average, double popularity, boolean favorite) {
+    public Movie createMovie(long _id, String title, String overview, String release_date, String poster_path, double vote_average, int runtime, double popularity, boolean favorite) {
         ContentValues values = new ContentValues();
-        values.put(COLUMN_ID,_id);
+        values.put(COLUMN_ID, _id);
         values.put(COLUMN_TITLE, title);
         values.put(COLUMN_OVERVIEW, overview);
         values.put(COLUMN_RELEASE_DATE, release_date);
         values.put(COLUMN_POSTER_PATH, poster_path);
         values.put(COLUMN_VOTE_AVERAGE, vote_average);
+        values.put(COLUMN_RUNTIME, runtime);
         values.put(COLUMN_POPULARITY, popularity);
         values.put(COLUMN_FAVORITE, String.valueOf(favorite));
 
@@ -101,14 +106,15 @@ public class MoviesDB {
         return newMovie;
     }
 
-    public Movie createPopularList(long _id, String title, String overview, String release_date, String poster_path, double vote_average, double popularity, boolean favorite) {
+    public Movie createPopularList(long _id, String title, String overview, String release_date, String poster_path, double vote_average, int runtime, double popularity, boolean favorite) {
         ContentValues values = new ContentValues();
-        values.put(COLUMN_ID,_id);
+        values.put(COLUMN_ID, _id);
         values.put(COLUMN_TITLE, title);
         values.put(COLUMN_OVERVIEW, overview);
         values.put(COLUMN_RELEASE_DATE, release_date);
         values.put(COLUMN_POSTER_PATH, poster_path);
         values.put(COLUMN_VOTE_AVERAGE, vote_average);
+        values.put(COLUMN_RUNTIME, runtime);
         values.put(COLUMN_POPULARITY, popularity);
         values.put(COLUMN_FAVORITE, String.valueOf(favorite));
 
@@ -122,14 +128,15 @@ public class MoviesDB {
         return newMovie;
     }
 
-    public Movie createTopRatedList(long _id, String title, String overview, String release_date, String poster_path, double vote_average, double popularity, boolean favorite) {
+    public Movie createTopRatedList(long _id, String title, String overview, String release_date, String poster_path, double vote_average,int runtime, double popularity, boolean favorite) {
         ContentValues values = new ContentValues();
-        values.put(COLUMN_ID,_id);
+        values.put(COLUMN_ID, _id);
         values.put(COLUMN_TITLE, title);
         values.put(COLUMN_OVERVIEW, overview);
         values.put(COLUMN_RELEASE_DATE, release_date);
         values.put(COLUMN_POSTER_PATH, poster_path);
         values.put(COLUMN_VOTE_AVERAGE, vote_average);
+        values.put(COLUMN_RUNTIME, runtime);
         values.put(COLUMN_POPULARITY, popularity);
         values.put(COLUMN_FAVORITE, String.valueOf(favorite));
 
@@ -177,13 +184,14 @@ public class MoviesDB {
 
     }
 
-    public long updateMovie(long idToUpdate, String newTitle, String newOverview, String newReleaseDate, String newPosterPath, double newVoteAverage, double newPopularity,boolean newFavorite) {
+    public long updateMovie(long idToUpdate, String newTitle, String newOverview, String newReleaseDate, String newPosterPath, double newVoteAverage, int newRunTime, double newPopularity, boolean newFavorite) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_TITLE, newTitle);
         values.put(COLUMN_OVERVIEW, newOverview);
         values.put(COLUMN_RELEASE_DATE, newReleaseDate);
         values.put(COLUMN_POSTER_PATH, newPosterPath);
         values.put(COLUMN_VOTE_AVERAGE, newVoteAverage);
+        values.put(COLUMN_RUNTIME, newRunTime);
         values.put(COLUMN_POPULARITY, newPopularity);
         values.put(COLUMN_FAVORITE, String.valueOf(newFavorite));
 
@@ -242,10 +250,18 @@ public class MoviesDB {
         return movie;
     }
 
+    public Movie getMovie(long idToSearch) {
+        Cursor cursor = sqLiteDatabase.query(MOVIE_TABLE, allColumns, COLUMN_ID + " = " + idToSearch, null, null, null, null);
+        cursor.moveToFirst();
+        Movie movie = cursorToMovie(cursor);
+        cursor.close();
+        return movie;
+    }
+
     private Movie cursorToMovie(Cursor cursor) {
         Movie newMovie;
         try {
-            newMovie = new Movie(cursor.getLong(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), cursor.getDouble(6), Boolean.parseBoolean(cursor.getString(7)));
+            newMovie = new Movie(cursor.getLong(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), cursor.getInt(6), cursor.getDouble(7), Boolean.parseBoolean(cursor.getString(8)));
         } catch (Exception e) {
             newMovie = null;
         }

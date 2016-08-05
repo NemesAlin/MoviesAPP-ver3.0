@@ -7,7 +7,9 @@ import android.util.Log;
 
 import com.example.alinnemes.moviesapp_version10.BuildConfig;
 import com.example.alinnemes.moviesapp_version10.R;
+import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
+import com.example.alinnemes.moviesapp_version10.model.Movie;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,6 +21,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * Created by alin.nemes on 02-Aug-16.
@@ -40,7 +43,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
-        String moviesJsonSTRING = null;
+        String moviesJsonSTRING;
 
         try {
             final String API_BASE_URL = "https://api.themoviedb.org/3/movie/";
@@ -50,10 +53,12 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             //http://api.themoviedb.org/3/movie/id/videos?api_key = {MY_API_KEY}
             Uri.Builder builtUri = Uri.parse(API_BASE_URL).buildUpon()
                     .appendPath(params[0]);
-                    if(isNumeric(params[0])){
-                        builtUri.appendPath("videos");
-                    }
-                    builtUri.appendQueryParameter(apiKey_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
+            if (isNumeric(params[0])) {
+                if (params.length>1 && !params[1].equals(DetailActivity.MOVIE_DETAIL_QUERTY)) {
+                    builtUri.appendPath("videos");
+                }
+            }
+            builtUri.appendQueryParameter(apiKey_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
                     .build();
 
             URL url = new URL(builtUri.toString());
@@ -85,7 +90,10 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             }
             moviesJsonSTRING = buffer.toString();
             if (isNumeric(params[0])) {
-                getDataFromJsonMovieTrailers(moviesJsonSTRING, params[0]);
+                if (params.length>1 && params[1].equals(DetailActivity.MOVIE_DETAIL_QUERTY)) {
+                    getDataFromJsonToUpdateRuntimeForAMovie(moviesJsonSTRING, params[0]);
+                } else
+                    getDataFromJsonMovieTrailers(moviesJsonSTRING, params[0]);
             } else {
                 getDataFromJson(moviesJsonSTRING, params[0]);
             }
@@ -121,7 +129,6 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         final String OWN_POSTER_PATH = "poster_path";
         final String OWN_VOTEAVERAGE = "vote_average";
         final String OWN_POPULARITY = "popularity";
-        final String OWN_RUNTIME = "runtime";
 
 
         JSONObject moviesJson = new JSONObject(moviesJsonSTRING);
@@ -144,7 +151,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             String poster_path;
             double vote_average;
             double popularity;
-            int runtime;
+
 
             JSONObject movieJSONObject = moviesResultsArray.getJSONObject(i);
 
@@ -155,21 +162,32 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             poster_path = String.format("http://image.tmdb.org/t/p/w342%s", movieJSONObject.getString(OWN_POSTER_PATH));
             vote_average = movieJSONObject.getDouble(OWN_VOTEAVERAGE);
             popularity = movieJSONObject.getDouble(OWN_POPULARITY);
-//            if (isNumeric(params)) {
-//                runtime = movieJSONObject.getInt(OWN_RUNTIME);
-//            }
 
             moviesDB.open();
             if (moviesDB.getMovie(title) == null) {
-                moviesDB.createMovie(id, title, overview, release_date, poster_path, vote_average, popularity, false);
+                moviesDB.createMovie(id, title, overview, release_date, poster_path, vote_average,0, popularity, false);
             }
             if (params.equals(mContext.getString(R.string.pref_sorting_default))) {
-                moviesDB.createPopularList(id, title, overview, release_date, poster_path, vote_average, popularity, false);
+                moviesDB.createPopularList(id, title, overview, release_date, poster_path, vote_average,0, popularity, false);
             } else {
-                moviesDB.createTopRatedList(id, title, overview, release_date, poster_path, vote_average, popularity, false);
+                moviesDB.createTopRatedList(id, title, overview, release_date, poster_path, vote_average,0, popularity, false);
             }
             moviesDB.close();
         }
+    }
+
+    private void getDataFromJsonToUpdateRuntimeForAMovie(String moviesJsonSTRING, String params) throws JSONException {
+        MoviesDB moviesDB = new MoviesDB(mContext).open();
+        final String OWN_RUNTIME = "runtime";
+        int runtime;
+
+        JSONObject moviesJson = new JSONObject(moviesJsonSTRING);
+
+        runtime = moviesJson.getInt(OWN_RUNTIME);
+        Movie movie = moviesDB.getMovie(Long.parseLong(params));
+        long affected = moviesDB.updateMovie(movie.getId(), movie.getTitle(), movie.getOverview(), movie.getRelease_date(), movie.getPoster_path(), movie.getVote_average(), runtime, movie.getPopularity(), movie.isFavorite());
+        Movie newmovie = moviesDB.getMovie(movie.getTitle());
+        moviesDB.close();
     }
 
     private void getDataFromJsonMovieTrailers(String moviesJsonSTRING, String params) throws JSONException {

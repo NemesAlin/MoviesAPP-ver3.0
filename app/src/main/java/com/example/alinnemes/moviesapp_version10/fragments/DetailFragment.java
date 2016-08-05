@@ -1,9 +1,7 @@
 package com.example.alinnemes.moviesapp_version10.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +11,16 @@ import android.widget.Toast;
 
 import com.example.alinnemes.moviesapp_version10.R;
 import com.example.alinnemes.moviesapp_version10.Utility.FetchMovieTask;
-import com.example.alinnemes.moviesapp_version10.activities.MainActivity;
+import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
 import com.example.alinnemes.moviesapp_version10.model.Movie;
 import com.squareup.picasso.Picasso;
 
+import java.util.Locale;
+
 public class DetailFragment extends Fragment {
 
+    //views
     private TextView movieTitleTV;
     private TextView releaseDateTV;
     private TextView runTimeTV;
@@ -27,6 +28,7 @@ public class DetailFragment extends Fragment {
     private TextView movieOverviewTV;
     private ImageView moviePosterIV;
     private ImageView favoriteMovieIV;
+    //data
     private Movie movie;
 
     public DetailFragment() {
@@ -36,12 +38,13 @@ public class DetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        Intent intent = getActivity().getIntent();
-        movie = (Movie) intent.getExtras().getSerializable(MainActivity.MOVIE_OBJECT);
-        MoviesDB moviesDB = new MoviesDB(getActivity()).open();
-        movie = moviesDB.getMovie(movie.getTitle());
+        long idMovie;
+        Bundle bundle = this.getArguments();
+        idMovie = bundle.getLong(DetailActivity.MOVIE_DETAIL_QUERTY, 0);
+        MoviesDB moviesDB = new MoviesDB(getActivity());
+        moviesDB.open();
+        movie = moviesDB.getMovie(idMovie);
         moviesDB.close();
-        long idMovie = movie.getId();
         new FetchMovieTask(getActivity()).execute(String.valueOf(idMovie));
     }
 
@@ -59,9 +62,9 @@ public class DetailFragment extends Fragment {
         favoriteMovieIV = (ImageView) view.findViewById(R.id.favoriteMovieDETAILVIEW);
 
         movieTitleTV.setText(movie.getTitle());
-
         releaseDateTV.setText(movie.getRelease_date());
-        voteAverageTV.setText(String.format("%.2f/10", movie.getVote_average()));
+        voteAverageTV.setText(String.format(Locale.US, "%.2f/10", movie.getVote_average()));
+        runTimeTV.setText(String.format(Locale.US, "%dmin", movie.getRuntime()));
         movieOverviewTV.setText(movie.getOverview());
         Picasso.with(getActivity()).load(movie.getPoster_path()).into(moviePosterIV);
         if (movie.isFavorite()) {
@@ -80,11 +83,11 @@ public class DetailFragment extends Fragment {
                 Movie movieToUpdate = moviesDB.getMovie(movie.getTitle());
                 if (movieToUpdate.isFavorite()) {
                     Picasso.with(getActivity()).load(R.drawable.unfavorite_icon).into(favoriteMovieIV);
-                    moviesDB.updateMovie(movieToUpdate.getId(), movieToUpdate.getTitle(), movieToUpdate.getOverview(), movieToUpdate.getRelease_date(), movieToUpdate.getPoster_path(), movieToUpdate.getVote_average(), movieToUpdate.getPopularity(), false);
+                    moviesDB.updateMovie(movieToUpdate.getId(), movieToUpdate.getTitle(), movieToUpdate.getOverview(), movieToUpdate.getRelease_date(), movieToUpdate.getPoster_path(), movieToUpdate.getVote_average(), movieToUpdate.getRuntime(), movieToUpdate.getPopularity(), false);
                     Toast.makeText(getActivity(), "Marked as unfavorite!", Toast.LENGTH_SHORT).show();
                 } else {
                     Picasso.with(getActivity()).load(R.drawable.favorite_icon).into(favoriteMovieIV);
-                    moviesDB.updateMovie(movieToUpdate.getId(), movieToUpdate.getTitle(), movieToUpdate.getOverview(), movieToUpdate.getRelease_date(), movieToUpdate.getPoster_path(), movieToUpdate.getVote_average(), movieToUpdate.getPopularity(), true);
+                    moviesDB.updateMovie(movieToUpdate.getId(), movieToUpdate.getTitle(), movieToUpdate.getOverview(), movieToUpdate.getRelease_date(), movieToUpdate.getPoster_path(), movieToUpdate.getVote_average(), movieToUpdate.getRuntime(), movieToUpdate.getPopularity(), true);
                     Toast.makeText(getActivity(), "Marked as favorite!", Toast.LENGTH_SHORT).show();
                 }
                 moviesDB.close();

@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -20,6 +21,7 @@ import com.example.alinnemes.moviesapp_version10.Utility.GridViewAdapter;
 import com.example.alinnemes.moviesapp_version10.Utility.UtilityClass;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.activities.MainActivity;
+import com.example.alinnemes.moviesapp_version10.activities.SettingsActivity;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
 import com.example.alinnemes.moviesapp_version10.model.Movie;
 
@@ -42,6 +44,7 @@ public class MovieListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        setRetainInstance(true);
         sorting = UtilityClass.getPreferredSorting(getActivity());
         new FetchMovieTask(getActivity()).execute(sorting);
     }
@@ -79,6 +82,7 @@ public class MovieListFragment extends Fragment {
 
             boolean favorite = UtilityClass.getPreferredFavorite(getActivity());
 
+
             MoviesDB moviesDB = new MoviesDB(getActivity());
             moviesDB.open();
             if (favorite) {
@@ -101,16 +105,34 @@ public class MovieListFragment extends Fragment {
 
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-
+                MoviesDB moviesDB = new MoviesDB(getActivity()).open();
                 Movie movieToIntent = movies.get(position);
+                movieToIntent = moviesDB.getMovie(movieToIntent.getTitle());
                 Intent intent = new Intent(getActivity(), DetailActivity.class);
                 intent.putExtra(MainActivity.MOVIE_OBJECT,movieToIntent);
                 startActivity(intent);
                 Toast.makeText(getActivity(), "" + position,
                         Toast.LENGTH_SHORT).show();
+                moviesDB.close();
             }
         });
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
+            startActivity(new Intent(getActivity(), SettingsActivity.class));
+            return true;
+        }
+        if (id == R.id.action_refresh) {
+            listMovies();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 }
