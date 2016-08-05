@@ -44,9 +44,8 @@ public class MovieListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        setRetainInstance(true);
         sorting = UtilityClass.getPreferredSorting(getActivity());
-        new FetchMovieTask(getActivity()).execute(sorting);
+//        new FetchMovieTask(getActivity()).execute(sorting);
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -82,7 +81,6 @@ public class MovieListFragment extends Fragment {
 
             boolean favorite = UtilityClass.getPreferredFavorite(getActivity());
 
-
             MoviesDB moviesDB = new MoviesDB(getActivity());
             moviesDB.open();
             if (favorite) {
@@ -101,13 +99,16 @@ public class MovieListFragment extends Fragment {
             noInternetTextView.setVisibility(View.VISIBLE);
             Toast.makeText(getActivity(), getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
         }
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                MoviesDB moviesDB = new MoviesDB(getActivity()).open();
+                MoviesDB moviesDB = new MoviesDB(getActivity());
+                        moviesDB.open();
                 Movie movieToIntent = movies.get(position);
                 movieToIntent = moviesDB.getMovie(movieToIntent.getTitle());
+//                new FetchMovieTask(getActivity()).execute(String.valueOf(movieToIntent.getId()),DetailActivity.MOVIE_DETAIL_QUERTY);
                 Intent intent = new Intent(getActivity(), DetailActivity.class);
                 intent.putExtra(MainActivity.MOVIE_OBJECT,movieToIntent);
                 startActivity(intent);

@@ -38,6 +38,15 @@ public class DetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+
+//        new FetchMovieTask(getActivity()).execute(String.valueOf(idMovie));
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_detail, container, false);
+
         long idMovie;
         Bundle bundle = this.getArguments();
         idMovie = bundle.getLong(DetailActivity.MOVIE_DETAIL_QUERTY, 0);
@@ -45,13 +54,6 @@ public class DetailFragment extends Fragment {
         moviesDB.open();
         movie = moviesDB.getMovie(idMovie);
         moviesDB.close();
-        new FetchMovieTask(getActivity()).execute(String.valueOf(idMovie));
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
         movieTitleTV = (TextView) view.findViewById(R.id.movieTitleDETAILVIEW);
         releaseDateTV = (TextView) view.findViewById(R.id.release_dateDETAILVIEW);
@@ -83,11 +85,11 @@ public class DetailFragment extends Fragment {
                 Movie movieToUpdate = moviesDB.getMovie(movie.getTitle());
                 if (movieToUpdate.isFavorite()) {
                     Picasso.with(getActivity()).load(R.drawable.unfavorite_icon).into(favoriteMovieIV);
-                    moviesDB.updateMovie(movieToUpdate.getId(), movieToUpdate.getTitle(), movieToUpdate.getOverview(), movieToUpdate.getRelease_date(), movieToUpdate.getPoster_path(), movieToUpdate.getVote_average(), movieToUpdate.getRuntime(), movieToUpdate.getPopularity(), false);
+                    moviesDB.updateMovie(movieToUpdate.getId(), movieToUpdate.getRuntime(), false);
                     Toast.makeText(getActivity(), "Marked as unfavorite!", Toast.LENGTH_SHORT).show();
                 } else {
                     Picasso.with(getActivity()).load(R.drawable.favorite_icon).into(favoriteMovieIV);
-                    moviesDB.updateMovie(movieToUpdate.getId(), movieToUpdate.getTitle(), movieToUpdate.getOverview(), movieToUpdate.getRelease_date(), movieToUpdate.getPoster_path(), movieToUpdate.getVote_average(), movieToUpdate.getRuntime(), movieToUpdate.getPopularity(), true);
+                    moviesDB.updateMovie(movieToUpdate.getId(), movieToUpdate.getRuntime(), true);
                     Toast.makeText(getActivity(), "Marked as favorite!", Toast.LENGTH_SHORT).show();
                 }
                 moviesDB.close();

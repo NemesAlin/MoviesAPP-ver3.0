@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import com.example.alinnemes.moviesapp_version10.BuildConfig;
 import com.example.alinnemes.moviesapp_version10.R;
@@ -21,7 +23,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by alin.nemes on 02-Aug-16.
@@ -54,7 +56,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             Uri.Builder builtUri = Uri.parse(API_BASE_URL).buildUpon()
                     .appendPath(params[0]);
             if (isNumeric(params[0])) {
-                if (params.length>1 && !params[1].equals(DetailActivity.MOVIE_DETAIL_QUERTY)) {
+                if (params.length > 1 && !params[1].equals(DetailActivity.MOVIE_DETAIL_QUERTY)) {
                     builtUri.appendPath("videos");
                 }
             }
@@ -90,7 +92,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             }
             moviesJsonSTRING = buffer.toString();
             if (isNumeric(params[0])) {
-                if (params.length>1 && params[1].equals(DetailActivity.MOVIE_DETAIL_QUERTY)) {
+                if (params.length > 1 && params[1].equals(DetailActivity.MOVIE_DETAIL_QUERTY)) {
                     getDataFromJsonToUpdateRuntimeForAMovie(moviesJsonSTRING, params[0]);
                 } else
                     getDataFromJsonMovieTrailers(moviesJsonSTRING, params[0]);
@@ -163,21 +165,24 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             vote_average = movieJSONObject.getDouble(OWN_VOTEAVERAGE);
             popularity = movieJSONObject.getDouble(OWN_POPULARITY);
 
+            new FetchMovieTask(mContext).execute(String.valueOf(id),DetailActivity.MOVIE_DETAIL_QUERTY);
+
             moviesDB.open();
             if (moviesDB.getMovie(title) == null) {
-                moviesDB.createMovie(id, title, overview, release_date, poster_path, vote_average,0, popularity, false);
+                moviesDB.createMovie(id, title, overview, release_date, poster_path, vote_average, 0, popularity, false);
             }
             if (params.equals(mContext.getString(R.string.pref_sorting_default))) {
-                moviesDB.createPopularList(id, title, overview, release_date, poster_path, vote_average,0, popularity, false);
+                moviesDB.createPopularList(id, title, overview, release_date, poster_path, vote_average, 0, popularity, false);
             } else {
-                moviesDB.createTopRatedList(id, title, overview, release_date, poster_path, vote_average,0, popularity, false);
+                moviesDB.createTopRatedList(id, title, overview, release_date, poster_path, vote_average, 0, popularity, false);
             }
             moviesDB.close();
         }
     }
 
     private void getDataFromJsonToUpdateRuntimeForAMovie(String moviesJsonSTRING, String params) throws JSONException {
-        MoviesDB moviesDB = new MoviesDB(mContext).open();
+        MoviesDB moviesDB = new MoviesDB(mContext);
+        moviesDB.open();
         final String OWN_RUNTIME = "runtime";
         int runtime;
 
@@ -185,8 +190,9 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
 
         runtime = moviesJson.getInt(OWN_RUNTIME);
         Movie movie = moviesDB.getMovie(Long.parseLong(params));
-        long affected = moviesDB.updateMovie(movie.getId(), movie.getTitle(), movie.getOverview(), movie.getRelease_date(), movie.getPoster_path(), movie.getVote_average(), runtime, movie.getPopularity(), movie.isFavorite());
+        long affected = moviesDB.updateMovie(movie.getId(), runtime, movie.isFavorite());
         Movie newmovie = moviesDB.getMovie(movie.getTitle());
+//        runtimeTV.setText(String.format(Locale.US, "%dmin", runtime));
         moviesDB.close();
     }
 

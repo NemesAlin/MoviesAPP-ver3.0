@@ -20,7 +20,7 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
         Intent intent = this.getIntent();
         Movie movie = (Movie) intent.getExtras().getSerializable(MainActivity.MOVIE_OBJECT);
-        new FetchMovieTask(this).execute(String.valueOf(movie.getId()),MOVIE_DETAIL_QUERTY);
+
         if (savedInstanceState == null) {
             DetailFragment detailFragment = new DetailFragment();
             Bundle bundle = new Bundle();
