@@ -10,6 +10,7 @@ import com.example.alinnemes.moviesapp_version10.R;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
 import com.example.alinnemes.moviesapp_version10.model.Movie;
+import com.example.alinnemes.moviesapp_version10.model.Trailers;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,6 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * Created by alin.nemes on 02-Aug-16.
@@ -194,28 +196,37 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
     }
 
     private void getDataFromJsonMovieTrailers(String moviesJsonSTRING, String params) throws JSONException {
-
+        final String OWN_id = "id";
         final String OWN_site = "site";
         final String OWN_key = "key";
         final String OWN_name = "name";
-
+        ArrayList<Trailers> trailers =new ArrayList<Trailers>();
 
         JSONObject moviesJson = new JSONObject(moviesJsonSTRING);
         JSONArray moviesResultsArray = moviesJson.getJSONArray("results");
 
         for (int i = 0; i < moviesResultsArray.length(); i++) {
 
+            final String id;
             final String site;
             final String key;
             final String name;
 
             JSONObject movieJSONObject = moviesResultsArray.getJSONObject(i);
 
+            id = movieJSONObject.getString(OWN_id);
             site = movieJSONObject.getString(OWN_site);
             key = movieJSONObject.getString(OWN_key);
             name = movieJSONObject.getString(OWN_name);
 
+            Trailers trailer = new Trailers(id, site, key, name);
+            trailers.add(trailer);
         }
+
+        MoviesDB moviesDB = new MoviesDB(mContext);
+        moviesDB.open();
+        Movie movie = moviesDB.getMovie(Long.parseLong(params));
+
 
     }
 

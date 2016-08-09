@@ -1,6 +1,7 @@
 package com.example.alinnemes.moviesapp_version10.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created by alin.nemes on 01-Aug-16.
@@ -15,8 +16,9 @@ public class Movie implements Serializable {
     private int runtime;
     private double popularity;
     private boolean favorite;
+    private ArrayList<Trailers> trailers;
 
-    public Movie(long id, String title, String overview, String release_date, String poster_path, double vote_average, int runtime, double popularity, boolean favorite) {
+    public Movie(long id, String title, String overview, String release_date, String poster_path, double vote_average, int runtime, double popularity, boolean favorite, ArrayList<Trailers> trailers) {
         this.id = id;
         this.title = title;
         this.overview = overview;
@@ -26,6 +28,7 @@ public class Movie implements Serializable {
         this.runtime = runtime;
         this.popularity = popularity;
         this.favorite = favorite;
+        this.trailers = trailers;
     }
 
     public long getId() {
@@ -100,6 +103,14 @@ public class Movie implements Serializable {
         this.favorite = favorite;
     }
 
+    public ArrayList<Trailers> getTrailers() {
+        return trailers;
+    }
+
+    public void setTrailers(ArrayList<Trailers> trailers) {
+        this.trailers = trailers;
+    }
+
     @Override
     public String toString() {
         return "Movie{" +
@@ -112,6 +123,7 @@ public class Movie implements Serializable {
                 ", runtime=" + runtime +
                 ", popularity=" + popularity +
                 ", favorite=" + favorite +
+                ", trailers=" + trailers +
                 '}';
     }
 
