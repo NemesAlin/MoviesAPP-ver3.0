@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.alinnemes.moviesapp_version10.model.Movie;
+import com.example.alinnemes.moviesapp_version10.model.Trailer;
 
 import java.util.ArrayList;
 
@@ -25,12 +26,29 @@ public class MoviesDB {
     public static final String COLUMN_POPULARITY = "popularity";
     public static final String COLUMN_FAVORITE = "favorite";
 
+    public static final String COLUMN_TRAILER_ID = "_id";
+    public static final String COLUMN_TRAILER_MOVIEID = "id_movie";
+    public static final String COLUMN_TRAILER_SITE = "site";
+    public static final String COLUMN_TRAILER_KEY = "key";
+    public static final String COLUMN_TRAILER_NAME = "name";
+
     private static final String DATABASE_NAME = "moviesapp.db";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
 
     private static final String MOVIE_TABLE = "movie";
     private static final String POPULAR_MOVIE_TABLE = "popular";
     private static final String TOPRATED_MOVIE_TABLE = "top_rated";
+    private static final String TRAILERS_TABLE = "trailers";
+
+    private static final String CREATE_TRAILERS_TABLE = "CREATE TABLE " + TRAILERS_TABLE + " ( " +
+            COLUMN_TRAILER_ID + " TEXT NOT NULL, " +
+            COLUMN_TRAILER_MOVIEID + " INTEGER, " +
+            COLUMN_TRAILER_NAME + " TEXT NOT NULL, " +
+            COLUMN_TRAILER_KEY + " TEXT NOT NULL, " +
+            COLUMN_TRAILER_SITE + " TEXT NOT NULL, " +
+            " FOREIGN KEY(" + COLUMN_TRAILER_MOVIEID + ") REFERENCES " + MOVIE_TABLE + "(" + COLUMN_ID + ")" +
+            ");";
+
 
     private static final String CREATE_TABLE = "CREATE TABLE " + MOVIE_TABLE + " ( " +
             COLUMN_ID + " INTEGER PRIMARY KEY, " +
@@ -65,7 +83,9 @@ public class MoviesDB {
             COLUMN_POPULARITY + " REAL, " +
             COLUMN_FAVORITE + " TEXT NOT NULL " +
             ");";
+
     private String[] allColumns = {COLUMN_ID, COLUMN_TITLE, COLUMN_OVERVIEW, COLUMN_RELEASE_DATE, COLUMN_POSTER_PATH, COLUMN_VOTE_AVERAGE, COLUMN_RUNTIME, COLUMN_POPULARITY, COLUMN_FAVORITE};
+    private String[] allColumns_Trailer = {COLUMN_TRAILER_ID, COLUMN_TRAILER_MOVIEID, COLUMN_TRAILER_NAME, COLUMN_TRAILER_KEY, COLUMN_TRAILER_SITE};
     private SQLiteDatabase sqLiteDatabase;
     private Context context;
     private MyMovieDbHelper myMovieDbHelper;
@@ -104,6 +124,20 @@ public class MoviesDB {
         Movie newMovie = cursorToMovie(cursor);
         cursor.close();
         return newMovie;
+    }
+
+    public long createTrailer(String id, long idMovie, String name, String key, String site) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_TRAILER_ID, id);
+        values.put(COLUMN_TRAILER_MOVIEID, idMovie);
+        values.put(COLUMN_TRAILER_NAME, name);
+        values.put(COLUMN_TRAILER_KEY, key);
+        values.put(COLUMN_TRAILER_SITE, site);
+
+        long insertId = sqLiteDatabase.insert(TRAILERS_TABLE, null, values);
+
+//        Cursor cursor = sqLiteDatabase.query(TRAILERS_TABLE, allColumns_Trailer, COLUMN_TRAILER_ID + " = " + insertId, null, null, null, null);
+        return insertId;
     }
 
     public Movie createPopularList(long _id, String title, String overview, String release_date, String poster_path, double vote_average, int runtime, double popularity, boolean favorite) {
@@ -158,8 +192,8 @@ public class MoviesDB {
         cursor.moveToFirst();
 
         while (!cursor.isAfterLast()) {
-            Movie note = cursorToMovie(cursor);
-            allPopularMoviews.add(note);
+            Movie movie = cursorToMovie(cursor);
+            allPopularMoviews.add(movie);
             cursor.moveToNext();
         }
         cursor.close();
@@ -175,8 +209,8 @@ public class MoviesDB {
         cursor.moveToFirst();
 
         while (!cursor.isAfterLast()) {
-            Movie note = cursorToMovie(cursor);
-            allTopRatedMoviews.add(note);
+            Movie movie = cursorToMovie(cursor);
+            allTopRatedMoviews.add(movie);
             cursor.moveToNext();
         }
         cursor.close();
@@ -196,6 +230,15 @@ public class MoviesDB {
         values.put(COLUMN_FAVORITE, String.valueOf(newFavorite));
 
         return sqLiteDatabase.update(MOVIE_TABLE, values, COLUMN_ID + " = " + idToUpdate, null);
+    }
+
+    public long updateTrailer(long idToUpdate, String name, String key, String site) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_TRAILER_NAME, name);
+        values.put(COLUMN_TRAILER_KEY, key);
+        values.put(COLUMN_TRAILER_SITE, site);
+
+        return sqLiteDatabase.update(TRAILERS_TABLE, values, COLUMN_TRAILER_ID + " = " + idToUpdate, null);
     }
 
     public long deleteMovie(long idToDelete) {
@@ -226,10 +269,26 @@ public class MoviesDB {
         return allMovies;
     }
 
+    public ArrayList<Trailer> getTrailers(long idMovie) {
+        ArrayList<Trailer> allTrailers = new ArrayList<Trailer>();
+
+        Cursor cursor = sqLiteDatabase.query(TRAILERS_TABLE, allColumns_Trailer, COLUMN_TRAILER_MOVIEID + " = " + idMovie, null, null, null, null);
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast()) {
+            Trailer trailer = cursorToTrailer(cursor);
+            allTrailers.add(trailer);
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+        return allTrailers;
+    }
+
     public ArrayList<Movie> getFavoriteMovies() {
         ArrayList<Movie> allMovies = new ArrayList<Movie>();
 
-        //grall all the information from your dataBase
+        //grab all the favorite movies from dataBase
         Cursor cursor = sqLiteDatabase.query(MOVIE_TABLE, allColumns, COLUMN_FAVORITE + " = " + "\"" + "true" + "\"", null, null, null, null);
         cursor.moveToFirst();
 
@@ -261,11 +320,21 @@ public class MoviesDB {
     private Movie cursorToMovie(Cursor cursor) {
         Movie newMovie;
         try {
-            newMovie = new Movie(cursor.getLong(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), cursor.getInt(6), cursor.getDouble(7), Boolean.parseBoolean(cursor.getString(8)));
+            newMovie = new Movie(cursor.getLong(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), cursor.getInt(6), cursor.getDouble(7), Boolean.parseBoolean(cursor.getString(8)), getTrailers(cursor.getLong(0)));
         } catch (Exception e) {
             newMovie = null;
         }
         return newMovie;
+    }
+
+    private Trailer cursorToTrailer(Cursor cursor) {
+        Trailer trailer;
+        try {
+            trailer = new Trailer(cursor.getString(0), cursor.getLong(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
+        } catch (Exception e) {
+            trailer = null;
+        }
+        return trailer;
     }
 
     private static class MyMovieDbHelper extends SQLiteOpenHelper {
@@ -279,6 +348,7 @@ public class MoviesDB {
             sqLiteDatabase.execSQL(CREATE_TABLE);
             sqLiteDatabase.execSQL(CREATE_POPULAR_TABLE);
             sqLiteDatabase.execSQL(CREATE_TOPRATED_TABLE);
+            sqLiteDatabase.execSQL(CREATE_TRAILERS_TABLE);
         }
 
         @Override
@@ -287,6 +357,7 @@ public class MoviesDB {
             sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MOVIE_TABLE);
             sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + POPULAR_MOVIE_TABLE);
             sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TOPRATED_MOVIE_TABLE);
+            sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TRAILERS_TABLE);
             onCreate(sqLiteDatabase);
         }
     }

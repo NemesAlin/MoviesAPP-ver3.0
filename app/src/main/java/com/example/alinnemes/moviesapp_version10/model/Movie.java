@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * Created by alin.nemes on 01-Aug-16.
  */
 public class Movie implements Serializable {
-    long id;
+    private long id;
     private String title;
     private String overview;
     private String release_date;
@@ -16,9 +16,9 @@ public class Movie implements Serializable {
     private int runtime;
     private double popularity;
     private boolean favorite;
-    private ArrayList<Trailers> trailers;
+    private ArrayList<Trailer> trailers;
 
-    public Movie(long id, String title, String overview, String release_date, String poster_path, double vote_average, int runtime, double popularity, boolean favorite, ArrayList<Trailers> trailers) {
+    public Movie(long id, String title, String overview, String release_date, String poster_path, double vote_average, int runtime, double popularity, boolean favorite, ArrayList<Trailer> trailers) {
         this.id = id;
         this.title = title;
         this.overview = overview;
@@ -103,11 +103,11 @@ public class Movie implements Serializable {
         this.favorite = favorite;
     }
 
-    public ArrayList<Trailers> getTrailers() {
+    public ArrayList<Trailer> getTrailers() {
         return trailers;
     }
 
-    public void setTrailers(ArrayList<Trailers> trailers) {
+    public void setTrailers(ArrayList<Trailer> trailers) {
         this.trailers = trailers;
     }
 

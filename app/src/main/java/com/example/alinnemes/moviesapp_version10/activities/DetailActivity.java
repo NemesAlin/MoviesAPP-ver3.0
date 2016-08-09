@@ -11,6 +11,7 @@ import com.example.alinnemes.moviesapp_version10.model.Movie;
 public class DetailActivity extends AppCompatActivity {
 
     public static final String MOVIE_DETAIL_QUERTY = "detail";
+    public static final String MOVIE_TRAILER_QUERY = "video";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

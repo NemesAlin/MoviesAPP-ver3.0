@@ -10,7 +10,7 @@ import com.example.alinnemes.moviesapp_version10.R;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
 import com.example.alinnemes.moviesapp_version10.model.Movie;
-import com.example.alinnemes.moviesapp_version10.model.Trailers;
+import com.example.alinnemes.moviesapp_version10.model.Trailer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -165,6 +165,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             popularity = movieJSONObject.getDouble(OWN_POPULARITY);
 
             new FetchMovieTask(mContext).execute(String.valueOf(id), DetailActivity.MOVIE_DETAIL_QUERTY);
+            new FetchMovieTask(mContext).execute(String.valueOf(id), DetailActivity.MOVIE_TRAILER_QUERY);
 
             moviesDB.open();
             if (moviesDB.getMovie(title) == null) {
@@ -189,9 +190,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
 
         runtime = moviesJson.getInt(OWN_RUNTIME);
         Movie movie = moviesDB.getMovie(Long.parseLong(params));
-        long affected = moviesDB.updateMovie(movie.getId(), runtime, movie.isFavorite());
-        Movie newmovie = moviesDB.getMovie(movie.getTitle());
-//        runtimeTV.setText(String.format(Locale.US, "%dmin", runtime));
+        moviesDB.updateMovie(movie.getId(), runtime, movie.isFavorite());
         moviesDB.close();
     }
 
@@ -200,7 +199,10 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         final String OWN_site = "site";
         final String OWN_key = "key";
         final String OWN_name = "name";
-        ArrayList<Trailers> trailers =new ArrayList<Trailers>();
+        ArrayList<Trailer> trailers = new ArrayList<Trailer>();
+
+        MoviesDB moviesDB = new MoviesDB(mContext);
+        moviesDB.open();
 
         JSONObject moviesJson = new JSONObject(moviesJsonSTRING);
         JSONArray moviesResultsArray = moviesJson.getJSONArray("results");
@@ -219,15 +221,12 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             key = movieJSONObject.getString(OWN_key);
             name = movieJSONObject.getString(OWN_name);
 
-            Trailers trailer = new Trailers(id, site, key, name);
-            trailers.add(trailer);
+            moviesDB.createTrailer(id, Long.parseLong(params), name, key, site);
         }
 
-        MoviesDB moviesDB = new MoviesDB(mContext);
-        moviesDB.open();
-        Movie movie = moviesDB.getMovie(Long.parseLong(params));
+        trailers = moviesDB.getTrailers(Long.parseLong(params));
 
-
+        moviesDB.close();
     }
 
     public boolean isNumeric(String s) {
