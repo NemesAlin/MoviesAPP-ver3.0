@@ -71,26 +71,14 @@ public class MovieListFragment extends Fragment {
                 listMovies();
             }
         });
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        listMovies();
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-                },1000);
-            }
-        });
-
-
+        refreshContent();
         return rootview;
     }
 
 
     public void listMovies() {
         if (UtilityClass.isOnline(getActivity())) {
+            gridView.setVisibility(View.VISIBLE);
             noInternetimageView.setVisibility(View.GONE);
             noInternetTextView.setVisibility(View.GONE);
 
@@ -110,6 +98,7 @@ public class MovieListFragment extends Fragment {
             gridViewAdapter.notifyDataSetChanged();
             gridView.setAdapter(gridViewAdapter);
         } else {
+            gridView.setVisibility(View.GONE);
             noInternetimageView.setVisibility(View.VISIBLE);
             noInternetTextView.setVisibility(View.VISIBLE);
             Toast.makeText(getActivity(), getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
@@ -123,12 +112,9 @@ public class MovieListFragment extends Fragment {
                 moviesDB.open();
                 Movie movieToIntent = movies.get(position);
                 movieToIntent = moviesDB.getMovie(movieToIntent.getTitle());
-//                new FetchMovieTask(getActivity()).execute(String.valueOf(movieToIntent.getId()),DetailActivity.MOVIE_DETAIL_QUERTY);
                 Intent intent = new Intent(getActivity(), DetailActivity.class);
                 intent.putExtra(MainActivity.MOVIE_OBJECT, movieToIntent);
                 startActivity(intent);
-                Toast.makeText(getActivity(), "" + position,
-                        Toast.LENGTH_SHORT).show();
                 moviesDB.close();
             }
         });
@@ -149,6 +135,23 @@ public class MovieListFragment extends Fragment {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void refreshContent(){
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary),getResources().getColor(R.color.colorAccent));
+        SwipeRefreshLayout.OnRefreshListener listener = new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        listMovies();
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                },1500);
+            }
+        };
+        mSwipeRefreshLayout.setOnRefreshListener(listener);
     }
 
 }

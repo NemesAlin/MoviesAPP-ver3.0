@@ -9,6 +9,7 @@ import com.example.alinnemes.moviesapp_version10.BuildConfig;
 import com.example.alinnemes.moviesapp_version10.R;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
+import com.example.alinnemes.moviesapp_version10.fragments.MovieListFragment;
 import com.example.alinnemes.moviesapp_version10.model.Movie;
 import com.example.alinnemes.moviesapp_version10.model.Trailer;
 
@@ -23,6 +24,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by alin.nemes on 02-Aug-16.
@@ -54,7 +56,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             //http://api.themoviedb.org/3/movie/id/videos?api_key = {MY_API_KEY}
             Uri.Builder builtUri = Uri.parse(API_BASE_URL).buildUpon()
                     .appendPath(params[0]);
-            if (isNumeric(params[0])) {
+            if (UtilityClass.isNumeric(params[0])) {
                 if (params.length > 1 && !params[1].equals(DetailActivity.MOVIE_DETAIL_QUERTY)) {
                     builtUri.appendPath("videos");
                 }
@@ -90,7 +92,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
                 return null;
             }
             moviesJsonSTRING = buffer.toString();
-            if (isNumeric(params[0])) {
+            if (UtilityClass.isNumeric(params[0])) {
                 if (params.length > 1 && params[1].equals(DetailActivity.MOVIE_DETAIL_QUERTY)) {
                     getDataFromJsonToUpdateRuntimeForAMovie(moviesJsonSTRING, params[0]);
                 } else
@@ -199,7 +201,6 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         final String OWN_site = "site";
         final String OWN_key = "key";
         final String OWN_name = "name";
-        ArrayList<Trailer> trailers = new ArrayList<Trailer>();
 
         MoviesDB moviesDB = new MoviesDB(mContext);
         moviesDB.open();
@@ -226,13 +227,9 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             }
         }
 
-        trailers = moviesDB.getTrailers(Long.parseLong(params));
-
         moviesDB.close();
     }
 
-    public boolean isNumeric(String s) {
-        return java.util.regex.Pattern.matches("\\d+", s);
-    }
+
 
 }

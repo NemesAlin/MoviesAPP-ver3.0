@@ -20,6 +20,10 @@ public class UtilityClass {
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
+    public static boolean isNumeric(String s) {
+        return java.util.regex.Pattern.matches("\\d+", s);
+    }
+
     public static String getPreferredSorting(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(context.getString(R.string.pref_sorting_key), context.getString(R.string.pref_sorting_default));
