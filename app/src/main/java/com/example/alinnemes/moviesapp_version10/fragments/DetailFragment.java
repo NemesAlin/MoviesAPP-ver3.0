@@ -1,10 +1,16 @@
 package com.example.alinnemes.moviesapp_version10.fragments;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -14,8 +20,10 @@ import android.widget.Toast;
 import com.example.alinnemes.moviesapp_version10.R;
 import com.example.alinnemes.moviesapp_version10.Utility.TrailerListViewAdapter;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
+import com.example.alinnemes.moviesapp_version10.activities.SettingsActivity;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
 import com.example.alinnemes.moviesapp_version10.model.Movie;
+import com.example.alinnemes.moviesapp_version10.model.Trailer;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -23,6 +31,7 @@ import java.util.Locale;
 
 public class DetailFragment extends Fragment {
 
+    ArrayList<Trailer> trailers;
     //views
     private TextView movieTitleTV;
     private TextView releaseDateTV;
@@ -42,7 +51,7 @@ public class DetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-
+        setHasOptionsMenu(true);
 //        new FetchMovieTask(getActivity()).execute(String.valueOf(idMovie));
     }
 
@@ -82,17 +91,19 @@ public class DetailFragment extends Fragment {
         }
 
 
-        ArrayList<String> strings = new ArrayList<>();
-        strings.add("Trailer 1");
-        strings.add("Trailer 2");
-        strings.add("Trailer 3");
-        strings.add("Trailer 4");
-        strings.add("Trailer 5");
-        strings.add("Trailer 6");
-        strings.add("Trailer 7");
-        TrailerListViewAdapter adapter = new TrailerListViewAdapter(getActivity(), strings);
+        trailers = movie.getTrailers();
+        TrailerListViewAdapter adapter = new TrailerListViewAdapter(getActivity(), trailers);
         movieTrailersList.setAdapter(adapter);
         justifyListViewHeightBasedOnChildren(movieTrailersList);
+
+        movieTrailersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                Trailer trailer = trailers.get(position);
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + trailer.getKey())));
+            }
+        });
 
         favoriteMovieIV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,5 +147,27 @@ public class DetailFragment extends Fragment {
         par.height = totalHeight + (listView.getDividerHeight() * (adapter.getCount() - 1));
         listView.setLayoutParams(par);
         listView.requestLayout();
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem action_refresh = menu.findItem(R.id.action_refresh);
+        action_refresh.setVisible(false);
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.moviefragment, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
+            startActivity(new Intent(getActivity(), SettingsActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

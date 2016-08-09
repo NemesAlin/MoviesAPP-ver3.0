@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.alinnemes.moviesapp_version10.R;
+import com.example.alinnemes.moviesapp_version10.model.Trailer;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -16,20 +17,20 @@ import java.util.ArrayList;
 /**
  * Created by alin.nemes on 05-Aug-16.
  */
-public class TrailerListViewAdapter extends ArrayAdapter<String> {
+public class TrailerListViewAdapter extends ArrayAdapter<Trailer> {
 
-    ArrayList<String> strs;
+    ArrayList<Trailer> trailers;
     private Context context;
 
-    public TrailerListViewAdapter(Context context, ArrayList<String> strs) {
-        super(context, 0, strs);
+    public TrailerListViewAdapter(Context context, ArrayList<Trailer> trailers) {
+        super(context, 0, trailers);
         this.context = context;
-        this.strs = strs;
+        this.trailers = trailers;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        String str = getItem(position);
+        Trailer trailer = getItem(position);
 
         ViewHolder holder;
 
@@ -47,7 +48,7 @@ public class TrailerListViewAdapter extends ArrayAdapter<String> {
         }
 
         Picasso.with(context).load(R.mipmap.play_icon).into(holder.playButton);
-        holder.trailerTitle.setText(str);
+        holder.trailerTitle.setText(trailer.getName());
         return convertView;
     }
 

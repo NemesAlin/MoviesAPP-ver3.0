@@ -89,6 +89,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        NavUtils.navigateUpFromSameTask(this);
+        super.onBackPressed();
+    }
+
+    @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {

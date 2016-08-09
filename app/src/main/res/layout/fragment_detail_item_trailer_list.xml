@@ -15,12 +15,7 @@
         android:id="@+id/trailerTitleView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/playIconImageView"
-        android:layout_alignBottom="@+id/playIconImageView"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_toEndOf="@+id/playIconImageView"
         android:layout_toRightOf="@+id/playIconImageView"
         android:text="Trailer Title"
         android:textAppearance="?android:attr/textAppearanceLarge" />

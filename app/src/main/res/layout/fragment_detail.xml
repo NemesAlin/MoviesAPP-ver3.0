@@ -112,6 +112,7 @@
                 android:layout_alignWithParentIfMissing="true"
                 android:layout_below="@id/movieOverviewDETAILVIEW"
                 android:fitsSystemWindows="true"
+
                 android:paddingTop="16dp" />
 
             <ImageView

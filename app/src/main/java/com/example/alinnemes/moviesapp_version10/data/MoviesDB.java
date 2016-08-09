@@ -220,13 +220,7 @@ public class MoviesDB {
 
     public long updateMovie(long idToUpdate, int newRunTime, boolean newFavorite) {
         ContentValues values = new ContentValues();
-//        values.put(COLUMN_TITLE, newTitle);
-//        values.put(COLUMN_OVERVIEW, newOverview);
-//        values.put(COLUMN_RELEASE_DATE, newReleaseDate);
-//        values.put(COLUMN_POSTER_PATH, newPosterPath);
-//        values.put(COLUMN_VOTE_AVERAGE, newVoteAverage);
         values.put(COLUMN_RUNTIME, newRunTime);
-//        values.put(COLUMN_POPULARITY, newPopularity);
         values.put(COLUMN_FAVORITE, String.valueOf(newFavorite));
 
         return sqLiteDatabase.update(MOVIE_TABLE, values, COLUMN_ID + " = " + idToUpdate, null);
@@ -307,6 +301,14 @@ public class MoviesDB {
         Movie movie = cursorToMovie(cursor);
         cursor.close();
         return movie;
+    }
+
+    public Trailer getTrailer(String id) {
+        Cursor cursor = sqLiteDatabase.query(TRAILERS_TABLE, allColumns_Trailer, COLUMN_TRAILER_ID + " = " + "\"" + id + "\"", null, null, null, null);
+        cursor.moveToFirst();
+        Trailer trailer = cursorToTrailer(cursor);
+        cursor.close();
+        return trailer;
     }
 
     public Movie getMovie(long idToSearch) {

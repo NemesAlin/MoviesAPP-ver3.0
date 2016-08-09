@@ -221,7 +221,9 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             key = movieJSONObject.getString(OWN_key);
             name = movieJSONObject.getString(OWN_name);
 
-            moviesDB.createTrailer(id, Long.parseLong(params), name, key, site);
+            if (moviesDB.getTrailer(id) == null) {
+                moviesDB.createTrailer(id, Long.parseLong(params), name, key, site);
+            }
         }
 
         trailers = moviesDB.getTrailers(Long.parseLong(params));

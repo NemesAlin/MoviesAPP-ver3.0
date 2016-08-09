@@ -2,7 +2,9 @@ package com.example.alinnemes.moviesapp_version10.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,6 +34,7 @@ public class MovieListFragment extends Fragment {
     private GridView gridView;
     private ImageView noInternetimageView;
     private TextView noInternetTextView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     //array data
     private ArrayList<Movie> movies;
     private String sorting;
@@ -44,7 +47,6 @@ public class MovieListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         sorting = UtilityClass.getPreferredSorting(getActivity());
-//        new FetchMovieTask(getActivity()).execute(sorting);
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -56,6 +58,7 @@ public class MovieListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootview = inflater.inflate(R.layout.moviefragment_item, container, false);
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootview.findViewById(R.id.refreshLayout);
         gridView = (GridView) rootview.findViewById(R.id.moviesPosterGridView);
         noInternetimageView = (ImageView) rootview.findViewById(R.id.noInternetIcon);
         noInternetTextView = (TextView) rootview.findViewById(R.id.noInternettextView);
@@ -68,10 +71,23 @@ public class MovieListFragment extends Fragment {
                 listMovies();
             }
         });
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        listMovies();
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                },1000);
+            }
+        });
 
 
         return rootview;
     }
+
 
     public void listMovies() {
         if (UtilityClass.isOnline(getActivity())) {
