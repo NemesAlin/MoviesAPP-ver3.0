@@ -19,7 +19,9 @@ import android.widget.Toast;
 
 import com.example.alinnemes.moviesapp_version10.R;
 import com.example.alinnemes.moviesapp_version10.Utility.GridViewAdapter;
-import com.example.alinnemes.moviesapp_version10.Utility.UtilityClass;
+import com.example.alinnemes.moviesapp_version10.Utility.InternetUtilityClass;
+import com.example.alinnemes.moviesapp_version10.Utility.MovieManager;
+import com.example.alinnemes.moviesapp_version10.Utility.PreferenceUtilityClass;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.activities.MainActivity;
 import com.example.alinnemes.moviesapp_version10.activities.SettingsActivity;
@@ -32,21 +34,35 @@ public class MovieListFragment extends Fragment {
 
     //Views
     private GridView gridView;
-    private ImageView noInternetimageView;
+    private ImageView noInternetImageView;
     private TextView noInternetTextView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     //array data
     private ArrayList<Movie> movies;
     private String sorting;
+    private MovieManager movieManager;
 
     public MovieListFragment() {
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        movieManager = new MovieManager(getActivity());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        movieManager = null;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        sorting = UtilityClass.getPreferredSorting(getActivity());
+        sorting = PreferenceUtilityClass.getPreferredSorting(getActivity());
+        movieManager = new MovieManager(getActivity());
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -56,50 +72,50 @@ public class MovieListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootview = inflater.inflate(R.layout.moviefragment_item, container, false);
+        View rootView = inflater.inflate(R.layout.moviefragment_item, container, false);
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) rootview.findViewById(R.id.refreshLayout);
-        gridView = (GridView) rootview.findViewById(R.id.moviesPosterGridView);
-        noInternetimageView = (ImageView) rootview.findViewById(R.id.noInternetIcon);
-        noInternetTextView = (TextView) rootview.findViewById(R.id.noInternettextView);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refreshLayout);
+        gridView = (GridView) rootView.findViewById(R.id.moviesPosterGridView);
+        noInternetImageView = (ImageView) rootView.findViewById(R.id.noInternetIcon);
+        noInternetTextView = (TextView) rootView.findViewById(R.id.noInternettextView);
 
         listMovies();
 
-        noInternetimageView.setOnClickListener(new View.OnClickListener() {
+        noInternetImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 listMovies();
             }
         });
         refreshContent();
-        return rootview;
+        return rootView;
     }
 
 
     public void listMovies() {
-        if (UtilityClass.isOnline(getActivity())) {
+        if (InternetUtilityClass.isOnline(getActivity())) {
             gridView.setVisibility(View.VISIBLE);
-            noInternetimageView.setVisibility(View.GONE);
+            noInternetImageView.setVisibility(View.GONE);
             noInternetTextView.setVisibility(View.GONE);
 
-            boolean favorite = UtilityClass.getPreferredFavorite(getActivity());
+            boolean favorite = PreferenceUtilityClass.getPreferredFavorite(getActivity());
 
-            MoviesDB moviesDB = new MoviesDB(getActivity());
-            moviesDB.open();
+
             if (favorite) {
-                movies = moviesDB.getFavoriteMovies();
+                movieManager.listFavoriteMovies();
+                movies = movieManager.getFavoriteMovies();
             } else if (sorting.equals(getString(R.string.pref_sorting_default))) {
-                movies = moviesDB.getPopularMovies();
+//                movies = moviesDB.getPopularMovies();
             } else {
-                movies = moviesDB.getTopRatedMovies();
+//                movies = moviesDB.getTopRatedMovies();
             }
-            moviesDB.close();
+
             GridViewAdapter gridViewAdapter = new GridViewAdapter(getContext(), movies);
             gridViewAdapter.notifyDataSetChanged();
             gridView.setAdapter(gridViewAdapter);
         } else {
             gridView.setVisibility(View.GONE);
-            noInternetimageView.setVisibility(View.VISIBLE);
+            noInternetImageView.setVisibility(View.VISIBLE);
             noInternetTextView.setVisibility(View.VISIBLE);
             Toast.makeText(getActivity(), getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
         }
@@ -108,14 +124,9 @@ public class MovieListFragment extends Fragment {
 
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                MoviesDB moviesDB = new MoviesDB(getActivity());
-                moviesDB.open();
-                Movie movieToIntent = movies.get(position);
-                movieToIntent = moviesDB.getMovie(movieToIntent.getTitle());
                 Intent intent = new Intent(getActivity(), DetailActivity.class);
-                intent.putExtra(MainActivity.MOVIE_OBJECT, movieToIntent);
+                intent.putExtra(MainActivity.MOVIE_OBJECT, movies.get(position).getId());
                 startActivity(intent);
-                moviesDB.close();
             }
         });
     }
@@ -137,8 +148,8 @@ public class MovieListFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    public void refreshContent(){
-        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary),getResources().getColor(R.color.colorAccent));
+    public void refreshContent() {
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary), getResources().getColor(R.color.colorAccent));
         SwipeRefreshLayout.OnRefreshListener listener = new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -148,7 +159,7 @@ public class MovieListFragment extends Fragment {
                         listMovies();
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
-                },1500);
+                }, 1500);
             }
         };
         mSwipeRefreshLayout.setOnRefreshListener(listener);

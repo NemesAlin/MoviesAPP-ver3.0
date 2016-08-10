@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 import com.example.alinnemes.moviesapp_version10.R;
 import com.example.alinnemes.moviesapp_version10.Utility.TrailerListViewAdapter;
-import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
+import com.example.alinnemes.moviesapp_version10.activities.MainActivity;
 import com.example.alinnemes.moviesapp_version10.activities.SettingsActivity;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
 import com.example.alinnemes.moviesapp_version10.model.Movie;
@@ -31,18 +31,13 @@ import java.util.Locale;
 
 public class DetailFragment extends Fragment {
 
-    ArrayList<Trailer> trailers;
     //views
-    private TextView movieTitleTV;
-    private TextView releaseDateTV;
-    private TextView runTimeTV;
-    private TextView voteAverageTV;
-    private TextView movieOverviewTV;
-    private ImageView moviePosterIV;
     private ImageView favoriteMovieIV;
-    private ListView movieTrailersList;
     //data
     private Movie movie;
+    private ArrayList<Trailer> trailers;
+    private long idMovie;
+
 
     public DetailFragment() {
     }
@@ -52,7 +47,13 @@ public class DetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         setHasOptionsMenu(true);
-//        new FetchMovieTask(getActivity()).execute(String.valueOf(idMovie));
+
+        Intent intent = getActivity().getIntent();
+        idMovie = intent.getExtras().getLong(MainActivity.MOVIE_OBJECT);
+        MoviesDB moviesDB = new MoviesDB(getActivity());
+        moviesDB.open();
+        movie = moviesDB.getMovie(idMovie);
+        moviesDB.close();
     }
 
     @Override
@@ -60,22 +61,14 @@ public class DetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        long idMovie;
-        Bundle bundle = this.getArguments();
-        idMovie = bundle.getLong(DetailActivity.MOVIE_DETAIL_QUERTY, 0);
-        MoviesDB moviesDB = new MoviesDB(getActivity());
-        moviesDB.open();
-        movie = moviesDB.getMovie(idMovie);
-        moviesDB.close();
-
-        movieTitleTV = (TextView) view.findViewById(R.id.movieTitleDETAILVIEW);
-        releaseDateTV = (TextView) view.findViewById(R.id.release_dateDETAILVIEW);
-        runTimeTV = (TextView) view.findViewById(R.id.runtimeDETAILVIEW);
-        voteAverageTV = (TextView) view.findViewById(R.id.voteAverageDETAILVIEW);
-        movieOverviewTV = (TextView) view.findViewById(R.id.movieOverviewDETAILVIEW);
-        moviePosterIV = (ImageView) view.findViewById(R.id.moviePosterImageViewDETAILVIEW);
+        TextView movieTitleTV = (TextView) view.findViewById(R.id.movieTitleDETAILVIEW);
+        TextView releaseDateTV = (TextView) view.findViewById(R.id.release_dateDETAILVIEW);
+        TextView runTimeTV = (TextView) view.findViewById(R.id.runtimeDETAILVIEW);
+        TextView voteAverageTV = (TextView) view.findViewById(R.id.voteAverageDETAILVIEW);
+        TextView movieOverviewTV = (TextView) view.findViewById(R.id.movieOverviewDETAILVIEW);
+        ImageView moviePosterIV = (ImageView) view.findViewById(R.id.moviePosterImageViewDETAILVIEW);
         favoriteMovieIV = (ImageView) view.findViewById(R.id.favoriteMovieDETAILVIEW);
-        movieTrailersList = (ListView) view.findViewById(R.id.movieTrailersListDETAILVIEW);
+        ListView movieTrailersList = (ListView) view.findViewById(R.id.movieTrailersListDETAILVIEW);
 
         movieTitleTV.setText(movie.getTitle());
         releaseDateTV.setText(movie.getRelease_date());
