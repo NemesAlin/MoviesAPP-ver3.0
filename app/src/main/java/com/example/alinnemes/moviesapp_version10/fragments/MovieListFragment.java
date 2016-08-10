@@ -56,7 +56,7 @@ public class MovieListFragment extends Fragment implements ProcessListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        movieManager = null;
+        movieManager.setProcessListener(null);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class MovieListFragment extends Fragment implements ProcessListener {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 Intent intent = new Intent(getActivity(), DetailActivity.class);
-                intent.putExtra(MainActivity.MOVIE_OBJECT, movies.get(position).getId());
+                intent.putExtra(MainActivity.MOVIE_OBJECT, movies.get(position));
                 startActivity(intent);
             }
         });

@@ -46,7 +46,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
             return null;
         }
 
-        ArrayList<Movie> movies = new ArrayList<Movie>();
+        ArrayList<Movie> movies = new ArrayList<>();
 
         publishProgress();
         HttpURLConnection urlConnection = null;
@@ -98,14 +98,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
                 return null;
             }
             moviesJsonSTRING = buffer.toString();
-            if (DataUtilityClass.isNumeric(params[0])) {
-                if (params.length > 1 && params[1].equals(DetailActivity.MOVIE_DETAIL_QUERTY)) {
-                    getDataFromJsonToUpdateRuntimeForAMovie(moviesJsonSTRING, params[0]);
-                } else
-                    getDataFromJsonMovieTrailers(moviesJsonSTRING, params[0]);
-            } else {
-                movies = getDataFromJson(moviesJsonSTRING, params[0]);
-            }
+            movies = getDataFromJson(moviesJsonSTRING, params[0]);
         } catch (IOException io) {
             Log.e("IOExpection", "Error ", io);
         } catch (JSONException e) {
@@ -183,54 +176,6 @@ public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
         }
         moviesDB.close();
         return movies;
-    }
-
-    private void getDataFromJsonToUpdateRuntimeForAMovie(String moviesJsonSTRING, String params) throws JSONException {
-        MoviesDB moviesDB = new MoviesDB(mContext);
-        moviesDB.open();
-        final String OWN_RUNTIME = "runtime";
-        int runtime;
-
-        JSONObject moviesJson = new JSONObject(moviesJsonSTRING);
-
-        runtime = moviesJson.getInt(OWN_RUNTIME);
-        Movie movie = moviesDB.getMovie(Long.parseLong(params));
-        moviesDB.updateMovie(movie.getId(), runtime, movie.isFavorite());
-        moviesDB.close();
-    }
-
-    private void getDataFromJsonMovieTrailers(String moviesJsonSTRING, String params) throws JSONException {
-        final String OWN_id = "id";
-        final String OWN_site = "site";
-        final String OWN_key = "key";
-        final String OWN_name = "name";
-
-        MoviesDB moviesDB = new MoviesDB(mContext);
-        moviesDB.open();
-
-        JSONObject moviesJson = new JSONObject(moviesJsonSTRING);
-        JSONArray moviesResultsArray = moviesJson.getJSONArray("results");
-
-        for (int i = 0; i < moviesResultsArray.length(); i++) {
-
-            final String id;
-            final String site;
-            final String key;
-            final String name;
-
-            JSONObject movieJSONObject = moviesResultsArray.getJSONObject(i);
-
-            id = movieJSONObject.getString(OWN_id);
-            site = movieJSONObject.getString(OWN_site);
-            key = movieJSONObject.getString(OWN_key);
-            name = movieJSONObject.getString(OWN_name);
-
-            if (moviesDB.getTrailer(id) == null) {
-                moviesDB.createTrailer(id, Long.parseLong(params), name, key, site);
-            }
-        }
-
-        moviesDB.close();
     }
 
     @Override

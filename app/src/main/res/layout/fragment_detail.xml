@@ -21,7 +21,7 @@
         android:paddingTop="20dp"
         android:scrollHorizontally="true"
         android:singleLine="true"
-        android:text="Movie Title"
+
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#ffffff"
         android:textSize="@dimen/abc_alert_dialog_button_bar_height" />
@@ -52,8 +52,7 @@
                 android:layout_marginLeft="25dp"
                 android:layout_marginStart="25dp"
                 android:layout_marginTop="25dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/movie_icon" />
+                android:scaleType="fitXY" />
 
             <TextView
                 android:id="@+id/release_dateDETAILVIEW"
@@ -64,7 +63,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_toEndOf="@+id/moviePosterImageViewDETAILVIEW"
                 android:layout_toRightOf="@+id/moviePosterImageViewDETAILVIEW"
-                android:text="New Text"
+
                 android:textIsSelectable="true"
                 android:textSize="20dp" />
 
@@ -76,7 +75,7 @@
                 android:layout_alignStart="@+id/release_dateDETAILVIEW"
                 android:layout_below="@+id/release_dateDETAILVIEW"
                 android:paddingTop="10dp"
-                android:text="New Text"
+
                 android:textSize="16dp"
                 android:textStyle="bold|italic" />
 
@@ -88,7 +87,7 @@
                 android:layout_alignStart="@+id/runtimeDETAILVIEW"
                 android:layout_below="@+id/runtimeDETAILVIEW"
                 android:paddingTop="16dp"
-                android:text="Medium Text"
+
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#000000" />
 
@@ -101,7 +100,7 @@
                 android:layout_below="@+id/favoriteMovieDETAILVIEW"
                 android:paddingRight="16dp"
                 android:paddingTop="25dp"
-                android:text="Medium Text"
+
                 android:textAlignment="inherit"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -125,8 +124,7 @@
                 android:layout_alignRight="@+id/runtimeDETAILVIEW"
                 android:layout_alignStart="@+id/voteAverageDETAILVIEW"
                 android:layout_below="@+id/voteAverageDETAILVIEW"
-                android:paddingTop="16dp"
-                android:src="@drawable/favorite_icon" />
+                android:paddingTop="16dp" />
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>

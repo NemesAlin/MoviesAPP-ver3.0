@@ -62,7 +62,7 @@ public class DetailFragment extends Fragment implements ProcessListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        movieManager = null;
+        movieManager.setProcessListener(null);
     }
 
     @Override
@@ -76,15 +76,7 @@ public class DetailFragment extends Fragment implements ProcessListener {
         pdLoading = new ProgressDialog(getActivity());
 
         Intent intent = getActivity().getIntent();
-        idMovie = intent.getExtras().getLong(MainActivity.MOVIE_OBJECT);
-
-
-        MoviesDB moviesDB = new MoviesDB(getActivity());
-        moviesDB.open();
-        movie = moviesDB.getMovie(idMovie);
-        moviesDB.close();
-
-
+        movie = (Movie) intent.getExtras().getSerializable(MainActivity.MOVIE_OBJECT);
     }
 
     @Override
@@ -100,6 +92,18 @@ public class DetailFragment extends Fragment implements ProcessListener {
         moviePosterIV = (ImageView) view.findViewById(R.id.moviePosterImageViewDETAILVIEW);
         favoriteMovieIV = (ImageView) view.findViewById(R.id.favoriteMovieDETAILVIEW);
         movieTrailersList = (ListView) view.findViewById(R.id.movieTrailersListDETAILVIEW);
+
+        if(movie.getRuntime()==0){
+            movieManager.startDetailedMovieTask(getActivity(),movie.getId());
+        }else{
+            setViews();
+
+        }
+        if(movie.getTrailers().size()==0){
+            movieManager.startTrailersMovieTask(getActivity(),movie.getId());
+        }else{
+            setTrailers();
+        }
 
         favoriteMovieIV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,6 +180,9 @@ public class DetailFragment extends Fragment implements ProcessListener {
     @Override
     public void onProcessEnded() {
         pdLoading.dismiss();
+        this.movie = movieManager.startDetailedMovieTask();
+        setViews();
+        setTrailers();
     }
 
     @Override
