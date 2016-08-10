@@ -13,8 +13,6 @@ public class SplashActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        new FetchMovieTask(this).execute("popular");
-        new FetchMovieTask(this).execute("top_rated");
         SystemClock.sleep(TimeUnit.SECONDS.toMillis(1));
         super.onCreate(savedInstanceState);
         Intent intent = new Intent(this, MainActivity.class);

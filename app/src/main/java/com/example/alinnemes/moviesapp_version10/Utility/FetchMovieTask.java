@@ -20,24 +20,35 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * Created by alin.nemes on 02-Aug-16.
  */
-public class FetchMovieTask extends AsyncTask<String, Void, Void> {
+public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
 
     private final Context mContext;
+    private final MovieManager movieManager;
 
-    public FetchMovieTask(Context context) {
+    public FetchMovieTask(Context context, MovieManager movieManager) {
         mContext = context;
+        this.movieManager = movieManager;
     }
 
     @Override
-    protected Void doInBackground(String... params) {
+    protected void onProgressUpdate(Void... values) {
+        movieManager.publishProgressFromNetwork();
+    }
+
+    @Override
+    protected ArrayList<Movie> doInBackground(String... params) {
         if (params.length == 0) {
             return null;
         }
 
+        ArrayList<Movie> movies = new ArrayList<Movie>();
+
+        publishProgress();
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
@@ -52,7 +63,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             Uri.Builder builtUri = Uri.parse(API_BASE_URL).buildUpon()
                     .appendPath(params[0]);
             if (DataUtilityClass.isNumeric(params[0])) {
-                if (params.length > 1 && !params[1].equals(DetailActivity.MOVIE_DETAIL_QUERTY)) {
+                if (params.length > 1 && params[1].equals(DetailActivity.MOVIE_TRAILER_QUERY)) {
                     builtUri.appendPath("videos");
                 }
             }
@@ -93,7 +104,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
                 } else
                     getDataFromJsonMovieTrailers(moviesJsonSTRING, params[0]);
             } else {
-                getDataFromJson(moviesJsonSTRING, params[0]);
+                movies = getDataFromJson(moviesJsonSTRING, params[0]);
             }
         } catch (IOException io) {
             Log.e("IOExpection", "Error ", io);
@@ -113,11 +124,13 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             }
         }
 
-        return null;
+        return movies;
     }
 
-    private void getDataFromJson(String moviesJsonSTRING, String params) throws JSONException {
+    private ArrayList<Movie> getDataFromJson(String moviesJsonSTRING, String param) throws JSONException {
         MoviesDB moviesDB = new MoviesDB(mContext);
+        moviesDB.open();
+        ArrayList<Movie> movies = new ArrayList<>();
 
         //movie information
         final String OWN_ID = "id";
@@ -131,14 +144,6 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
 
         JSONObject moviesJson = new JSONObject(moviesJsonSTRING);
         JSONArray moviesResultsArray = moviesJson.getJSONArray("results");
-//        //refresh the lists
-//        moviesDB.open();
-//        if (params.equals(mContext.getString(R.string.pref_sorting_default))) {
-//            moviesDB.deletePopularList();
-//        } else {
-//            moviesDB.deleteTopRatedList();
-//        }
-//        moviesDB.close();
 
         for (int i = 0; i < moviesResultsArray.length(); i++) {
 
@@ -161,20 +166,23 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             vote_average = movieJSONObject.getDouble(OWN_VOTEAVERAGE);
             popularity = movieJSONObject.getDouble(OWN_POPULARITY);
 
-            new FetchMovieTask(mContext).execute(String.valueOf(id), DetailActivity.MOVIE_DETAIL_QUERTY);
-            new FetchMovieTask(mContext).execute(String.valueOf(id), DetailActivity.MOVIE_TRAILER_QUERY);
 
-            moviesDB.open();
             if (moviesDB.getMovie(title) == null) {
                 moviesDB.createMovie(id, title, overview, release_date, poster_path, vote_average, 0, popularity, false);
             }
-//            if (params.equals(mContext.getString(R.string.pref_sorting_default))) {
-//                moviesDB.createPopularList(id, title, overview, release_date, poster_path, vote_average, 0, popularity, false);
-//            } else {
-//                moviesDB.createTopRatedList(id, title, overview, release_date, poster_path, vote_average, 0, popularity, false);
-//            }
-            moviesDB.close();
+
         }
+
+        switch (param) {
+            case MovieManager.LIST_POPULAR:
+                movies = moviesDB.getPopularMovies();
+                break;
+            case MovieManager.LIST_TOP_RATED:
+                movies = moviesDB.getTopRatedMovies();
+                break;
+        }
+        moviesDB.close();
+        return movies;
     }
 
     private void getDataFromJsonToUpdateRuntimeForAMovie(String moviesJsonSTRING, String params) throws JSONException {
@@ -223,5 +231,11 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         }
 
         moviesDB.close();
+    }
+
+    @Override
+    protected void onPostExecute(ArrayList<Movie> movies) {
+        super.onPostExecute(movies);
+        movieManager.setMoviesList(movies);
     }
 }

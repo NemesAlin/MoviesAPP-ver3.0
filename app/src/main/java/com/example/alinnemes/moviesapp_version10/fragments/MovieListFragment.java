@@ -1,5 +1,6 @@
 package com.example.alinnemes.moviesapp_version10.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,21 +23,22 @@ import com.example.alinnemes.moviesapp_version10.Utility.GridViewAdapter;
 import com.example.alinnemes.moviesapp_version10.Utility.InternetUtilityClass;
 import com.example.alinnemes.moviesapp_version10.Utility.MovieManager;
 import com.example.alinnemes.moviesapp_version10.Utility.PreferenceUtilityClass;
+import com.example.alinnemes.moviesapp_version10.Utility.ProcessListener;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.activities.MainActivity;
 import com.example.alinnemes.moviesapp_version10.activities.SettingsActivity;
-import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
 import com.example.alinnemes.moviesapp_version10.model.Movie;
 
 import java.util.ArrayList;
 
-public class MovieListFragment extends Fragment {
+public class MovieListFragment extends Fragment implements ProcessListener {
 
     //Views
     private GridView gridView;
     private ImageView noInternetImageView;
     private TextView noInternetTextView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private ProgressDialog pdLoading;
     //array data
     private ArrayList<Movie> movies;
     private String sorting;
@@ -48,7 +50,7 @@ public class MovieListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        movieManager = new MovieManager(getActivity());
+        movieManager = MovieManager.getInstance();
     }
 
     @Override
@@ -62,7 +64,8 @@ public class MovieListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         sorting = PreferenceUtilityClass.getPreferredSorting(getActivity());
-        movieManager = new MovieManager(getActivity());
+        movieManager = MovieManager.getInstance();
+        movieManager.setProcessListener(this);
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -78,6 +81,7 @@ public class MovieListFragment extends Fragment {
         gridView = (GridView) rootView.findViewById(R.id.moviesPosterGridView);
         noInternetImageView = (ImageView) rootView.findViewById(R.id.noInternetIcon);
         noInternetTextView = (TextView) rootView.findViewById(R.id.noInternettextView);
+        pdLoading = new ProgressDialog(getActivity());
 
         listMovies();
 
@@ -85,6 +89,16 @@ public class MovieListFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 listMovies();
+            }
+        });
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                Intent intent = new Intent(getActivity(), DetailActivity.class);
+                intent.putExtra(MainActivity.MOVIE_OBJECT, movies.get(position).getId());
+                startActivity(intent);
             }
         });
         refreshContent();
@@ -102,17 +116,14 @@ public class MovieListFragment extends Fragment {
 
 
             if (favorite) {
-                movieManager.listFavoriteMovies();
-                movies = movieManager.getFavoriteMovies();
+                movieManager.getMovies(getActivity(), MovieManager.LIST_FAVORITES);
             } else if (sorting.equals(getString(R.string.pref_sorting_default))) {
-//                movies = moviesDB.getPopularMovies();
+                movieManager.getMovies(getActivity(), MovieManager.LIST_POPULAR);
             } else {
-//                movies = moviesDB.getTopRatedMovies();
+                movieManager.getMovies(getActivity(), MovieManager.LIST_TOP_RATED);
             }
 
-            GridViewAdapter gridViewAdapter = new GridViewAdapter(getContext(), movies);
-            gridViewAdapter.notifyDataSetChanged();
-            gridView.setAdapter(gridViewAdapter);
+
         } else {
             gridView.setVisibility(View.GONE);
             noInternetImageView.setVisibility(View.VISIBLE);
@@ -120,15 +131,6 @@ public class MovieListFragment extends Fragment {
             Toast.makeText(getActivity(), getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
         }
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                Intent intent = new Intent(getActivity(), DetailActivity.class);
-                intent.putExtra(MainActivity.MOVIE_OBJECT, movies.get(position).getId());
-                startActivity(intent);
-            }
-        });
     }
 
     @Override
@@ -164,5 +166,37 @@ public class MovieListFragment extends Fragment {
         };
         mSwipeRefreshLayout.setOnRefreshListener(listener);
     }
+
+    public void setGridView() {
+        GridViewAdapter gridViewAdapter = new GridViewAdapter(getContext(), movies);
+        gridViewAdapter.notifyDataSetChanged();
+        gridView.setAdapter(gridViewAdapter);
+    }
+
+    @Override
+    public void onProcessStarted() {
+        pdLoading.setMessage("\tLoading...");
+        pdLoading.show();
+    }
+
+    @Override
+    public void onProcessEnded() {
+        pdLoading.dismiss();
+        movies = movieManager.getMoviesList();
+        setGridView();
+    }
+
+    @Override
+    public void onProcessUpdate() {
+        pdLoading.setMessage("\tGetting Movies...");
+        pdLoading.show();
+    }
+
+    @Override
+    public void onProcessUpdateFromNetwork(){
+        pdLoading.setMessage("\tGetting data from network...");
+        pdLoading.show();
+    }
+
 
 }

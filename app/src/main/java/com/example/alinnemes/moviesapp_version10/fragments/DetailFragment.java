@@ -1,5 +1,6 @@
 package com.example.alinnemes.moviesapp_version10.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.alinnemes.moviesapp_version10.R;
+import com.example.alinnemes.moviesapp_version10.Utility.MovieManager;
+import com.example.alinnemes.moviesapp_version10.Utility.ProcessListener;
 import com.example.alinnemes.moviesapp_version10.Utility.TrailerListViewAdapter;
 import com.example.alinnemes.moviesapp_version10.activities.MainActivity;
 import com.example.alinnemes.moviesapp_version10.activities.SettingsActivity;
@@ -29,17 +32,37 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class DetailFragment extends Fragment {
+public class DetailFragment extends Fragment implements ProcessListener {
 
     //views
     private ImageView favoriteMovieIV;
+    private TextView movieTitleTV;
+    private TextView releaseDateTV;
+    private TextView runTimeTV;
+    private TextView voteAverageTV;
+    private TextView movieOverviewTV;
+    private ImageView moviePosterIV;
+    private ListView movieTrailersList;
+    private ProgressDialog pdLoading;
     //data
     private Movie movie;
     private ArrayList<Trailer> trailers;
     private long idMovie;
-
+    private MovieManager movieManager;
 
     public DetailFragment() {
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        movieManager = MovieManager.getInstance();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        movieManager = null;
     }
 
     @Override
@@ -48,12 +71,20 @@ public class DetailFragment extends Fragment {
         setRetainInstance(true);
         setHasOptionsMenu(true);
 
+        movieManager = MovieManager.getInstance();
+        movieManager.setProcessListener(this);
+        pdLoading = new ProgressDialog(getActivity());
+
         Intent intent = getActivity().getIntent();
         idMovie = intent.getExtras().getLong(MainActivity.MOVIE_OBJECT);
+
+
         MoviesDB moviesDB = new MoviesDB(getActivity());
         moviesDB.open();
         movie = moviesDB.getMovie(idMovie);
         moviesDB.close();
+
+
     }
 
     @Override
@@ -61,42 +92,14 @@ public class DetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        TextView movieTitleTV = (TextView) view.findViewById(R.id.movieTitleDETAILVIEW);
-        TextView releaseDateTV = (TextView) view.findViewById(R.id.release_dateDETAILVIEW);
-        TextView runTimeTV = (TextView) view.findViewById(R.id.runtimeDETAILVIEW);
-        TextView voteAverageTV = (TextView) view.findViewById(R.id.voteAverageDETAILVIEW);
-        TextView movieOverviewTV = (TextView) view.findViewById(R.id.movieOverviewDETAILVIEW);
-        ImageView moviePosterIV = (ImageView) view.findViewById(R.id.moviePosterImageViewDETAILVIEW);
+        movieTitleTV = (TextView) view.findViewById(R.id.movieTitleDETAILVIEW);
+        releaseDateTV = (TextView) view.findViewById(R.id.release_dateDETAILVIEW);
+        runTimeTV = (TextView) view.findViewById(R.id.runtimeDETAILVIEW);
+        voteAverageTV = (TextView) view.findViewById(R.id.voteAverageDETAILVIEW);
+        movieOverviewTV = (TextView) view.findViewById(R.id.movieOverviewDETAILVIEW);
+        moviePosterIV = (ImageView) view.findViewById(R.id.moviePosterImageViewDETAILVIEW);
         favoriteMovieIV = (ImageView) view.findViewById(R.id.favoriteMovieDETAILVIEW);
-        ListView movieTrailersList = (ListView) view.findViewById(R.id.movieTrailersListDETAILVIEW);
-
-        movieTitleTV.setText(movie.getTitle());
-        releaseDateTV.setText(movie.getRelease_date());
-        voteAverageTV.setText(String.format(Locale.US, "%.2f/10", movie.getVote_average()));
-        runTimeTV.setText(String.format(Locale.US, "%dmin", movie.getRuntime()));
-        movieOverviewTV.setText(movie.getOverview());
-        Picasso.with(getActivity()).load(movie.getPoster_path()).into(moviePosterIV);
-
-        if (movie.isFavorite()) {
-            Picasso.with(getActivity()).load(R.drawable.favorite_icon).into(favoriteMovieIV);
-        } else {
-            Picasso.with(getActivity()).load(R.drawable.unfavorite_icon).into(favoriteMovieIV);
-        }
-
-
-        trailers = movie.getTrailers();
-        TrailerListViewAdapter adapter = new TrailerListViewAdapter(getActivity(), trailers);
-        movieTrailersList.setAdapter(adapter);
-        justifyListViewHeightBasedOnChildren(movieTrailersList);
-
-        movieTrailersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                Trailer trailer = trailers.get(position);
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + trailer.getKey())));
-            }
-        });
+        movieTrailersList = (ListView) view.findViewById(R.id.movieTrailersListDETAILVIEW);
 
         favoriteMovieIV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,5 +165,60 @@ public class DetailFragment extends Fragment {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onProcessStarted() {
+        pdLoading.setMessage("\tLoading...");
+        pdLoading.show();
+    }
+
+    @Override
+    public void onProcessEnded() {
+        pdLoading.dismiss();
+    }
+
+    @Override
+    public void onProcessUpdate() {
+        pdLoading.setMessage("\tGetting Movie...");
+        pdLoading.show();
+    }
+
+    @Override
+    public void onProcessUpdateFromNetwork() {
+        pdLoading.setMessage("\tGetting data from network...");
+        pdLoading.show();
+    }
+
+    public void setViews() {
+
+        movieTitleTV.setText(movie.getTitle());
+        releaseDateTV.setText(movie.getRelease_date());
+        voteAverageTV.setText(String.format(Locale.US, "%.2f/10", movie.getVote_average()));
+        runTimeTV.setText(String.format(Locale.US, "%dmin", movie.getRuntime()));
+        movieOverviewTV.setText(movie.getOverview());
+        Picasso.with(getActivity()).load(movie.getPoster_path()).into(moviePosterIV);
+
+        if (movie.isFavorite()) {
+            Picasso.with(getActivity()).load(R.drawable.favorite_icon).into(favoriteMovieIV);
+        } else {
+            Picasso.with(getActivity()).load(R.drawable.unfavorite_icon).into(favoriteMovieIV);
+        }
+    }
+
+    public void setTrailers() {
+        trailers = movie.getTrailers();
+        TrailerListViewAdapter adapter = new TrailerListViewAdapter(getActivity(), trailers);
+        movieTrailersList.setAdapter(adapter);
+        justifyListViewHeightBasedOnChildren(movieTrailersList);
+
+        movieTrailersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                Trailer trailer = trailers.get(position);
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + trailer.getKey())));
+            }
+        });
     }
 }
