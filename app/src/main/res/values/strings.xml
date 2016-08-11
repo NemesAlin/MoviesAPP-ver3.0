@@ -22,6 +22,7 @@
     </string>
 
     <string name="pref_title_sorting">Sorting</string>
+    <string name="no_movies_to_show">No movies to show, try refresh...</string>
     <string-array name="pref_sorting_list_title">
         <item>Popular</item>
         <item>Top Rated</item>

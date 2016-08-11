@@ -11,25 +11,18 @@ import java.util.ArrayList;
 /**
  * Created by alin.nemes on 09-Aug-16.
  */
-public class ListMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
+public class ListMovieFromDBTask extends AsyncTask<String, Void, ArrayList<Movie>> {
 
     private Context mContext;
     private MovieManager movieManager;
 
-    public ListMovieTask(Context mContext, MovieManager movieManager) {
+    public ListMovieFromDBTask(Context mContext, MovieManager movieManager) {
         this.mContext = mContext;
         this.movieManager = movieManager;
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-
-    }
-
-    @Override
     protected ArrayList<Movie> doInBackground(String... params) {
-        publishProgress();
         if (params.length == 0) {
             return null;
         }
@@ -52,13 +45,9 @@ public class ListMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
     }
 
     @Override
-    protected void onProgressUpdate(Void... values) {
-        movieManager.publishProgress();
-    }
-
-    @Override
     protected void onPostExecute(ArrayList<Movie> movies) {
         super.onPostExecute(movies);
         movieManager.setMoviesList(movies);
+        movieManager.onLoadEnded();
     }
 }

@@ -1,6 +1,7 @@
 package com.example.alinnemes.moviesapp_version10.activities;
 
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.alinnemes.moviesapp_version10.R;
@@ -10,6 +11,12 @@ public class DetailActivity extends AppCompatActivity {
 
     public static final String MOVIE_DETAIL_QUERTY = "detail";
     public static final String MOVIE_TRAILER_QUERY = "video";
+
+    @Override
+    public void onBackPressed() {
+        NavUtils.navigateUpFromSameTask(this);
+        super.onBackPressed();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

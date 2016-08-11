@@ -36,8 +36,9 @@ public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
     }
 
     @Override
-    protected void onProgressUpdate(Void... values) {
-        movieManager.publishProgressFromNetwork();
+    protected void onPreExecute() {
+        super.onPreExecute();
+        movieManager.onLoadStarted();
     }
 
     @Override
@@ -48,7 +49,6 @@ public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
 
         ArrayList<Movie> movies = new ArrayList<>();
 
-        publishProgress();
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
@@ -181,6 +181,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
     @Override
     protected void onPostExecute(ArrayList<Movie> movies) {
         super.onPostExecute(movies);
-        movieManager.setMoviesList(movies);
+        movieManager.onLoadStarted();
+        movieManager.startListingFromDB();
     }
 }

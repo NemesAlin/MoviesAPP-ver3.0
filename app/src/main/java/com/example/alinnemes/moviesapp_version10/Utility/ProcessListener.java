@@ -5,8 +5,9 @@ package com.example.alinnemes.moviesapp_version10.Utility;
  */
 public interface ProcessListener {
 
-    void onProcessStarted();
-    void onProcessEnded();
-    void onProcessUpdate();
-    void onProcessUpdateFromNetwork();
+    void onLoadStarted();
+
+    void onLoadEnded();
+
+    void onLoadProgress(String msg);
 }

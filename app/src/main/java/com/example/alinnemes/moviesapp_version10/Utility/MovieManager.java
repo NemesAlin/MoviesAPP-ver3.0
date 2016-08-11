@@ -6,47 +6,47 @@ import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.model.Movie;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 /**
  * Created by alin.nemes on 10-Aug-16.
  */
 public class MovieManager {
 
-    private ArrayList<Movie> movies;
-    private Movie detailedMovie;
     public static final String LIST_FAVORITES = "favorites";
     public static final String LIST_POPULAR = "popular";
     public static final String LIST_TOP_RATED = "top_rated";
+    private static MovieManager ourInstance = new MovieManager();
+    private ArrayList<Movie> movies;
+    private Movie detailedMovie;
     private ProcessListener processListener;
     private String param;
     private Context context;
 
-    private static MovieManager ourInstance = new MovieManager();
+    private MovieManager() {
+    }
 
     public static MovieManager getInstance() {
         return ourInstance;
     }
 
-    private MovieManager() {
-    }
-
-    public void getMovies(Context context, String param) {
+    public void startListingMovies(Context context, String param, boolean fetchFromNetwork) {
 
         this.param = param;
         this.context = context;
-        if (processListener != null) {
-            processListener.onProcessStarted();
-        }
+
         switch (param) {
-            case LIST_FAVORITES:
-                new ListMovieTask(context, this).execute(LIST_FAVORITES);
-                break;
             case LIST_POPULAR:
-                new ListMovieTask(context, this).execute(LIST_POPULAR);
+                if (fetchFromNetwork)
+                    new FetchMovieTask(context, this).execute(LIST_POPULAR);
+                else startListingFromDB();
                 break;
             case LIST_TOP_RATED:
-                new ListMovieTask(context, this).execute(LIST_TOP_RATED);
+                if (fetchFromNetwork)
+                    new FetchMovieTask(context, this).execute(LIST_TOP_RATED);
+                else startListingFromDB();
+                break;
+            case LIST_FAVORITES:
+                startListingFromDB();
                 break;
         }
     }
@@ -67,53 +67,50 @@ public class MovieManager {
 
     public void setMoviesList(ArrayList<Movie> movies) {
         this.movies = movies;
+    }
 
-        Calendar c = Calendar.getInstance();
-        int hours = c.get(Calendar.HOUR_OF_DAY);
-        int minutes = c.get(Calendar.MINUTE);
-        int seconds = c.get(Calendar.SECOND);
-
-        if(hours*3600 + minutes*60 + seconds < 1800){
-            switch (param) {
-                case LIST_POPULAR:
-                    new FetchMovieTask(context, this).execute(LIST_POPULAR);
-                    break;
-                case LIST_TOP_RATED:
-                    new FetchMovieTask(context, this).execute(LIST_TOP_RATED);
-                    break;
-                case LIST_FAVORITES:
-                    if (processListener != null)
-                        processListener.onProcessEnded();
-                    break;
-            }
-        } else {
-            if (processListener != null)
-                processListener.onProcessEnded();
+    public void startListingFromDB() {
+        switch (param) {
+            case LIST_FAVORITES:
+                new ListMovieFromDBTask(context, this).execute(LIST_FAVORITES);
+                break;
+            case LIST_POPULAR:
+                new ListMovieFromDBTask(context, this).execute(LIST_POPULAR);
+                break;
+            case LIST_TOP_RATED:
+                new ListMovieFromDBTask(context, this).execute(LIST_TOP_RATED);
+                break;
         }
+    }
+
+    public Movie getDetailedMovie() {
+        return detailedMovie;
     }
 
     public void setDetailedMovie(Movie movie) {
         this.detailedMovie = movie;
-        processListener.onProcessEnded();
-    }
-
-    public Movie startDetailedMovieTask() {
-        return detailedMovie;
-    }
-
-
-    public void publishProgress() {
-        if (processListener != null)
-            processListener.onProcessUpdate();
-    }
-
-    public void publishProgressFromNetwork() {
-        if (processListener != null)
-            processListener.onProcessUpdateFromNetwork();
     }
 
     public void setProcessListener(ProcessListener processListener) {
         if (processListener != null)
             this.processListener = processListener;
     }
+
+    public void onLoadStarted() {
+        if (processListener != null) {
+            processListener.onLoadStarted();
+        }
+    }
+
+    public void onLoadEnded() {
+        if (processListener != null)
+            processListener.onLoadEnded();
+    }
+
+    public void onLoadProgress(String msg) {
+        if (processListener != null)
+            processListener.onLoadProgress(msg);
+    }
+
+
 }

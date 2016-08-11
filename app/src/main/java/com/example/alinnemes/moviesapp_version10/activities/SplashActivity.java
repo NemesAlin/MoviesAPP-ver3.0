@@ -5,11 +5,10 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 
-import com.example.alinnemes.moviesapp_version10.Utility.FetchMovieTask;
-
 import java.util.concurrent.TimeUnit;
 
 public class SplashActivity extends AppCompatActivity {
+    public static boolean fetchFromNetwork;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,6 +16,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+        fetchFromNetwork = true;
         finish();
     }
 }

@@ -2,6 +2,8 @@ package com.example.alinnemes.moviesapp_version10.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,8 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +24,7 @@ import com.example.alinnemes.moviesapp_version10.R;
 import com.example.alinnemes.moviesapp_version10.Utility.MovieManager;
 import com.example.alinnemes.moviesapp_version10.Utility.ProcessListener;
 import com.example.alinnemes.moviesapp_version10.Utility.TrailerListViewAdapter;
+import com.example.alinnemes.moviesapp_version10.Utility.ViewUtility;
 import com.example.alinnemes.moviesapp_version10.activities.MainActivity;
 import com.example.alinnemes.moviesapp_version10.activities.SettingsActivity;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
@@ -44,10 +47,10 @@ public class DetailFragment extends Fragment implements ProcessListener {
     private ImageView moviePosterIV;
     private ListView movieTrailersList;
     private ProgressDialog pdLoading;
+    private ScrollView layout;
     //data
     private Movie movie;
     private ArrayList<Trailer> trailers;
-    private long idMovie;
     private MovieManager movieManager;
 
     public DetailFragment() {
@@ -77,6 +80,7 @@ public class DetailFragment extends Fragment implements ProcessListener {
 
         Intent intent = getActivity().getIntent();
         movie = (Movie) intent.getExtras().getSerializable(MainActivity.MOVIE_OBJECT);
+
     }
 
     @Override
@@ -92,16 +96,18 @@ public class DetailFragment extends Fragment implements ProcessListener {
         moviePosterIV = (ImageView) view.findViewById(R.id.moviePosterImageViewDETAILVIEW);
         favoriteMovieIV = (ImageView) view.findViewById(R.id.favoriteMovieDETAILVIEW);
         movieTrailersList = (ListView) view.findViewById(R.id.movieTrailersListDETAILVIEW);
+        layout = (ScrollView) view.findViewById(R.id.DetailScrollView);
 
-        if(movie.getRuntime()==0){
-            movieManager.startDetailedMovieTask(getActivity(),movie.getId());
-        }else{
+
+        if (movie.getRuntime() == 0) {
+            movieManager.startDetailedMovieTask(getActivity(), movie.getId());
+        } else {
             setViews();
 
         }
-        if(movie.getTrailers().size()==0){
-            movieManager.startTrailersMovieTask(getActivity(),movie.getId());
-        }else{
+        if (movie.getTrailers().size() == 0) {
+            movieManager.startTrailersMovieTask(getActivity(), movie.getId());
+        } else {
             setTrailers();
         }
 
@@ -128,27 +134,6 @@ public class DetailFragment extends Fragment implements ProcessListener {
         return view;
     }
 
-    public void justifyListViewHeightBasedOnChildren(ListView listView) {
-
-        ListAdapter adapter = listView.getAdapter();
-
-        if (adapter == null) {
-            return;
-        }
-        ViewGroup vg = listView;
-        int totalHeight = 100;
-        for (int i = 0; i < adapter.getCount(); i++) {
-            View listItem = adapter.getView(i, null, vg);
-            listItem.measure(0, 0);
-            totalHeight += listItem.getMeasuredHeight();
-        }
-
-        ViewGroup.LayoutParams par = listView.getLayoutParams();
-        par.height = totalHeight + (listView.getDividerHeight() * (adapter.getCount() - 1));
-        listView.setLayoutParams(par);
-        listView.requestLayout();
-    }
-
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         MenuItem action_refresh = menu.findItem(R.id.action_refresh);
@@ -172,28 +157,22 @@ public class DetailFragment extends Fragment implements ProcessListener {
     }
 
     @Override
-    public void onProcessStarted() {
+    public void onLoadStarted() {
         pdLoading.setMessage("\tLoading...");
         pdLoading.show();
     }
 
     @Override
-    public void onProcessEnded() {
+    public void onLoadEnded() {
         pdLoading.dismiss();
-        this.movie = movieManager.startDetailedMovieTask();
+        this.movie = movieManager.getDetailedMovie();
         setViews();
         setTrailers();
     }
 
     @Override
-    public void onProcessUpdate() {
-        pdLoading.setMessage("\tGetting Movie...");
-        pdLoading.show();
-    }
-
-    @Override
-    public void onProcessUpdateFromNetwork() {
-        pdLoading.setMessage("\tGetting data from network...");
+    public void onLoadProgress(String msg) {
+        pdLoading.setMessage("\t" + msg);
         pdLoading.show();
     }
 
@@ -205,6 +184,16 @@ public class DetailFragment extends Fragment implements ProcessListener {
         runTimeTV.setText(String.format(Locale.US, "%dmin", movie.getRuntime()));
         movieOverviewTV.setText(movie.getOverview());
         Picasso.with(getActivity()).load(movie.getPoster_path()).into(moviePosterIV);
+        int color = ViewUtility.getDominantColor(((BitmapDrawable) moviePosterIV.getDrawable()).getBitmap());
+        if (color > Color.LTGRAY) {
+            releaseDateTV.setTextColor(Color.BLACK);
+            voteAverageTV.setTextColor(Color.BLACK);
+            runTimeTV.setTextColor(Color.BLACK);
+            movieOverviewTV.setTextColor(Color.BLACK);
+            movieTrailersList.setBackgroundColor(Color.BLACK);
+        }
+        layout.setBackgroundColor(color);
+
 
         if (movie.isFavorite()) {
             Picasso.with(getActivity()).load(R.drawable.favorite_icon).into(favoriteMovieIV);
@@ -217,7 +206,7 @@ public class DetailFragment extends Fragment implements ProcessListener {
         trailers = movie.getTrailers();
         TrailerListViewAdapter adapter = new TrailerListViewAdapter(getActivity(), trailers);
         movieTrailersList.setAdapter(adapter);
-        justifyListViewHeightBasedOnChildren(movieTrailersList);
+        ViewUtility.justifyListViewHeightBasedOnChildren(movieTrailersList);
 
         movieTrailersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 

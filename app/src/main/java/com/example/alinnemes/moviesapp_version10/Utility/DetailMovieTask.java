@@ -32,12 +32,12 @@ public class DetailMovieTask extends AsyncTask<String, Void, Movie> {
     public DetailMovieTask(Context mContext, MovieManager movieManager) {
         this.mContext = mContext;
         this.movieManager = movieManager;
-
     }
 
     @Override
-    protected void onProgressUpdate(Void... values) {
-        movieManager.publishProgress();
+    protected void onPreExecute() {
+        super.onPreExecute();
+        movieManager.onLoadStarted();
     }
 
     @Override
@@ -46,7 +46,6 @@ public class DetailMovieTask extends AsyncTask<String, Void, Movie> {
             return null;
         }
 
-        publishProgress();
         Movie movie = null;
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -100,8 +99,10 @@ public class DetailMovieTask extends AsyncTask<String, Void, Movie> {
             if (DataUtilityClass.isNumeric(params[0])) {
                 if (params.length > 1 && params[1].equals(DetailActivity.MOVIE_DETAIL_QUERTY)) {
                     movie = getDataFromJsonToUpdateRuntimeForAMovie(moviesJsonSTRING, params[0]);
-                } else
-                   movie = getDataFromJsonMovieTrailers(moviesJsonSTRING, params[0]);
+                } else {
+                    publishProgress();
+                    movie = getDataFromJsonMovieTrailers(moviesJsonSTRING, params[0]);
+                }
             }
         } catch (IOException io) {
             Log.e("IOExpection", "Error ", io);
@@ -121,12 +122,6 @@ public class DetailMovieTask extends AsyncTask<String, Void, Movie> {
             }
         }
         return movie;
-    }
-
-    @Override
-    protected void onPostExecute(Movie movie) {
-        super.onPostExecute(movie);
-        movieManager.setDetailedMovie(movie);
     }
 
     private Movie getDataFromJsonToUpdateRuntimeForAMovie(String moviesJsonSTRING, String params) throws JSONException {
@@ -181,6 +176,18 @@ public class DetailMovieTask extends AsyncTask<String, Void, Movie> {
         movieToReturn = moviesDB.getMovie(Long.parseLong(params));
         moviesDB.close();
         return movieToReturn;
+    }
+
+    @Override
+    protected void onProgressUpdate(Void... values) {
+        movieManager.onLoadProgress("Getting Trailers...");
+    }
+
+    @Override
+    protected void onPostExecute(Movie movie) {
+        super.onPostExecute(movie);
+        movieManager.setDetailedMovie(movie);
+        movieManager.onLoadEnded();
     }
 
 }
