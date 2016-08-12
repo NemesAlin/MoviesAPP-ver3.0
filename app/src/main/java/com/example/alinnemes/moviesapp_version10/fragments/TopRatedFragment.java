@@ -1,7 +1,9 @@
 package com.example.alinnemes.moviesapp_version10.fragments;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -32,8 +34,7 @@ import com.example.alinnemes.moviesapp_version10.model.Movie;
 
 import java.util.ArrayList;
 
-public class MovieListFragment extends Fragment implements ProcessListener {
-
+public class TopRatedFragment extends Fragment implements ProcessListener {
     //Views
     private GridView gridView;
     private ImageView informationImageView;
@@ -45,8 +46,8 @@ public class MovieListFragment extends Fragment implements ProcessListener {
     private String sorting;
     private MovieManager movieManager;
 
-    public MovieListFragment() {
-    }
+   public TopRatedFragment(){
+   }
 
     @Override
     public void onResume() {
@@ -128,9 +129,9 @@ public class MovieListFragment extends Fragment implements ProcessListener {
 //            if (favorite) {
 //                movieManager.startListingMovies(getActivity(), MovieManager.LIST_FAVORITES, SplashActivity.fetchFromNetwork);
 //            } else if (sorting.equals(getString(R.string.pref_sorting_default))) {
-                movieManager.startListingMovies(getActivity(), MovieManager.LIST_POPULAR, SplashActivity.fetchFromNetwork);
+//                movieManager.startListingMovies(getActivity(), MovieManager.LIST_POPULAR, SplashActivity.fetchFromNetwork);
 //            } else {
-//                movieManager.startListingMovies(getActivity(), MovieManager.LIST_TOP_RATED, SplashActivity.fetchFromNetwork);
+                movieManager.startListingMovies(getActivity(), MovieManager.LIST_TOP_RATED, SplashActivity.fetchFromNetwork);
 //            }
 
 
@@ -217,5 +218,4 @@ public class MovieListFragment extends Fragment implements ProcessListener {
         informationImageView.setImageResource(img);
         informationTextView.setText(msg);
     }
-
 }

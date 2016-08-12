@@ -1,5 +1,6 @@
 package com.example.alinnemes.moviesapp_version10.fragments;
 
+
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,7 +33,15 @@ import com.example.alinnemes.moviesapp_version10.model.Movie;
 
 import java.util.ArrayList;
 
-public class MovieListFragment extends Fragment implements ProcessListener {
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class FavoritesFragment extends Fragment implements ProcessListener {
+
+
+    public FavoritesFragment() {
+        // Required empty public constructor
+    }
 
     //Views
     private GridView gridView;
@@ -45,8 +54,6 @@ public class MovieListFragment extends Fragment implements ProcessListener {
     private String sorting;
     private MovieManager movieManager;
 
-    public MovieListFragment() {
-    }
 
     @Override
     public void onResume() {
@@ -126,9 +133,9 @@ public class MovieListFragment extends Fragment implements ProcessListener {
 
 
 //            if (favorite) {
-//                movieManager.startListingMovies(getActivity(), MovieManager.LIST_FAVORITES, SplashActivity.fetchFromNetwork);
+                movieManager.startListingMovies(getActivity(), MovieManager.LIST_FAVORITES, SplashActivity.fetchFromNetwork);
 //            } else if (sorting.equals(getString(R.string.pref_sorting_default))) {
-                movieManager.startListingMovies(getActivity(), MovieManager.LIST_POPULAR, SplashActivity.fetchFromNetwork);
+//                movieManager.startListingMovies(getActivity(), MovieManager.LIST_POPULAR, SplashActivity.fetchFromNetwork);
 //            } else {
 //                movieManager.startListingMovies(getActivity(), MovieManager.LIST_TOP_RATED, SplashActivity.fetchFromNetwork);
 //            }
@@ -217,5 +224,6 @@ public class MovieListFragment extends Fragment implements ProcessListener {
         informationImageView.setImageResource(img);
         informationTextView.setText(msg);
     }
+
 
 }
