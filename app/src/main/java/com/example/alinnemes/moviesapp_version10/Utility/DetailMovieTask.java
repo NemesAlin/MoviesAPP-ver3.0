@@ -9,6 +9,7 @@ import com.example.alinnemes.moviesapp_version10.BuildConfig;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
 import com.example.alinnemes.moviesapp_version10.model.Movie;
+import com.example.alinnemes.moviesapp_version10.model.Trailer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -134,7 +135,7 @@ public class DetailMovieTask extends AsyncTask<String, Void, Movie> {
 
         runtime = moviesJson.getInt(OWN_RUNTIME);
         Movie movie = moviesDB.getMovie(Long.parseLong(params));
-        moviesDB.updateMovie(movie.getId(), runtime, movie.isFavorite());
+        moviesDB.updateMovie(movie.getId(), movie.getTitle(), movie.getOverview(), movie.getRelease_date(), movie.getPoster_path(), movie.getVote_average(), runtime, movie.getPopularity(), movie.isFavorite());
         Movie movieToReturn = moviesDB.getMovie(Long.parseLong(params));
         moviesDB.close();
         return movieToReturn;
@@ -149,6 +150,7 @@ public class DetailMovieTask extends AsyncTask<String, Void, Movie> {
         MoviesDB moviesDB = new MoviesDB(mContext);
         moviesDB.open();
         Movie movieToReturn;
+        Trailer trailer;
 
         JSONObject moviesJson = new JSONObject(moviesJsonSTRING);
         JSONArray moviesResultsArray = moviesJson.getJSONArray("results");
@@ -167,8 +169,13 @@ public class DetailMovieTask extends AsyncTask<String, Void, Movie> {
             key = movieJSONObject.getString(OWN_key);
             name = movieJSONObject.getString(OWN_name);
 
-            if (moviesDB.getTrailer(id) == null) {
+            trailer = moviesDB.getTrailer(id);
+
+            if (trailer == null) {//trailer doesn't exist, create it!
                 moviesDB.createTrailer(id, Long.parseLong(params), name, key, site);
+            } else if (!site.equals(trailer.getSite()) || !name.equals(trailer.getName()) || !key.equals(trailer.getKey())) {
+                //trailer exist,update it if is different from the api key;
+                moviesDB.updateTrailer(id, name, key, site);
             }
         }
 

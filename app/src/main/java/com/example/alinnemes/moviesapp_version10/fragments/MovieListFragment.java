@@ -91,6 +91,7 @@ public class MovieListFragment extends Fragment implements ProcessListener {
         informationImageView = (ImageView) rootView.findViewById(R.id.noInternetIcon);
         informationTextView = (TextView) rootView.findViewById(R.id.noInternettextView);
         pdLoading = new ProgressDialog(getActivity());
+        pdLoading.setCancelable(false);
 
         listMovies();
 
@@ -150,6 +151,9 @@ public class MovieListFragment extends Fragment implements ProcessListener {
         }
         if (id == R.id.action_refresh) {
             listMovies();
+            return true;
+        }
+        if (id == R.id.action_new) {
             return true;
         }
 

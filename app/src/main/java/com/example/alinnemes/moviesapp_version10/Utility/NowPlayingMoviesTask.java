@@ -22,15 +22,15 @@ import java.net.URL;
 import java.util.ArrayList;
 
 /**
- * Created by alin.nemes on 02-Aug-16.
+ * Created by alin.nemes on 12-Aug-16.
  */
-public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
+public class NowPlayingMoviesTask extends AsyncTask<String, Void, ArrayList<Movie>> {
 
-    private final Context mContext;
-    private final MovieManager movieManager;
+    private Context mContext;
+    private MovieManager movieManager;
 
-    public FetchMovieTask(Context context, MovieManager movieManager) {
-        mContext = context;
+    public NowPlayingMoviesTask(Context context, MovieManager movieManager) {
+        this.mContext = context;
         this.movieManager = movieManager;
     }
 
@@ -57,8 +57,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
             final String API_BASE_URL = "https://api.themoviedb.org/3/movie/";
             final String apiKey_PARAM = "api_key";
 
-            //http://api.themoviedb.org/3/movie/popular?api_key = {MY_API_KEY}
-            //http://api.themoviedb.org/3/movie/top_rated?api_key = {MY_API_KEY}
+            //http://api.themoviedb.org/3/movie/now_playing?api_key = {MY_API_KEY}
             Uri.Builder builtUri = Uri.parse(API_BASE_URL).buildUpon()
                     .appendPath(params[0]);
             builtUri.appendQueryParameter(apiKey_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
@@ -154,6 +153,8 @@ public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
             vote_average = movieJSONObject.getDouble(OWN_VOTEAVERAGE);
             popularity = movieJSONObject.getDouble(OWN_POPULARITY);
 
+            movies.add(new Movie(id, title, overview, release_date, poster_path, vote_average, 0, popularity, false, null));
+
             movie = moviesDB.getMovie(title);
             if (movie == null) {//movie do not exist in the personal DB, add it
                 moviesDB.createMovie(id, title, overview, release_date, poster_path, vote_average, 0, popularity, false);
@@ -161,17 +162,8 @@ public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
                 //if movie exist, but is not similar with the movie getted from the api, update it :)
                 moviesDB.updateMovie(id, title, overview, release_date, poster_path, vote_average, movie.getRuntime(), popularity, movie.isFavorite());
             }
-
         }
 
-        switch (param) {
-            case MovieManager.LIST_POPULAR:
-                movies = moviesDB.getPopularMovies();
-                break;
-            case MovieManager.LIST_TOP_RATED:
-                movies = moviesDB.getTopRatedMovies();
-                break;
-        }
         moviesDB.close();
         return movies;
     }
@@ -179,7 +171,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
     @Override
     protected void onPostExecute(ArrayList<Movie> movies) {
         super.onPostExecute(movies);
-        movieManager.onLoadStarted();
-        movieManager.startListingFromDB();
+        movieManager.setMoviesList(movies);
+        movieManager.onLoadEnded();
     }
 }

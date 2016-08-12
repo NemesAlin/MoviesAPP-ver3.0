@@ -33,7 +33,7 @@ public class MoviesDB {
     public static final String COLUMN_TRAILER_NAME = "name";
 
     private static final String DATABASE_NAME = "moviesapp.db";
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
 
     private static final String MOVIE_TABLE = "movie";
     private static final String TRAILERS_TABLE = "trailers";
@@ -146,15 +146,21 @@ public class MoviesDB {
 
     }
 
-    public long updateMovie(long idToUpdate, int newRunTime, boolean newFavorite) {
+    public long updateMovie(long idToUpdate, String newTitle, String newOverview, String newReleaseDate, String newPosterPath, double newVoteAverage, int newRunTime, double newPopularity, boolean newFavorite) {
         ContentValues values = new ContentValues();
+        values.put(COLUMN_TITLE, newTitle);
+        values.put(COLUMN_OVERVIEW, newOverview);
+        values.put(COLUMN_RELEASE_DATE, newReleaseDate);
+        values.put(COLUMN_POSTER_PATH, newPosterPath);
+        values.put(COLUMN_VOTE_AVERAGE, newVoteAverage);
         values.put(COLUMN_RUNTIME, newRunTime);
+        values.put(COLUMN_POPULARITY, newPopularity);
         values.put(COLUMN_FAVORITE, String.valueOf(newFavorite));
 
         return sqLiteDatabase.update(MOVIE_TABLE, values, COLUMN_ID + " = " + idToUpdate, null);
     }
 
-    public long updateTrailer(long idToUpdate, String name, String key, String site) {
+    public long updateTrailer(String idToUpdate, String name, String key, String site) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_TRAILER_NAME, name);
         values.put(COLUMN_TRAILER_KEY, key);

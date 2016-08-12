@@ -34,16 +34,19 @@ public class MovieManager {
         this.param = param;
         this.context = context;
 
+        if (fetchFromNetwork) {
+            new FetchMovieTask(context, this).execute(LIST_POPULAR);
+            new FetchMovieTask(context, this).execute(LIST_TOP_RATED);
+        }
+
         switch (param) {
             case LIST_POPULAR:
-                if (fetchFromNetwork)
-                    new FetchMovieTask(context, this).execute(LIST_POPULAR);
-                else startListingFromDB();
+                if (!fetchFromNetwork)
+                    startListingFromDB();
                 break;
             case LIST_TOP_RATED:
-                if (fetchFromNetwork)
-                    new FetchMovieTask(context, this).execute(LIST_TOP_RATED);
-                else startListingFromDB();
+                if (!fetchFromNetwork)
+                    startListingFromDB();
                 break;
             case LIST_FAVORITES:
                 startListingFromDB();
@@ -51,6 +54,9 @@ public class MovieManager {
         }
     }
 
+    public void startListingNowPlayingMovies(Context context, String param) {
+        new NowPlayingMoviesTask(context, this).execute(param);
+    }
 
     public void startDetailedMovieTask(Context mContext, long id) {
         new DetailMovieTask(mContext, this).execute(String.valueOf(id), DetailActivity.MOVIE_DETAIL_QUERTY);

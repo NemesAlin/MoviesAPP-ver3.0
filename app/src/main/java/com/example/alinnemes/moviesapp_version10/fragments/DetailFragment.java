@@ -120,11 +120,11 @@ public class DetailFragment extends Fragment implements ProcessListener {
                 Movie movieToUpdate = moviesDB.getMovie(movie.getTitle());
                 if (movieToUpdate.isFavorite()) {
                     Picasso.with(getActivity()).load(R.drawable.unfavorite_icon).into(favoriteMovieIV);
-                    moviesDB.updateMovie(movieToUpdate.getId(), movieToUpdate.getRuntime(), false);
+                    moviesDB.updateMovie(movieToUpdate.getId(), movieToUpdate.getTitle(), movieToUpdate.getOverview(), movieToUpdate.getRelease_date(), movieToUpdate.getPoster_path(), movieToUpdate.getVote_average(), movieToUpdate.getRuntime(), movieToUpdate.getPopularity(), false);
                     Toast.makeText(getActivity(), "Marked as unfavorite!", Toast.LENGTH_SHORT).show();
                 } else {
                     Picasso.with(getActivity()).load(R.drawable.favorite_icon).into(favoriteMovieIV);
-                    moviesDB.updateMovie(movieToUpdate.getId(), movieToUpdate.getRuntime(), true);
+                    moviesDB.updateMovie(movieToUpdate.getId(), movieToUpdate.getTitle(), movieToUpdate.getOverview(), movieToUpdate.getRelease_date(), movieToUpdate.getPoster_path(), movieToUpdate.getVote_average(), movieToUpdate.getRuntime(), movieToUpdate.getPopularity(), true);
                     Toast.makeText(getActivity(), "Marked as favorite!", Toast.LENGTH_SHORT).show();
                 }
                 moviesDB.close();
