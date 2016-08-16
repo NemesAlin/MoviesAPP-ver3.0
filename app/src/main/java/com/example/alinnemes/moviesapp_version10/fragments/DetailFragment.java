@@ -21,10 +21,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.alinnemes.moviesapp_version10.R;
-import com.example.alinnemes.moviesapp_version10.Utility.MovieManager;
 import com.example.alinnemes.moviesapp_version10.Utility.ProcessListener;
-import com.example.alinnemes.moviesapp_version10.Utility.TrailerListViewAdapter;
 import com.example.alinnemes.moviesapp_version10.Utility.ViewUtility;
+import com.example.alinnemes.moviesapp_version10.Utility.adapters.TrailerListViewAdapter;
+import com.example.alinnemes.moviesapp_version10.Utility.manager.MovieManager;
+import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.activities.MainActivity;
 import com.example.alinnemes.moviesapp_version10.activities.SettingsActivity;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
@@ -59,7 +60,7 @@ public class DetailFragment extends Fragment implements ProcessListener {
     @Override
     public void onResume() {
         super.onResume();
-        movieManager = MovieManager.getInstance();
+//        movieManager = MovieManager.getInstance();
     }
 
     @Override
@@ -79,8 +80,7 @@ public class DetailFragment extends Fragment implements ProcessListener {
         pdLoading = new ProgressDialog(getActivity());
 
         Intent intent = getActivity().getIntent();
-        movie = (Movie) intent.getExtras().getSerializable(MainActivity.MOVIE_OBJECT);
-
+        movieManager.startDetailedMovieTask(getActivity(), intent.getExtras().getLong(MainActivity.MOVIE_OBJECT), DetailActivity.MOVIE_DETAIL_QUERTY, DetailActivity.MOVIE_FROM_DB);
     }
 
     @Override
@@ -97,19 +97,6 @@ public class DetailFragment extends Fragment implements ProcessListener {
         favoriteMovieIV = (ImageView) view.findViewById(R.id.favoriteMovieDETAILVIEW);
         movieTrailersList = (ListView) view.findViewById(R.id.movieTrailersListDETAILVIEW);
         layout = (ScrollView) view.findViewById(R.id.DetailScrollView);
-
-
-        if (movie.getRuntime() == 0) {
-            movieManager.startDetailedMovieTask(getActivity(), movie.getId());
-        } else {
-            setViews();
-
-        }
-        if (movie.getTrailers().size() == 0) {
-            movieManager.startTrailersMovieTask(getActivity(), movie.getId());
-        } else {
-            setTrailers();
-        }
 
         favoriteMovieIV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,6 +140,10 @@ public class DetailFragment extends Fragment implements ProcessListener {
             startActivity(new Intent(getActivity(), SettingsActivity.class));
             return true;
         }
+        if (id == android.R.id.home) {
+            getActivity().onBackPressed();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -166,6 +157,20 @@ public class DetailFragment extends Fragment implements ProcessListener {
     public void onLoadEnded() {
         pdLoading.dismiss();
         this.movie = movieManager.getDetailedMovie();
+        if (movie.getRuntime() == 0) {
+            movieManager.startDetailedMovieTask(getActivity(), movie.getId(), DetailActivity.MOVIE_DETAIL_QUERTY, null);
+        }
+        if (movie.getTrailers() != null &&movie.getTrailers().size() == 0) {
+            movieManager.startDetailedMovieTask(getActivity(), movie.getId(), DetailActivity.MOVIE_TRAILER_QUERY, null);
+        }
+
+//        else {
+//            setTrailers();
+//        }
+//        else {
+//            setViews();
+//        }
+
         setViews();
         setTrailers();
     }
@@ -200,21 +205,27 @@ public class DetailFragment extends Fragment implements ProcessListener {
         } else {
             Picasso.with(getActivity()).load(R.drawable.unfavorite_icon).into(favoriteMovieIV);
         }
+
+
+
+
     }
 
     public void setTrailers() {
         trailers = movie.getTrailers();
-        TrailerListViewAdapter adapter = new TrailerListViewAdapter(getActivity(), trailers);
-        movieTrailersList.setAdapter(adapter);
-        ViewUtility.justifyListViewHeightBasedOnChildren(movieTrailersList);
+        if (trailers!=null) {
+            TrailerListViewAdapter adapter = new TrailerListViewAdapter(getActivity(), trailers);
+            movieTrailersList.setAdapter(adapter);
+            ViewUtility.justifyListViewHeightBasedOnChildren(movieTrailersList);
 
-        movieTrailersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            movieTrailersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                Trailer trailer = trailers.get(position);
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + trailer.getKey())));
-            }
-        });
+                public void onItemClick(AdapterView<?> parent, View v,
+                                        int position, long id) {
+                    Trailer trailer = trailers.get(position);
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + trailer.getKey())));
+                }
+            });
+        }
     }
 }

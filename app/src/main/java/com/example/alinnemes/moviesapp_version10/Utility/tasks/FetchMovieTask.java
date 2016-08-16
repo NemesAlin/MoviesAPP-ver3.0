@@ -1,4 +1,4 @@
-package com.example.alinnemes.moviesapp_version10.Utility;
+package com.example.alinnemes.moviesapp_version10.Utility.tasks;
 
 import android.content.Context;
 import android.net.Uri;
@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.alinnemes.moviesapp_version10.BuildConfig;
+import com.example.alinnemes.moviesapp_version10.Utility.manager.MovieManager;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
 import com.example.alinnemes.moviesapp_version10.model.Movie;
 
@@ -22,15 +23,15 @@ import java.net.URL;
 import java.util.ArrayList;
 
 /**
- * Created by alin.nemes on 12-Aug-16.
+ * Created by alin.nemes on 02-Aug-16.
  */
-public class NowPlayingMoviesTask extends AsyncTask<String, Void, ArrayList<Movie>> {
+public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
 
-    private Context mContext;
-    private MovieManager movieManager;
+    private final Context mContext;
+    private final MovieManager movieManager;
 
-    public NowPlayingMoviesTask(Context context, MovieManager movieManager) {
-        this.mContext = context;
+    public FetchMovieTask(Context context, MovieManager movieManager) {
+        mContext = context;
         this.movieManager = movieManager;
     }
 
@@ -57,7 +58,8 @@ public class NowPlayingMoviesTask extends AsyncTask<String, Void, ArrayList<Movi
             final String API_BASE_URL = "https://api.themoviedb.org/3/movie/";
             final String apiKey_PARAM = "api_key";
 
-            //http://api.themoviedb.org/3/movie/now_playing?api_key = {MY_API_KEY}
+            //http://api.themoviedb.org/3/movie/popular?api_key = {MY_API_KEY}
+            //http://api.themoviedb.org/3/movie/top_rated?api_key = {MY_API_KEY}
             Uri.Builder builtUri = Uri.parse(API_BASE_URL).buildUpon()
                     .appendPath(params[0]);
             builtUri.appendQueryParameter(apiKey_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
@@ -153,8 +155,6 @@ public class NowPlayingMoviesTask extends AsyncTask<String, Void, ArrayList<Movi
             vote_average = movieJSONObject.getDouble(OWN_VOTEAVERAGE);
             popularity = movieJSONObject.getDouble(OWN_POPULARITY);
 
-            movies.add(new Movie(id, title, overview, release_date, poster_path, vote_average, 0, popularity, false, null));
-
             movie = moviesDB.getMovie(title);
             if (movie == null) {//movie do not exist in the personal DB, add it
                 moviesDB.createMovie(id, title, overview, release_date, poster_path, vote_average, 0, popularity, false);
@@ -162,8 +162,17 @@ public class NowPlayingMoviesTask extends AsyncTask<String, Void, ArrayList<Movi
                 //if movie exist, but is not similar with the movie getted from the api, update it :)
                 moviesDB.updateMovie(id, title, overview, release_date, poster_path, vote_average, movie.getRuntime(), popularity, movie.isFavorite());
             }
+
         }
 
+        switch (param) {
+            case MovieManager.LIST_POPULAR:
+                movies = moviesDB.getPopularMovies();
+                break;
+            case MovieManager.LIST_TOP_RATED:
+                movies = moviesDB.getTopRatedMovies();
+                break;
+        }
         moviesDB.close();
         return movies;
     }
@@ -171,7 +180,7 @@ public class NowPlayingMoviesTask extends AsyncTask<String, Void, ArrayList<Movi
     @Override
     protected void onPostExecute(ArrayList<Movie> movies) {
         super.onPostExecute(movies);
-        movieManager.setMoviesList(movies);
-        movieManager.onLoadEnded();
+        movieManager.onLoadStarted();
+        movieManager.startListingFromDB();
     }
 }

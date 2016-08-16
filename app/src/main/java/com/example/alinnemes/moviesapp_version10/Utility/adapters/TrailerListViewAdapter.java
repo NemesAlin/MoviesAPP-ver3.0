@@ -1,4 +1,4 @@
-package com.example.alinnemes.moviesapp_version10.Utility;
+package com.example.alinnemes.moviesapp_version10.Utility.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;

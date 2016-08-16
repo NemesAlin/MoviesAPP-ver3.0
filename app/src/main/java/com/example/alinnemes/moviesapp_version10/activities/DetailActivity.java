@@ -11,12 +11,7 @@ public class DetailActivity extends AppCompatActivity {
 
     public static final String MOVIE_DETAIL_QUERTY = "detail";
     public static final String MOVIE_TRAILER_QUERY = "video";
-
-    @Override
-    public void onBackPressed() {
-        NavUtils.navigateUpFromSameTask(this);
-        super.onBackPressed();
-    }
+    public static final String MOVIE_FROM_DB = "db";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,6 +1,5 @@
 package com.example.alinnemes.moviesapp_version10.activities;
 
-import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -12,7 +11,8 @@ import android.support.v7.widget.Toolbar;
 
 import com.example.alinnemes.moviesapp_version10.R;
 import com.example.alinnemes.moviesapp_version10.fragments.FavoritesFragment;
-import com.example.alinnemes.moviesapp_version10.fragments.MovieListFragment;
+import com.example.alinnemes.moviesapp_version10.fragments.PopularFragment;
+import com.example.alinnemes.moviesapp_version10.fragments.NowPlayingFragment;
 import com.example.alinnemes.moviesapp_version10.fragments.TopRatedFragment;
 
 import java.util.ArrayList;
@@ -42,10 +42,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setLogo(R.mipmap.ic_launcher);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setLogo(R.mipmap.ic_launcher);
+            getSupportActionBar().setDisplayUseLogoEnabled(true);
+        }
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
@@ -55,15 +57,18 @@ public class MainActivity extends AppCompatActivity {
 
 //        if (savedInstanceState == null) {
 //            getSupportFragmentManager().beginTransaction()
-//                    .add(R.id.container, new MovieListFragment())
+//                    .add(R.id.container, new PopularFragment())
 //                    .commit();
 //        }
     }
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-//        adapter.addFragment(new MovieListFragment(), "POPULAR");
+
+        adapter.addFragment(new PopularFragment(), "POPULAR");
         adapter.addFragment(new TopRatedFragment(), "TOP RATED");
-//        adapter.addFragment(new FavoritesFragment(), "FAVORITES");
+        adapter.addFragment(new NowPlayingFragment(), "NOW PLAYING");
+        adapter.addFragment(new FavoritesFragment(), "FAVORITES");
+
         viewPager.setAdapter(adapter);
     }
 

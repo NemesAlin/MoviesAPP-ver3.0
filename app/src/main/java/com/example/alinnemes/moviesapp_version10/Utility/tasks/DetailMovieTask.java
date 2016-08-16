@@ -1,4 +1,4 @@
-package com.example.alinnemes.moviesapp_version10.Utility;
+package com.example.alinnemes.moviesapp_version10.Utility.tasks;
 
 import android.content.Context;
 import android.net.Uri;
@@ -6,6 +6,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.alinnemes.moviesapp_version10.BuildConfig;
+import com.example.alinnemes.moviesapp_version10.Utility.DataUtilityClass;
+import com.example.alinnemes.moviesapp_version10.Utility.manager.MovieManager;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
 import com.example.alinnemes.moviesapp_version10.model.Movie;
@@ -38,13 +40,18 @@ public class DetailMovieTask extends AsyncTask<String, Void, Movie> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        movieManager.onLoadStarted();
+//        movieManager.onLoadStarted();
     }
 
     @Override
     protected Movie doInBackground(String... params) {
         if (params.length == 0) {
             return null;
+        }
+        if(params.length > 1){
+            if (params[2] !=null && params[2].equals(DetailActivity.MOVIE_FROM_DB)){
+                return getMovieFromDB(Long.parseLong(params[0]));
+            }
         }
 
         Movie movie = null;
@@ -182,7 +189,17 @@ public class DetailMovieTask extends AsyncTask<String, Void, Movie> {
 
         movieToReturn = moviesDB.getMovie(Long.parseLong(params));
         moviesDB.close();
+        if (movieToReturn.getTrailers().size()==0){
+            movieToReturn.setTrailers(null);
+        }
         return movieToReturn;
+    }
+
+    public Movie getMovieFromDB(long movieId){
+        MoviesDB moviesDB = new MoviesDB(mContext).open();
+        Movie movie = moviesDB.getMovie(movieId);
+        moviesDB.close();
+        return movie;
     }
 
     @Override

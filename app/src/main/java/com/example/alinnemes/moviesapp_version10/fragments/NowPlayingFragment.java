@@ -1,7 +1,5 @@
 package com.example.alinnemes.moviesapp_version10.fragments;
 
-
-import android.support.v4.app.Fragment;
 import android.view.View;
 
 import com.example.alinnemes.moviesapp_version10.R;
@@ -10,9 +8,9 @@ import com.example.alinnemes.moviesapp_version10.Utility.manager.MovieManager;
 import com.example.alinnemes.moviesapp_version10.activities.SplashActivity;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Created by alin.nemes on 16-Aug-16.
  */
-public class FavoritesFragment extends SuperClassFragment {
+public class NowPlayingFragment extends SuperClassFragment {
 
     @Override
     public void listMovies() {
@@ -21,7 +19,7 @@ public class FavoritesFragment extends SuperClassFragment {
             informationImageView.setVisibility(View.GONE);
             informationTextView.setVisibility(View.GONE);
 
-            movieManager.startListingMovies(getActivity(), MovieManager.LIST_FAVORITES, SplashActivity.fetchFromNetwork);
+            movieManager.startListingMovies(getActivity(), MovieManager.LIST_NOW_PLAYING, SplashActivity.fetchFromNetwork);
 
         } else {
             showInformationToUser(getString(R.string.no_internet_connection), R.drawable.no_internet_connection);

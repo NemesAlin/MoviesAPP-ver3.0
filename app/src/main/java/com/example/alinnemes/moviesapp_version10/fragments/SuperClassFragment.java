@@ -19,11 +19,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.alinnemes.moviesapp_version10.R;
-import com.example.alinnemes.moviesapp_version10.Utility.GridViewAdapter;
 import com.example.alinnemes.moviesapp_version10.Utility.InternetUtilityClass;
-import com.example.alinnemes.moviesapp_version10.Utility.MovieManager;
-import com.example.alinnemes.moviesapp_version10.Utility.PreferenceUtilityClass;
 import com.example.alinnemes.moviesapp_version10.Utility.ProcessListener;
+import com.example.alinnemes.moviesapp_version10.Utility.adapters.GridViewAdapter;
+import com.example.alinnemes.moviesapp_version10.Utility.manager.MovieManager;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.activities.MainActivity;
 import com.example.alinnemes.moviesapp_version10.activities.SettingsActivity;
@@ -32,26 +31,25 @@ import com.example.alinnemes.moviesapp_version10.model.Movie;
 
 import java.util.ArrayList;
 
-public class MovieListFragment extends Fragment implements ProcessListener {
+/**
+ * Created by alin.nemes on 16-Aug-16.
+ */
+public class SuperClassFragment extends Fragment implements ProcessListener {
 
     //Views
-    private GridView gridView;
-    private ImageView informationImageView;
-    private TextView informationTextView;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private ProgressDialog pdLoading;
+    public GridView gridView;
+    public ImageView informationImageView;
+    public TextView informationTextView;
+    public SwipeRefreshLayout mSwipeRefreshLayout;
+    public ProgressDialog pdLoading;
     //array data
-    private ArrayList<Movie> movies;
-    private String sorting;
-    private MovieManager movieManager;
-
-    public MovieListFragment() {
-    }
+    public ArrayList<Movie> movies;
+    public MovieManager movieManager;
 
     @Override
     public void onResume() {
         super.onResume();
-        movieManager = MovieManager.getInstance();
+//        movieManager = MovieManager.getInstance();
         SplashActivity.fetchFromNetwork = false;
     }
 
@@ -71,8 +69,7 @@ public class MovieListFragment extends Fragment implements ProcessListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        sorting = PreferenceUtilityClass.getPreferredSorting(getActivity());
-        movieManager = MovieManager.getInstance();
+        movieManager = new MovieManager();
         movieManager.setProcessListener(this);
 
     }
@@ -107,10 +104,11 @@ public class MovieListFragment extends Fragment implements ProcessListener {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 Intent intent = new Intent(getActivity(), DetailActivity.class);
-                intent.putExtra(MainActivity.MOVIE_OBJECT, movies.get(position));
+                intent.putExtra(MainActivity.MOVIE_OBJECT, movies.get(position).getId());
                 startActivity(intent);
             }
         });
+
         refreshContent();
         return rootView;
     }
@@ -122,17 +120,7 @@ public class MovieListFragment extends Fragment implements ProcessListener {
             informationImageView.setVisibility(View.GONE);
             informationTextView.setVisibility(View.GONE);
 
-            boolean favorite = PreferenceUtilityClass.getPreferredFavorite(getActivity());
-
-
-//            if (favorite) {
-//                movieManager.startListingMovies(getActivity(), MovieManager.LIST_FAVORITES, SplashActivity.fetchFromNetwork);
-//            } else if (sorting.equals(getString(R.string.pref_sorting_default))) {
-                movieManager.startListingMovies(getActivity(), MovieManager.LIST_POPULAR, SplashActivity.fetchFromNetwork);
-//            } else {
-//                movieManager.startListingMovies(getActivity(), MovieManager.LIST_TOP_RATED, SplashActivity.fetchFromNetwork);
-//            }
-
+            movieManager.startListingMovies(getActivity(), MovieManager.LIST_POPULAR, SplashActivity.fetchFromNetwork);
 
         } else {
             showInformationToUser(getString(R.string.no_internet_connection), R.drawable.no_internet_connection);
@@ -153,15 +141,12 @@ public class MovieListFragment extends Fragment implements ProcessListener {
             listMovies();
             return true;
         }
-        if (id == R.id.action_new) {
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
 
     public void refreshContent() {
-        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary), getResources().getColor(R.color.colorAccent));
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary), getResources().getColor(R.color.switchColorAccent));
         SwipeRefreshLayout.OnRefreshListener listener = new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

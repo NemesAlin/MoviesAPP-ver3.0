@@ -1,7 +1,12 @@
-package com.example.alinnemes.moviesapp_version10.Utility;
+package com.example.alinnemes.moviesapp_version10.Utility.manager;
 
 import android.content.Context;
 
+import com.example.alinnemes.moviesapp_version10.Utility.ProcessListener;
+import com.example.alinnemes.moviesapp_version10.Utility.tasks.DetailMovieTask;
+import com.example.alinnemes.moviesapp_version10.Utility.tasks.FetchMovieTask;
+import com.example.alinnemes.moviesapp_version10.Utility.tasks.ListMovieFromDBTask;
+import com.example.alinnemes.moviesapp_version10.Utility.tasks.NowPlayingMoviesTask;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.model.Movie;
 
@@ -15,6 +20,7 @@ public class MovieManager {
     public static final String LIST_FAVORITES = "favorites";
     public static final String LIST_POPULAR = "popular";
     public static final String LIST_TOP_RATED = "top_rated";
+    public static final String LIST_NOW_PLAYING = "now_playing";
     private static MovieManager ourInstance = new MovieManager();
     private ArrayList<Movie> movies;
     private Movie detailedMovie;
@@ -22,7 +28,7 @@ public class MovieManager {
     private String param;
     private Context context;
 
-    private MovieManager() {
+    public MovieManager() {
     }
 
     public static MovieManager getInstance() {
@@ -51,6 +57,9 @@ public class MovieManager {
             case LIST_FAVORITES:
                 startListingFromDB();
                 break;
+            case LIST_NOW_PLAYING:
+                startListingNowPlayingMovies(context, param);
+                break;
         }
     }
 
@@ -58,14 +67,9 @@ public class MovieManager {
         new NowPlayingMoviesTask(context, this).execute(param);
     }
 
-    public void startDetailedMovieTask(Context mContext, long id) {
-        new DetailMovieTask(mContext, this).execute(String.valueOf(id), DetailActivity.MOVIE_DETAIL_QUERTY);
+    public void startDetailedMovieTask(Context mContext, long id, String param, String fromDB) {
+        new DetailMovieTask(mContext, this).execute(String.valueOf(id), param, fromDB);
     }
-
-    public void startTrailersMovieTask(Context mContext, long id) {
-        new DetailMovieTask(mContext, this).execute(String.valueOf(id), DetailActivity.MOVIE_TRAILER_QUERY);
-    }
-
 
     public ArrayList<Movie> getMoviesList() {
         return movies;
