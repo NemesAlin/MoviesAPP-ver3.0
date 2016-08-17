@@ -14,7 +14,7 @@
     </style>
 
     <style name="OtherTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
-        <item name="windowNoTitle">true</item>
+        <item name="windowNoTitle">false</item>
         <item name="windowActionBar">true</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>

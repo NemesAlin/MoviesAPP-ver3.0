@@ -7,21 +7,21 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.alinnemes.moviesapp_version10.R;
 import com.example.alinnemes.moviesapp_version10.Utility.InternetUtilityClass;
 import com.example.alinnemes.moviesapp_version10.Utility.ProcessListener;
-import com.example.alinnemes.moviesapp_version10.Utility.adapters.GridViewAdapter;
+import com.example.alinnemes.moviesapp_version10.Utility.adapters.MyRecyclerAdapter;
+import com.example.alinnemes.moviesapp_version10.Utility.adapters.RecyclerItemClickListener;
 import com.example.alinnemes.moviesapp_version10.Utility.manager.MovieManager;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.activities.MainActivity;
@@ -31,13 +31,15 @@ import com.example.alinnemes.moviesapp_version10.model.Movie;
 
 import java.util.ArrayList;
 
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
+
 /**
  * Created by alin.nemes on 16-Aug-16.
  */
 public class SuperClassFragment extends Fragment implements ProcessListener {
 
     //Views
-    public GridView gridView;
+    public RecyclerView recyclerView;
     public ImageView informationImageView;
     public TextView informationTextView;
     public SwipeRefreshLayout mSwipeRefreshLayout;
@@ -49,7 +51,6 @@ public class SuperClassFragment extends Fragment implements ProcessListener {
     @Override
     public void onResume() {
         super.onResume();
-//        movieManager = MovieManager.getInstance();
         SplashActivity.fetchFromNetwork = false;
     }
 
@@ -75,7 +76,7 @@ public class SuperClassFragment extends Fragment implements ProcessListener {
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.moviefragment, menu);
+        inflater.inflate(R.menu.menuFragment, menu);
     }
 
     @Override
@@ -84,7 +85,8 @@ public class SuperClassFragment extends Fragment implements ProcessListener {
         View rootView = inflater.inflate(R.layout.moviefragment_item, container, false);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refreshLayout);
-        gridView = (GridView) rootView.findViewById(R.id.moviesPosterGridView);
+//        gridView = (GridView) rootView.findViewById(R.id.moviesPosterGridView);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         informationImageView = (ImageView) rootView.findViewById(R.id.noInternetIcon);
         informationTextView = (TextView) rootView.findViewById(R.id.noInternettextView);
         pdLoading = new ProgressDialog(getActivity());
@@ -99,15 +101,25 @@ public class SuperClassFragment extends Fragment implements ProcessListener {
             }
         });
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
+        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
                 Intent intent = new Intent(getActivity(), DetailActivity.class);
                 intent.putExtra(MainActivity.MOVIE_OBJECT, movies.get(position).getId());
                 startActivity(intent);
             }
-        });
+        }));
+
+//        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//
+//            public void onItemClick(AdapterView<?> parent, View v,
+//                                    int position, long id) {
+//                Intent intent = new Intent(getActivity(), DetailActivity.class);
+//                intent.putExtra(MainActivity.MOVIE_OBJECT, movies.get(position).getId());
+//                startActivity(intent);
+//            }
+//        });
 
         refreshContent();
         return rootView;
@@ -116,7 +128,7 @@ public class SuperClassFragment extends Fragment implements ProcessListener {
 
     public void listMovies() {
         if (InternetUtilityClass.isOnline(getActivity())) {
-            gridView.setVisibility(View.VISIBLE);
+//            gridView.setVisibility(View.VISIBLE);
             informationImageView.setVisibility(View.GONE);
             informationTextView.setVisibility(View.GONE);
 
@@ -163,12 +175,31 @@ public class SuperClassFragment extends Fragment implements ProcessListener {
     }
 
     public void setGridView() {
-        GridViewAdapter gridViewAdapter = new GridViewAdapter(getContext(), movies);
-        gridViewAdapter.notifyDataSetChanged();
+//        GridViewAdapter gridViewAdapter = new GridViewAdapter(getContext(), movies);
+//        gridViewAdapter.notifyDataSetChanged();
+
+        recyclerView.setHasFixedSize(true);
+        final MyRecyclerAdapter adapter = new MyRecyclerAdapter(movies, getContext());
+        adapter.notifyDataSetChanged();
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setItemAnimator(new SlideInUpAnimator());
+        recyclerView.setAdapter(adapter);
+
+//        GridLayoutManager linearLayoutManager = new GridLayoutManager(getActivity(),2) ;
+//        recyclerView.setLayoutManager(linearLayoutManager);
+
+
+//         adapter.setOnItemClickListener(new OnRecyclerViewItemClickListener<Movie>() {
+//                    @Override
+//                    public void onItemClick(View view, Movie movie) {
+//
+//            }
+//        });
+
 
         if (movies != null) {
             if (movies.size() != 0) {
-                gridView.setAdapter(gridViewAdapter);
+//                gridView.setAdapter(gridViewAdapter);
             } else
                 showInformationToUser(getString(R.string.no_movies_to_show), R.drawable.sad_face);
         } else {
@@ -196,7 +227,8 @@ public class SuperClassFragment extends Fragment implements ProcessListener {
     }
 
     public void showInformationToUser(String msg, int img) {
-        gridView.setVisibility(View.GONE);
+//        gridView.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.GONE);
         informationImageView.setVisibility(View.VISIBLE);
         informationTextView.setVisibility(View.VISIBLE);
         informationImageView.setImageResource(img);

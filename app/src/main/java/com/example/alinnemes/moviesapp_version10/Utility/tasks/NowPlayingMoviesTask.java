@@ -127,6 +127,7 @@ public class NowPlayingMoviesTask extends AsyncTask<String, Void, ArrayList<Movi
         final String OWN_OVERVIEW = "overview";
         final String OWN_RELEASEDATE = "release_date";
         final String OWN_POSTER_PATH = "poster_path";
+        final String OWN_BACKDROP_PATH = "backdrop_path";
         final String OWN_VOTEAVERAGE = "vote_average";
         final String OWN_POPULARITY = "popularity";
 
@@ -141,6 +142,7 @@ public class NowPlayingMoviesTask extends AsyncTask<String, Void, ArrayList<Movi
             String overview;
             String release_date;
             String poster_path;
+            String backdrop_path;
             double vote_average;
             double popularity;
 
@@ -152,17 +154,18 @@ public class NowPlayingMoviesTask extends AsyncTask<String, Void, ArrayList<Movi
             overview = movieJSONObject.getString(OWN_OVERVIEW);
             release_date = movieJSONObject.getString(OWN_RELEASEDATE);
             poster_path = String.format("http://image.tmdb.org/t/p/w342%s", movieJSONObject.getString(OWN_POSTER_PATH));
+            backdrop_path = String.format("http://image.tmdb.org/t/p/w500%s", movieJSONObject.getString(OWN_BACKDROP_PATH));
             vote_average = movieJSONObject.getDouble(OWN_VOTEAVERAGE);
             popularity = movieJSONObject.getDouble(OWN_POPULARITY);
 
-            movies.add(new Movie(id, title, overview, release_date, poster_path, vote_average, 0, popularity, false, new ArrayList<Trailer>()));
+            movies.add(new Movie(id, title, overview, release_date, poster_path, backdrop_path, vote_average, 0, popularity, false, new ArrayList<Trailer>()));
 
             movie = moviesDB.getMovie(title);
             if (movie == null) {//movie do not exist in the personal DB, add it
-                moviesDB.createMovie(id, title, overview, release_date, poster_path, vote_average, 0, popularity, false);
+                moviesDB.createMovie(id, title, overview, release_date, poster_path, backdrop_path, vote_average, 0, popularity, false);
             } else if (!title.equals(movie.getTitle()) || !overview.equals(movie.getOverview()) || !release_date.equals(movie.getRelease_date()) || !poster_path.equals(movie.getPoster_path()) || vote_average != movie.getVote_average() || popularity != movie.getPopularity()) {
                 //if movie exist, but is not similar with the movie getted from the api, update it :)
-                moviesDB.updateMovie(id, title, overview, release_date, poster_path, vote_average, movie.getRuntime(), popularity, movie.isFavorite());
+                moviesDB.updateMovie(id, title, overview, release_date, poster_path, backdrop_path, vote_average, movie.getRuntime(), popularity, movie.isFavorite());
             }
         }
 

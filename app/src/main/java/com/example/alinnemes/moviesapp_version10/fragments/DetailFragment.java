@@ -3,10 +3,15 @@ package com.example.alinnemes.moviesapp_version10.fragments;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,7 +21,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +44,6 @@ public class DetailFragment extends Fragment implements ProcessListener {
 
     //views
     private ImageView favoriteMovieIV;
-    private TextView movieTitleTV;
     private TextView releaseDateTV;
     private TextView runTimeTV;
     private TextView voteAverageTV;
@@ -48,19 +51,26 @@ public class DetailFragment extends Fragment implements ProcessListener {
     private ImageView moviePosterIV;
     private ListView movieTrailersList;
     private ProgressDialog pdLoading;
-    private ScrollView layout;
+    private NestedScrollView layout;
+    private CollapsingToolbarLayout collapsingToolbar;
+    private Toolbar toolbar;
+    private ImageView toolbarImage;
     //data
     private Movie movie;
     private ArrayList<Trailer> trailers;
     private MovieManager movieManager;
 
     public DetailFragment() {
+        setRetainInstance(true);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-//        movieManager = MovieManager.getInstance();
+        if (movie != null) {
+            this.onLoadEnded();
+        }
+        movieManager = MovieManager.getInstance();
     }
 
     @Override
@@ -72,7 +82,7 @@ public class DetailFragment extends Fragment implements ProcessListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+
         setHasOptionsMenu(true);
 
         movieManager = MovieManager.getInstance();
@@ -88,7 +98,15 @@ public class DetailFragment extends Fragment implements ProcessListener {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        movieTitleTV = (TextView) view.findViewById(R.id.movieTitleDETAILVIEW);
+        toolbar = (Toolbar) view.findViewById(R.id.detailToolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        if (toolbar != null)
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        collapsingToolbar = (CollapsingToolbarLayout) view.findViewById(R.id.detailCollapsing_toolbar);
+        toolbarImage = (ImageView) view.findViewById(R.id.detailImageViewToolBar);
+
+
         releaseDateTV = (TextView) view.findViewById(R.id.release_dateDETAILVIEW);
         runTimeTV = (TextView) view.findViewById(R.id.runtimeDETAILVIEW);
         voteAverageTV = (TextView) view.findViewById(R.id.voteAverageDETAILVIEW);
@@ -96,7 +114,7 @@ public class DetailFragment extends Fragment implements ProcessListener {
         moviePosterIV = (ImageView) view.findViewById(R.id.moviePosterImageViewDETAILVIEW);
         favoriteMovieIV = (ImageView) view.findViewById(R.id.favoriteMovieDETAILVIEW);
         movieTrailersList = (ListView) view.findViewById(R.id.movieTrailersListDETAILVIEW);
-        layout = (ScrollView) view.findViewById(R.id.DetailScrollView);
+        layout = (NestedScrollView) view.findViewById(R.id.DetailScrollView);
 
         favoriteMovieIV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,11 +125,11 @@ public class DetailFragment extends Fragment implements ProcessListener {
                 Movie movieToUpdate = moviesDB.getMovie(movie.getTitle());
                 if (movieToUpdate.isFavorite()) {
                     Picasso.with(getActivity()).load(R.drawable.unfavorite_icon).into(favoriteMovieIV);
-                    moviesDB.updateMovie(movieToUpdate.getId(), movieToUpdate.getTitle(), movieToUpdate.getOverview(), movieToUpdate.getRelease_date(), movieToUpdate.getPoster_path(), movieToUpdate.getVote_average(), movieToUpdate.getRuntime(), movieToUpdate.getPopularity(), false);
+                    moviesDB.updateMovie(movieToUpdate.getId(), movieToUpdate.getTitle(), movieToUpdate.getOverview(), movieToUpdate.getRelease_date(), movieToUpdate.getPoster_path(), movieToUpdate.getBackdrop_path(), movieToUpdate.getVote_average(), movieToUpdate.getRuntime(), movieToUpdate.getPopularity(), false);
                     Toast.makeText(getActivity(), "Marked as unfavorite!", Toast.LENGTH_SHORT).show();
                 } else {
                     Picasso.with(getActivity()).load(R.drawable.favorite_icon).into(favoriteMovieIV);
-                    moviesDB.updateMovie(movieToUpdate.getId(), movieToUpdate.getTitle(), movieToUpdate.getOverview(), movieToUpdate.getRelease_date(), movieToUpdate.getPoster_path(), movieToUpdate.getVote_average(), movieToUpdate.getRuntime(), movieToUpdate.getPopularity(), true);
+                    moviesDB.updateMovie(movieToUpdate.getId(), movieToUpdate.getTitle(), movieToUpdate.getOverview(), movieToUpdate.getRelease_date(), movieToUpdate.getPoster_path(), movieToUpdate.getBackdrop_path(), movieToUpdate.getVote_average(), movieToUpdate.getRuntime(), movieToUpdate.getPopularity(), true);
                     Toast.makeText(getActivity(), "Marked as favorite!", Toast.LENGTH_SHORT).show();
                 }
                 moviesDB.close();
@@ -121,15 +139,9 @@ public class DetailFragment extends Fragment implements ProcessListener {
         return view;
     }
 
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        MenuItem action_refresh = menu.findItem(R.id.action_refresh);
-        action_refresh.setVisible(false);
-        super.onPrepareOptionsMenu(menu);
-    }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.moviefragment, menu);
+        inflater.inflate(R.menu.main, menu);
     }
 
     @Override
@@ -160,16 +172,9 @@ public class DetailFragment extends Fragment implements ProcessListener {
         if (movie.getRuntime() == 0) {
             movieManager.startDetailedMovieTask(getActivity(), movie.getId(), DetailActivity.MOVIE_DETAIL_QUERTY, null);
         }
-        if (movie.getTrailers() != null &&movie.getTrailers().size() == 0) {
+        if (movie.getTrailers() != null && movie.getTrailers().size() == 0) {
             movieManager.startDetailedMovieTask(getActivity(), movie.getId(), DetailActivity.MOVIE_TRAILER_QUERY, null);
         }
-
-//        else {
-//            setTrailers();
-//        }
-//        else {
-//            setViews();
-//        }
 
         setViews();
         setTrailers();
@@ -183,7 +188,7 @@ public class DetailFragment extends Fragment implements ProcessListener {
 
     public void setViews() {
 
-        movieTitleTV.setText(movie.getTitle());
+        collapsingToolbar.setTitle(movie.getTitle());
         releaseDateTV.setText(movie.getRelease_date());
         voteAverageTV.setText(String.format(Locale.US, "%.2f/10", movie.getVote_average()));
         runTimeTV.setText(String.format(Locale.US, "%dmin", movie.getRuntime()));
@@ -191,6 +196,9 @@ public class DetailFragment extends Fragment implements ProcessListener {
         Picasso.with(getActivity()).load(movie.getPoster_path()).into(moviePosterIV);
         int color = ViewUtility.getDominantColor(((BitmapDrawable) moviePosterIV.getDrawable()).getBitmap());
         if (color > Color.LTGRAY) {
+            collapsingToolbar.setExpandedTitleTypeface(Typeface.DEFAULT_BOLD);
+            collapsingToolbar.setExpandedTitleTextAppearance(View.DRAG_FLAG_OPAQUE);
+            collapsingToolbar.setExpandedTitleColor(Color.BLACK);
             releaseDateTV.setTextColor(Color.BLACK);
             voteAverageTV.setTextColor(Color.BLACK);
             runTimeTV.setTextColor(Color.BLACK);
@@ -199,21 +207,18 @@ public class DetailFragment extends Fragment implements ProcessListener {
         }
         layout.setBackgroundColor(color);
 
+        Picasso.with(getActivity()).load(movie.getBackdrop_path()).into(toolbarImage);
 
         if (movie.isFavorite()) {
             Picasso.with(getActivity()).load(R.drawable.favorite_icon).into(favoriteMovieIV);
         } else {
             Picasso.with(getActivity()).load(R.drawable.unfavorite_icon).into(favoriteMovieIV);
         }
-
-
-
-
     }
 
     public void setTrailers() {
         trailers = movie.getTrailers();
-        if (trailers!=null) {
+        if (trailers != null) {
             TrailerListViewAdapter adapter = new TrailerListViewAdapter(getActivity(), trailers);
             movieTrailersList.setAdapter(adapter);
             ViewUtility.justifyListViewHeightBasedOnChildren(movieTrailersList);

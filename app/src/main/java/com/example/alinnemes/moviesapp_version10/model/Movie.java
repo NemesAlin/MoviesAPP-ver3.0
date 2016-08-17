@@ -12,18 +12,20 @@ public class Movie implements Serializable {
     private String overview;
     private String release_date;
     private String poster_path;
+    private String backdrop_path;
     private double vote_average;
     private int runtime;
     private double popularity;
     private boolean favorite;
     private ArrayList<Trailer> trailers;
 
-    public Movie(long id, String title, String overview, String release_date, String poster_path, double vote_average, int runtime, double popularity, boolean favorite, ArrayList<Trailer> trailers) {
+    public Movie(long id, String title, String overview, String release_date, String poster_path, String backdrop_path, double vote_average, int runtime, double popularity, boolean favorite, ArrayList<Trailer> trailers) {
         this.id = id;
         this.title = title;
         this.overview = overview;
         this.release_date = release_date;
         this.poster_path = poster_path;
+        this.backdrop_path = backdrop_path;
         this.vote_average = vote_average;
         this.runtime = runtime;
         this.popularity = popularity;
@@ -69,6 +71,14 @@ public class Movie implements Serializable {
 
     public void setPoster_path(String poster_path) {
         this.poster_path = poster_path;
+    }
+
+    public String getBackdrop_path() {
+        return backdrop_path;
+    }
+
+    public void setBackdrop_path(String backdrop_path) {
+        this.backdrop_path = backdrop_path;
     }
 
     public double getVote_average() {
@@ -119,6 +129,7 @@ public class Movie implements Serializable {
                 ", overview='" + overview + '\'' +
                 ", release_date='" + release_date + '\'' +
                 ", poster_path='" + poster_path + '\'' +
+                ", backdrop_path='" + backdrop_path + '\'' +
                 ", vote_average=" + vote_average +
                 ", runtime=" + runtime +
                 ", popularity=" + popularity +

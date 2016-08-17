@@ -23,8 +23,7 @@
         </activity>
         <activity
             android:name=".activities.DetailActivity"
-            android:label="Movie Detail"
-            android:theme = "@style/OtherTheme"
+            android:theme = "@style/AppTheme"
             android:parentActivityName=".activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -35,9 +34,9 @@
             android:label="@string/title_activity_settings"
             android:parentActivityName=".activities.MainActivity"
             android:theme="@style/OtherTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.alinnemes.moviesapp_version10.activities.MainActivity" />
+            <!--<meta-data-->
+                <!--android:name="android.support.PARENT_ACTIVITY"-->
+                <!--android:value=".activities.MainActivity" />-->
         </activity>
     </application>
 

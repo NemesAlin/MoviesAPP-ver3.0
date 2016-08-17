@@ -48,8 +48,8 @@ public class DetailMovieTask extends AsyncTask<String, Void, Movie> {
         if (params.length == 0) {
             return null;
         }
-        if(params.length > 1){
-            if (params[2] !=null && params[2].equals(DetailActivity.MOVIE_FROM_DB)){
+        if (params.length > 1) {
+            if (params[2] != null && params[2].equals(DetailActivity.MOVIE_FROM_DB)) {
                 return getMovieFromDB(Long.parseLong(params[0]));
             }
         }
@@ -142,7 +142,7 @@ public class DetailMovieTask extends AsyncTask<String, Void, Movie> {
 
         runtime = moviesJson.getInt(OWN_RUNTIME);
         Movie movie = moviesDB.getMovie(Long.parseLong(params));
-        moviesDB.updateMovie(movie.getId(), movie.getTitle(), movie.getOverview(), movie.getRelease_date(), movie.getPoster_path(), movie.getVote_average(), runtime, movie.getPopularity(), movie.isFavorite());
+        moviesDB.updateMovie(movie.getId(), movie.getTitle(), movie.getOverview(), movie.getRelease_date(), movie.getPoster_path(), movie.getBackdrop_path(), movie.getVote_average(), runtime, movie.getPopularity(), movie.isFavorite());
         Movie movieToReturn = moviesDB.getMovie(Long.parseLong(params));
         moviesDB.close();
         return movieToReturn;
@@ -189,13 +189,13 @@ public class DetailMovieTask extends AsyncTask<String, Void, Movie> {
 
         movieToReturn = moviesDB.getMovie(Long.parseLong(params));
         moviesDB.close();
-        if (movieToReturn.getTrailers().size()==0){
+        if (movieToReturn.getTrailers().size() == 0) {
             movieToReturn.setTrailers(null);
         }
         return movieToReturn;
     }
 
-    public Movie getMovieFromDB(long movieId){
+    public Movie getMovieFromDB(long movieId) {
         MoviesDB moviesDB = new MoviesDB(mContext).open();
         Movie movie = moviesDB.getMovie(movieId);
         moviesDB.close();
