@@ -3,7 +3,6 @@ package com.example.alinnemes.moviesapp_version10.fragments;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -48,17 +47,19 @@ public class DetailFragment extends Fragment implements ProcessListener {
     private TextView runTimeTV;
     private TextView voteAverageTV;
     private TextView movieOverviewTV;
+    private TextView trailersTV;
     private ImageView moviePosterIV;
     private ListView movieTrailersList;
     private ProgressDialog pdLoading;
     private NestedScrollView layout;
     private CollapsingToolbarLayout collapsingToolbar;
     private Toolbar toolbar;
-    private ImageView toolbarImage;
+    private ImageView movieToolbarBackDropIV;
     //data
     private Movie movie;
     private ArrayList<Trailer> trailers;
     private MovieManager movieManager;
+    private int dominantColor;
 
     public DetailFragment() {
         setRetainInstance(true);
@@ -104,7 +105,7 @@ public class DetailFragment extends Fragment implements ProcessListener {
             ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         collapsingToolbar = (CollapsingToolbarLayout) view.findViewById(R.id.detailCollapsing_toolbar);
-        toolbarImage = (ImageView) view.findViewById(R.id.detailImageViewToolBar);
+        movieToolbarBackDropIV = (ImageView) view.findViewById(R.id.detailImageViewToolBar);
 
 
         releaseDateTV = (TextView) view.findViewById(R.id.release_dateDETAILVIEW);
@@ -113,6 +114,7 @@ public class DetailFragment extends Fragment implements ProcessListener {
         movieOverviewTV = (TextView) view.findViewById(R.id.movieOverviewDETAILVIEW);
         moviePosterIV = (ImageView) view.findViewById(R.id.moviePosterImageViewDETAILVIEW);
         favoriteMovieIV = (ImageView) view.findViewById(R.id.favoriteMovieDETAILVIEW);
+        trailersTV = (TextView) view.findViewById(R.id.trailersTextView);
         movieTrailersList = (ListView) view.findViewById(R.id.movieTrailersListDETAILVIEW);
         layout = (NestedScrollView) view.findViewById(R.id.DetailScrollView);
 
@@ -194,20 +196,20 @@ public class DetailFragment extends Fragment implements ProcessListener {
         runTimeTV.setText(String.format(Locale.US, "%dmin", movie.getRuntime()));
         movieOverviewTV.setText(movie.getOverview());
         Picasso.with(getActivity()).load(movie.getPoster_path()).into(moviePosterIV);
-        int color = ViewUtility.getDominantColor(((BitmapDrawable) moviePosterIV.getDrawable()).getBitmap());
-        if (color > Color.LTGRAY) {
-            collapsingToolbar.setExpandedTitleTypeface(Typeface.DEFAULT_BOLD);
-            collapsingToolbar.setExpandedTitleTextAppearance(View.DRAG_FLAG_OPAQUE);
-            collapsingToolbar.setExpandedTitleColor(Color.BLACK);
+        Picasso.with(getActivity()).load(movie.getBackdrop_path()).into(movieToolbarBackDropIV);
+        if (!movie.getBackdrop_path().contains("null")) {
+            collapsingToolbar.setBackgroundColor(Color.BLACK);
+        }
+        dominantColor = ViewUtility.getDominantColor(((BitmapDrawable) moviePosterIV.getDrawable()).getBitmap());
+
+        if (dominantColor > Color.LTGRAY) {
             releaseDateTV.setTextColor(Color.BLACK);
             voteAverageTV.setTextColor(Color.BLACK);
             runTimeTV.setTextColor(Color.BLACK);
             movieOverviewTV.setTextColor(Color.BLACK);
-            movieTrailersList.setBackgroundColor(Color.BLACK);
         }
-        layout.setBackgroundColor(color);
+        layout.setBackgroundColor(dominantColor);
 
-        Picasso.with(getActivity()).load(movie.getBackdrop_path()).into(toolbarImage);
 
         if (movie.isFavorite()) {
             Picasso.with(getActivity()).load(R.drawable.favorite_icon).into(favoriteMovieIV);
@@ -218,8 +220,12 @@ public class DetailFragment extends Fragment implements ProcessListener {
 
     public void setTrailers() {
         trailers = movie.getTrailers();
-        if (trailers != null) {
+        if (trailers != null && trailers.size() != 0) {
             TrailerListViewAdapter adapter = new TrailerListViewAdapter(getActivity(), trailers);
+            if (dominantColor > Color.LTGRAY) {
+                adapter.setTrailerTitleColorToBlack(true);
+                trailersTV.setTextColor(Color.BLACK);
+            }
             movieTrailersList.setAdapter(adapter);
             ViewUtility.justifyListViewHeightBasedOnChildren(movieTrailersList);
 
@@ -231,6 +237,8 @@ public class DetailFragment extends Fragment implements ProcessListener {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + trailer.getKey())));
                 }
             });
+        } else {
+            trailersTV.setVisibility(View.GONE);
         }
     }
 }

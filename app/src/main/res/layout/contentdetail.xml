@@ -1,0 +1,145 @@
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/DetailScrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <RelativeLayout
+        android:id="@+id/relativeLayoutSCROLLABLE"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/moviePosterImageViewDETAILVIEW"
+            android:layout_width="200dp"
+            android:layout_height="220dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="25dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="25dp"
+            android:scaleType="fitXY" />
+
+        <TextView
+            android:id="@+id/release_dateDETAILVIEW"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/moviePosterImageViewDETAILVIEW"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="16dp"
+            android:layout_toEndOf="@+id/moviePosterImageViewDETAILVIEW"
+            android:layout_toRightOf="@+id/moviePosterImageViewDETAILVIEW"
+            android:textColor="@android:color/white"
+
+            android:textIsSelectable="true"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/runtimeDETAILVIEW"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/release_dateDETAILVIEW"
+            android:layout_alignStart="@+id/release_dateDETAILVIEW"
+            android:layout_below="@+id/release_dateDETAILVIEW"
+            android:paddingTop="10dp"
+            android:textColor="@android:color/white"
+            android:textSize="16dp"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:id="@+id/voteAverageDETAILVIEW"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/runtimeDETAILVIEW"
+            android:layout_alignStart="@+id/runtimeDETAILVIEW"
+            android:layout_below="@+id/runtimeDETAILVIEW"
+            android:paddingTop="16dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/background_light" />
+
+        <ImageView
+            android:id="@+id/favoriteMovieDETAILVIEW"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/moviePosterImageViewDETAILVIEW"
+            android:layout_alignEnd="@+id/runtimeDETAILVIEW"
+            android:layout_alignLeft="@+id/voteAverageDETAILVIEW"
+            android:layout_alignRight="@+id/runtimeDETAILVIEW"
+            android:layout_alignStart="@+id/voteAverageDETAILVIEW"
+            android:layout_below="@+id/voteAverageDETAILVIEW"
+            android:paddingTop="16dp" />
+
+        <TextView
+            android:id="@+id/movieOverviewDETAILVIEW"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignLeft="@+id/moviePosterImageViewDETAILVIEW"
+            android:layout_alignStart="@+id/moviePosterImageViewDETAILVIEW"
+            android:layout_below="@+id/favoriteMovieDETAILVIEW"
+            android:paddingRight="16dp"
+            android:paddingTop="25dp"
+            android:textAlignment="inherit"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/white" />
+
+        <!--<android.support.design.widget.CoordinatorLayout-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--&gt;-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/trailers"
+            android:textColor="@android:color/white"
+            android:paddingTop="16dp"
+            android:id="@+id/trailersTextView"
+            android:layout_below="@+id/movieOverviewDETAILVIEW"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignLeft="@+id/movieOverviewDETAILVIEW"
+            android:layout_alignStart="@+id/movieOverviewDETAILVIEW"
+            android:capitalize="none"
+            android:elegantTextHeight="true"
+            android:textStyle="bold"
+            android:typeface="normal" />
+
+        <ListView
+            android:id="@+id/movieTrailersListDETAILVIEW"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/trailersTextView"
+            android:fitsSystemWindows="true"
+            android:textColor="@android:color/white"
+            android:paddingTop="16dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+        <!--</android.support.design.widget.CoordinatorLayout>-->
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Reviews"
+            android:id="@+id/textView1"
+            android:layout_alignLeft="@+id/movieOverviewDETAILVIEW"
+            android:layout_alignStart="@+id/movieOverviewDETAILVIEW"
+            android:layout_below="@+id/movieTrailersListDETAILVIEW"
+            android:layout_centerHorizontal="true" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Reviews2"
+            android:layout_alignLeft="@+id/movieOverviewDETAILVIEW"
+            android:layout_alignStart="@+id/movieOverviewDETAILVIEW"
+            android:id="@+id/textView2"
+            android:layout_below="@+id/textView1"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
+</android.support.v4.widget.NestedScrollView>

@@ -161,7 +161,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
             movie = moviesDB.getMovie(title);
             if (movie == null) {//movie do not exist in the personal DB, add it
                 moviesDB.createMovie(id, title, overview, release_date, poster_path, backdrop_path, vote_average, 0, popularity, false);
-            } else if (!title.equals(movie.getTitle()) || !overview.equals(movie.getOverview()) || !release_date.equals(movie.getRelease_date()) || !poster_path.equals(movie.getPoster_path()) || vote_average != movie.getVote_average() || popularity != movie.getPopularity()) {
+            } else if (!title.equals(movie.getTitle()) || !overview.equals(movie.getOverview()) || !release_date.equals(movie.getRelease_date()) || !poster_path.equals(movie.getPoster_path()) || !backdrop_path.equals(movie.getBackdrop_path()) || vote_average != movie.getVote_average() || popularity != movie.getPopularity()) {
                 //if movie exist, but is not similar with the movie getted from the api, update it :)
                 moviesDB.updateMovie(id, title, overview, release_date, poster_path, backdrop_path, vote_average, movie.getRuntime(), popularity, movie.isFavorite());
             }

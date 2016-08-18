@@ -18,6 +18,7 @@ public class Movie implements Serializable {
     private double popularity;
     private boolean favorite;
     private ArrayList<Trailer> trailers;
+    private ArrayList<Review> reviews;
 
     public Movie(long id, String title, String overview, String release_date, String poster_path, String backdrop_path, double vote_average, int runtime, double popularity, boolean favorite, ArrayList<Trailer> trailers) {
         this.id = id;

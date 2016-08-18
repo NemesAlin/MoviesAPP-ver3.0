@@ -17,7 +17,7 @@ public class FavoritesFragment extends SuperClassFragment {
     @Override
     public void listMovies() {
         if (InternetUtilityClass.isOnline(getActivity())) {
-//            gridView.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.VISIBLE);
             informationImageView.setVisibility(View.GONE);
             informationTextView.setVisibility(View.GONE);
 

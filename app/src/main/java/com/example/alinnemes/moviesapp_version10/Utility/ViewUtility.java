@@ -20,7 +20,7 @@ public class ViewUtility {
             return;
         }
         ViewGroup vg = listView;
-        int totalHeight = 200;
+        int totalHeight =100;
         for (int i = 0; i < adapter.getCount(); i++) {
             View listItem = adapter.getView(i, null, vg);
             listItem.measure(0, 0);
