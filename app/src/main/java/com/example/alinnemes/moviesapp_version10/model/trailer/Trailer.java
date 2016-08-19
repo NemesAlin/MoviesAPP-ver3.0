@@ -1,4 +1,4 @@
-package com.example.alinnemes.moviesapp_version10.model;
+package com.example.alinnemes.moviesapp_version10.model.trailer;
 
 import java.io.Serializable;
 

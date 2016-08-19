@@ -8,8 +8,9 @@ import android.util.Log;
 import com.example.alinnemes.moviesapp_version10.BuildConfig;
 import com.example.alinnemes.moviesapp_version10.Utility.manager.MovieManager;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
-import com.example.alinnemes.moviesapp_version10.model.Movie;
-import com.example.alinnemes.moviesapp_version10.model.Trailer;
+import com.example.alinnemes.moviesapp_version10.model.movie.Movie;
+import com.example.alinnemes.moviesapp_version10.model.review.Review;
+import com.example.alinnemes.moviesapp_version10.model.trailer.Trailer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -158,7 +159,9 @@ public class NowPlayingMoviesTask extends AsyncTask<String, Void, ArrayList<Movi
             vote_average = movieJSONObject.getDouble(OWN_VOTEAVERAGE);
             popularity = movieJSONObject.getDouble(OWN_POPULARITY);
 
-            movies.add(new Movie(id, title, overview, release_date, poster_path, backdrop_path, vote_average, 0, popularity, false, new ArrayList<Trailer>()));
+            title = title.replace("\"", "");
+
+            movies.add(new Movie(id, title, overview, release_date, poster_path, backdrop_path, vote_average, 0, popularity, false, new ArrayList<Trailer>(), new ArrayList<Review>()));
 
             movie = moviesDB.getMovie(title);
             if (movie == null) {//movie do not exist in the personal DB, add it

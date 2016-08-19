@@ -11,8 +11,8 @@ import android.support.v7.widget.Toolbar;
 
 import com.example.alinnemes.moviesapp_version10.R;
 import com.example.alinnemes.moviesapp_version10.fragments.FavoritesFragment;
-import com.example.alinnemes.moviesapp_version10.fragments.PopularFragment;
 import com.example.alinnemes.moviesapp_version10.fragments.NowPlayingFragment;
+import com.example.alinnemes.moviesapp_version10.fragments.PopularFragment;
 import com.example.alinnemes.moviesapp_version10.fragments.TopRatedFragment;
 
 import java.util.ArrayList;
@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
 //                    .commit();
 //        }
     }
+
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 

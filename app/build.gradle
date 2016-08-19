@@ -25,14 +25,14 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:24.1.1'
-    compile 'com.android.support:support-v4:24.1.1'
-    compile 'com.android.support:recyclerview-v7:24.1.1'
+    compile 'com.android.support:appcompat-v7:24.2.0'
+    compile 'com.android.support:support-v4:24.2.0'
+    compile 'com.android.support:recyclerview-v7:24.2.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.android.support:design:24.1.1'
+    compile 'com.android.support:design:24.2.0'
     compile 'jp.wasabeef:recyclerview-animators:2.2.3'
-    compile 'com.squareup.dagger:dagger:1.2.+'
-    provided 'com.squareup.dagger:dagger-compiler:1.2.+'
+    compile 'com.squareup.dagger:dagger:1.2.5'
+    provided 'com.squareup.dagger:dagger-compiler:1.2.5'
 
 }
 

@@ -26,14 +26,16 @@ import android.widget.Toast;
 import com.example.alinnemes.moviesapp_version10.R;
 import com.example.alinnemes.moviesapp_version10.Utility.ProcessListener;
 import com.example.alinnemes.moviesapp_version10.Utility.ViewUtility;
+import com.example.alinnemes.moviesapp_version10.Utility.adapters.ReviewListViewAdapter;
 import com.example.alinnemes.moviesapp_version10.Utility.adapters.TrailerListViewAdapter;
 import com.example.alinnemes.moviesapp_version10.Utility.manager.MovieManager;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.activities.MainActivity;
 import com.example.alinnemes.moviesapp_version10.activities.SettingsActivity;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
-import com.example.alinnemes.moviesapp_version10.model.Movie;
-import com.example.alinnemes.moviesapp_version10.model.Trailer;
+import com.example.alinnemes.moviesapp_version10.model.movie.Movie;
+import com.example.alinnemes.moviesapp_version10.model.review.Review;
+import com.example.alinnemes.moviesapp_version10.model.trailer.Trailer;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -48,8 +50,10 @@ public class DetailFragment extends Fragment implements ProcessListener {
     private TextView voteAverageTV;
     private TextView movieOverviewTV;
     private TextView trailersTV;
+    private TextView reviewsTV;
     private ImageView moviePosterIV;
     private ListView movieTrailersList;
+    private ListView movieReviewsList;
     private ProgressDialog pdLoading;
     private NestedScrollView layout;
     private CollapsingToolbarLayout collapsingToolbar;
@@ -58,6 +62,7 @@ public class DetailFragment extends Fragment implements ProcessListener {
     //data
     private Movie movie;
     private ArrayList<Trailer> trailers;
+    private ArrayList<Review> reviews;
     private MovieManager movieManager;
     private int dominantColor;
 
@@ -115,7 +120,11 @@ public class DetailFragment extends Fragment implements ProcessListener {
         moviePosterIV = (ImageView) view.findViewById(R.id.moviePosterImageViewDETAILVIEW);
         favoriteMovieIV = (ImageView) view.findViewById(R.id.favoriteMovieDETAILVIEW);
         trailersTV = (TextView) view.findViewById(R.id.trailersTextView);
+        trailersTV.setVisibility(View.GONE);
+        reviewsTV = (TextView) view.findViewById(R.id.reviewsTextView);
+        reviewsTV.setVisibility(View.GONE);
         movieTrailersList = (ListView) view.findViewById(R.id.movieTrailersListDETAILVIEW);
+        movieReviewsList = (ListView) view.findViewById(R.id.movieReviewsListDETAILVIEW);
         layout = (NestedScrollView) view.findViewById(R.id.DetailScrollView);
 
         favoriteMovieIV.setOnClickListener(new View.OnClickListener() {
@@ -172,14 +181,23 @@ public class DetailFragment extends Fragment implements ProcessListener {
         pdLoading.dismiss();
         this.movie = movieManager.getDetailedMovie();
         if (movie.getRuntime() == 0) {
-            movieManager.startDetailedMovieTask(getActivity(), movie.getId(), DetailActivity.MOVIE_DETAIL_QUERTY, null);
+            movieManager.startDetailedMovieTask(getActivity().getApplicationContext(), movie.getId(), DetailActivity.MOVIE_DETAIL_QUERTY, null);
         }
-        if (movie.getTrailers() != null && movie.getTrailers().size() == 0) {
-            movieManager.startDetailedMovieTask(getActivity(), movie.getId(), DetailActivity.MOVIE_TRAILER_QUERY, null);
+        if (movie.getRuntime() != 0 && movie.getTrailers() != null && movie.getTrailers().size() == 0) {
+            movieManager.startDetailedMovieTask(getActivity().getApplicationContext(), movie.getId(), DetailActivity.MOVIE_TRAILER_QUERY, null);
+        }
+        if (movie.getTrailers().size() != 0 && movie.getReviews() != null && movie.getReviews().size() == 0) {
+            ////STUPID METHOD!!!!!!!!
+            movieManager.startListingMovieReviewsById(getActivity().getApplicationContext(), movie.getId());
         }
 
-        setViews();
-        setTrailers();
+        if (movie != null) {
+            setViews();
+        }
+        if (movie.getTrailers() != null && movie.getTrailers().size() != 0) {
+            setTrailers();
+        }
+
     }
 
     @Override
@@ -221,6 +239,7 @@ public class DetailFragment extends Fragment implements ProcessListener {
     public void setTrailers() {
         trailers = movie.getTrailers();
         if (trailers != null && trailers.size() != 0) {
+            trailersTV.setVisibility(View.VISIBLE);
             TrailerListViewAdapter adapter = new TrailerListViewAdapter(getActivity(), trailers);
             if (dominantColor > Color.LTGRAY) {
                 adapter.setTrailerTitleColorToBlack(true);
@@ -228,17 +247,32 @@ public class DetailFragment extends Fragment implements ProcessListener {
             }
             movieTrailersList.setAdapter(adapter);
             ViewUtility.justifyListViewHeightBasedOnChildren(movieTrailersList);
-
             movieTrailersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                 public void onItemClick(AdapterView<?> parent, View v,
                                         int position, long id) {
                     Trailer trailer = trailers.get(position);
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + trailer.getKey())));
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(DetailActivity.YOUTUBE_VIDEO_LINK + trailer.getKey())));
                 }
             });
         } else {
             trailersTV.setVisibility(View.GONE);
+        }
+    }
+
+    public void setReviews(ArrayList<Review> reviews) {
+
+        if (reviews != null && reviews.size() != 0) {
+            reviewsTV.setVisibility(View.VISIBLE);
+            ReviewListViewAdapter adapter = new ReviewListViewAdapter(getActivity(), reviews);
+            if (dominantColor > Color.LTGRAY) {
+                adapter.setColorToBlack(true);
+                reviewsTV.setTextColor(Color.BLACK);
+            }
+            movieReviewsList.setAdapter(adapter);
+            ViewUtility.justifyListViewHeightBasedOnChildren(movieReviewsList);
+        } else {
+            reviewsTV.setVisibility(View.GONE);
         }
     }
 }

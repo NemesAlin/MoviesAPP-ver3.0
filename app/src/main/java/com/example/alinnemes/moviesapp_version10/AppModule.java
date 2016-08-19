@@ -1,7 +1,5 @@
 package com.example.alinnemes.moviesapp_version10;
 
-import android.app.Application;
-
 import com.example.alinnemes.moviesapp_version10.domain.DomainModule;
 
 import dagger.Module;
@@ -13,7 +11,7 @@ import dagger.Provides;
 
 @Module(
         injects = {
-                App.class
+                MoviesApp.class
         },
         includes = {
                 DomainModule.class
@@ -21,15 +19,14 @@ import dagger.Provides;
 )
 
 public class AppModule {
+    private MoviesApp app;
 
-    private App app;
-
-    public AppModule(App app) {
+    public AppModule(MoviesApp app) {
         this.app = app;
     }
 
     @Provides
-    public Application provideApp(){
+    public MoviesApp provideApp() {
         return app;
     }
 

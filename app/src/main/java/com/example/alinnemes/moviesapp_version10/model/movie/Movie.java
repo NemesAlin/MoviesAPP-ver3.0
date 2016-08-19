@@ -1,4 +1,7 @@
-package com.example.alinnemes.moviesapp_version10.model;
+package com.example.alinnemes.moviesapp_version10.model.movie;
+
+import com.example.alinnemes.moviesapp_version10.model.review.Review;
+import com.example.alinnemes.moviesapp_version10.model.trailer.Trailer;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -20,7 +23,7 @@ public class Movie implements Serializable {
     private ArrayList<Trailer> trailers;
     private ArrayList<Review> reviews;
 
-    public Movie(long id, String title, String overview, String release_date, String poster_path, String backdrop_path, double vote_average, int runtime, double popularity, boolean favorite, ArrayList<Trailer> trailers) {
+    public Movie(long id, String title, String overview, String release_date, String poster_path, String backdrop_path, double vote_average, int runtime, double popularity, boolean favorite, ArrayList<Trailer> trailers, ArrayList<Review> reviews) {
         this.id = id;
         this.title = title;
         this.overview = overview;
@@ -32,6 +35,7 @@ public class Movie implements Serializable {
         this.popularity = popularity;
         this.favorite = favorite;
         this.trailers = trailers;
+        this.reviews = reviews;
     }
 
     public long getId() {
@@ -122,6 +126,14 @@ public class Movie implements Serializable {
         this.trailers = trailers;
     }
 
+    public ArrayList<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(ArrayList<Review> reviews) {
+        this.reviews = reviews;
+    }
+
     @Override
     public String toString() {
         return "Movie{" +
@@ -136,6 +148,7 @@ public class Movie implements Serializable {
                 ", popularity=" + popularity +
                 ", favorite=" + favorite +
                 ", trailers=" + trailers +
+                ", reviews=" + reviews +
                 '}';
     }
 

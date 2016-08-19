@@ -1,5 +1,4 @@
-<android.support.v4.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/DetailScrollView"
     android:layout_width="match_parent"
@@ -86,25 +85,19 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/white" />
 
-        <!--<android.support.design.widget.CoordinatorLayout-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--&gt;-->
         <TextView
+            android:id="@+id/trailersTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/trailers"
-            android:textColor="@android:color/white"
-            android:paddingTop="16dp"
-            android:id="@+id/trailersTextView"
-            android:layout_below="@+id/movieOverviewDETAILVIEW"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
             android:layout_alignLeft="@+id/movieOverviewDETAILVIEW"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
             android:layout_alignStart="@+id/movieOverviewDETAILVIEW"
-            android:capitalize="none"
-            android:elegantTextHeight="true"
+            android:layout_below="@+id/movieOverviewDETAILVIEW"
+            android:paddingTop="16dp"
+            android:text="@string/trailers"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@android:color/white"
             android:textStyle="bold"
             android:typeface="normal" />
 
@@ -114,32 +107,35 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/trailersTextView"
             android:fitsSystemWindows="true"
-            android:textColor="@android:color/white"
             android:paddingTop="16dp"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-
-        <!--</android.support.design.widget.CoordinatorLayout>-->
+            android:textColor="@android:color/white"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 
         <TextView
+            android:id="@+id/reviewsTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Reviews"
-            android:id="@+id/textView1"
             android:layout_alignLeft="@+id/movieOverviewDETAILVIEW"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
             android:layout_alignStart="@+id/movieOverviewDETAILVIEW"
             android:layout_below="@+id/movieTrailersListDETAILVIEW"
-            android:layout_centerHorizontal="true" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:text="@string/reviews"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Reviews2"
-            android:layout_alignLeft="@+id/movieOverviewDETAILVIEW"
-            android:layout_alignStart="@+id/movieOverviewDETAILVIEW"
-            android:id="@+id/textView2"
-            android:layout_below="@+id/textView1"
-            android:layout_centerHorizontal="true" />
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:typeface="normal" />
+
+        <ListView
+            android:id="@+id/movieReviewsListDETAILVIEW"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/reviewsTextView"
+            android:fitsSystemWindows="true"
+            android:paddingTop="16dp"
+            android:textColor="@android:color/white"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
     </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>

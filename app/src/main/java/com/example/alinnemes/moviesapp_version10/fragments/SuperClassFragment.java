@@ -27,7 +27,8 @@ import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.activities.MainActivity;
 import com.example.alinnemes.moviesapp_version10.activities.SettingsActivity;
 import com.example.alinnemes.moviesapp_version10.activities.SplashActivity;
-import com.example.alinnemes.moviesapp_version10.model.Movie;
+import com.example.alinnemes.moviesapp_version10.model.movie.Movie;
+import com.example.alinnemes.moviesapp_version10.model.movie.MovieView;
 
 import java.util.ArrayList;
 
@@ -36,7 +37,7 @@ import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 /**
  * Created by alin.nemes on 16-Aug-16.
  */
-public class SuperClassFragment extends Fragment implements ProcessListener {
+public class SuperClassFragment extends Fragment implements ProcessListener, MovieView {
 
     //Views
     public RecyclerView recyclerView;
@@ -172,7 +173,7 @@ public class SuperClassFragment extends Fragment implements ProcessListener {
 
         if (movies != null) {
             if (movies.size() != 0) {
-               recyclerView.setAdapter(adapter);
+                recyclerView.setAdapter(adapter);
             } else
                 showInformationToUser(getString(R.string.no_movies_to_show), R.drawable.sad_face);
         } else {

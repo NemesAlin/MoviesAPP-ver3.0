@@ -6,9 +6,11 @@ import com.example.alinnemes.moviesapp_version10.Utility.ProcessListener;
 import com.example.alinnemes.moviesapp_version10.Utility.tasks.DetailMovieTask;
 import com.example.alinnemes.moviesapp_version10.Utility.tasks.FetchMovieTask;
 import com.example.alinnemes.moviesapp_version10.Utility.tasks.ListMovieFromDBTask;
+import com.example.alinnemes.moviesapp_version10.Utility.tasks.ListReviewsMovieFromDBTask;
 import com.example.alinnemes.moviesapp_version10.Utility.tasks.NowPlayingMoviesTask;
-import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
-import com.example.alinnemes.moviesapp_version10.model.Movie;
+import com.example.alinnemes.moviesapp_version10.fragments.DetailFragment;
+import com.example.alinnemes.moviesapp_version10.model.movie.Movie;
+import com.example.alinnemes.moviesapp_version10.model.review.Review;
 
 import java.util.ArrayList;
 
@@ -69,6 +71,16 @@ public class MovieManager {
 
     public void startDetailedMovieTask(Context mContext, long id, String param, String fromDB) {
         new DetailMovieTask(mContext, this).execute(String.valueOf(id), param, fromDB);
+    }
+
+    public void startListingMovieReviewsById(Context context, long id) {
+        new ListReviewsMovieFromDBTask(context, this).execute(id);
+    }
+
+    public void setReviews(ArrayList<Review> reviews) {
+        if (processListener instanceof DetailFragment) {
+            ((DetailFragment) processListener).setReviews(reviews);
+        }
     }
 
     public ArrayList<Movie> getMoviesList() {

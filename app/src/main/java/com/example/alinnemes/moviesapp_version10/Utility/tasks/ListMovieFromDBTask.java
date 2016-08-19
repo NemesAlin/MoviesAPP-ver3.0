@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 
 import com.example.alinnemes.moviesapp_version10.Utility.manager.MovieManager;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
-import com.example.alinnemes.moviesapp_version10.model.Movie;
+import com.example.alinnemes.moviesapp_version10.model.movie.Movie;
 
 import java.util.ArrayList;
 

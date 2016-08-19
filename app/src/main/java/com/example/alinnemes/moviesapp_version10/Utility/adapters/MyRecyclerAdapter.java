@@ -1,19 +1,14 @@
 package com.example.alinnemes.moviesapp_version10.Utility.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.example.alinnemes.moviesapp_version10.R;
-import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
-import com.example.alinnemes.moviesapp_version10.activities.MainActivity;
-import com.example.alinnemes.moviesapp_version10.model.Movie;
+import com.example.alinnemes.moviesapp_version10.model.movie.Movie;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -21,7 +16,7 @@ import java.util.ArrayList;
 /**
  * Created by alin.nemes on 16-Aug-16.
  */
-public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.ViewHolder>{
+public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.ViewHolder> {
 
     private ArrayList<Movie> movies;
     private Context ctx;
