@@ -268,7 +268,7 @@ public class MoviesDB {
         while (!cursor.isAfterLast()) {
             Review review = cursorToReview(cursor);
             allReviews.add(review);
-            cursor.moveToFirst();
+            cursor.moveToNext();
         }
         cursor.close();
         return allReviews;
@@ -310,7 +310,7 @@ public class MoviesDB {
     private Movie cursorToMovie(Cursor cursor) {
         Movie newMovie;
         try {
-            newMovie = new Movie(cursor.getLong(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getDouble(6), cursor.getInt(7), cursor.getDouble(8), Boolean.parseBoolean(cursor.getString(9)), getTrailers(cursor.getLong(0)), null);
+            newMovie = new Movie(cursor.getLong(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getDouble(6), cursor.getInt(7), cursor.getDouble(8), Boolean.parseBoolean(cursor.getString(9)), getTrailers(cursor.getLong(0)), getReviews(cursor.getLong(0)));
         } catch (Exception e) {
             newMovie = null;
         }

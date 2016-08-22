@@ -17,18 +17,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.alinnemes.moviesapp_version10.presenters.MainPresenterImpl;
 import com.example.alinnemes.moviesapp_version10.R;
-import com.example.alinnemes.moviesapp_version10.Utility.InternetUtilityClass;
+import com.example.alinnemes.moviesapp_version10.Utility.utilities.InternetUtilityClass;
 import com.example.alinnemes.moviesapp_version10.Utility.ProcessListener;
 import com.example.alinnemes.moviesapp_version10.Utility.adapters.MyRecyclerAdapter;
 import com.example.alinnemes.moviesapp_version10.Utility.adapters.RecyclerItemClickListener;
-import com.example.alinnemes.moviesapp_version10.Utility.manager.MovieManager;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.activities.MainActivity;
 import com.example.alinnemes.moviesapp_version10.activities.SettingsActivity;
 import com.example.alinnemes.moviesapp_version10.activities.SplashActivity;
 import com.example.alinnemes.moviesapp_version10.model.movie.Movie;
-import com.example.alinnemes.moviesapp_version10.model.movie.MovieView;
+import com.example.alinnemes.moviesapp_version10.views.MovieView;
 
 import java.util.ArrayList;
 
@@ -47,7 +47,8 @@ public class SuperClassFragment extends Fragment implements ProcessListener, Mov
     public ProgressDialog pdLoading;
     //array data
     public ArrayList<Movie> movies;
-    public MovieManager movieManager;
+    public String param;
+    public MainPresenterImpl mainPresenter = new MainPresenterImpl();
 
     @Override
     public void onResume() {
@@ -58,7 +59,7 @@ public class SuperClassFragment extends Fragment implements ProcessListener, Mov
     @Override
     public void onDestroy() {
         super.onDestroy();
-        movieManager.setProcessListener(null);
+        mainPresenter.settingListenerForManager(null);
         SplashActivity.fetchFromNetwork = false;
     }
 
@@ -71,8 +72,8 @@ public class SuperClassFragment extends Fragment implements ProcessListener, Mov
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        movieManager = new MovieManager();
-        movieManager.setProcessListener(this);
+        mainPresenter.creatingNewManager();
+        mainPresenter.settingListenerForManager(this);
 
     }
 
@@ -92,12 +93,12 @@ public class SuperClassFragment extends Fragment implements ProcessListener, Mov
         pdLoading = new ProgressDialog(getActivity());
         pdLoading.setCancelable(false);
 
-        listMovies();
+        listMovies(param);
 
         informationImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listMovies();
+                listMovies(param);
             }
         });
 
@@ -116,12 +117,14 @@ public class SuperClassFragment extends Fragment implements ProcessListener, Mov
     }
 
 
-    public void listMovies() {
+    public void listMovies(String param) {
         if (InternetUtilityClass.isOnline(getActivity())) {
             informationImageView.setVisibility(View.GONE);
             informationTextView.setVisibility(View.GONE);
-
-            movieManager.startListingMovies(getActivity(), MovieManager.LIST_POPULAR, SplashActivity.fetchFromNetwork);
+//            if (movies != null && movies.size()!=0) {
+//                this.onLoadEnded();
+//            } else
+            mainPresenter.onRequestingMoviesList(getActivity().getApplicationContext(), param);
 
         } else {
             showInformationToUser(getString(R.string.no_internet_connection), R.drawable.no_internet_connection);
@@ -138,10 +141,6 @@ public class SuperClassFragment extends Fragment implements ProcessListener, Mov
             startActivity(new Intent(getActivity(), SettingsActivity.class));
             return true;
         }
-        if (id == R.id.action_refresh) {
-            listMovies();
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -154,7 +153,7 @@ public class SuperClassFragment extends Fragment implements ProcessListener, Mov
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        listMovies();
+                        listMovies(param);
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
                 }, 1500);
@@ -165,7 +164,6 @@ public class SuperClassFragment extends Fragment implements ProcessListener, Mov
 
     public void setGridView() {
 
-        recyclerView.setHasFixedSize(true);
         final MyRecyclerAdapter adapter = new MyRecyclerAdapter(movies, getContext());
         adapter.notifyDataSetChanged();
         recyclerView.setHasFixedSize(true);
@@ -190,7 +188,7 @@ public class SuperClassFragment extends Fragment implements ProcessListener, Mov
     @Override
     public void onLoadEnded() {
         pdLoading.dismiss();
-        movies = movieManager.getMoviesList();
+        movies = mainPresenter.onLoadedMoviesListFinished();
         setGridView();
     }
 
@@ -206,6 +204,10 @@ public class SuperClassFragment extends Fragment implements ProcessListener, Mov
         informationTextView.setVisibility(View.VISIBLE);
         informationImageView.setImageResource(img);
         informationTextView.setText(msg);
+    }
+
+    public void setParam(String param) {
+        this.param = param;
     }
 
 }

@@ -1,4 +1,4 @@
-package com.example.alinnemes.moviesapp_version10.Utility;
+package com.example.alinnemes.moviesapp_version10.Utility.utilities;
 
 /**
  * Created by alin.nemes on 09-Aug-16.

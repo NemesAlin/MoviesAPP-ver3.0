@@ -10,6 +10,8 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,29 +21,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.alinnemes.moviesapp_version10.R;
 import com.example.alinnemes.moviesapp_version10.Utility.ProcessListener;
-import com.example.alinnemes.moviesapp_version10.Utility.ViewUtility;
-import com.example.alinnemes.moviesapp_version10.Utility.adapters.ReviewListViewAdapter;
+import com.example.alinnemes.moviesapp_version10.Utility.adapters.MyRecyclerAdapter;
+import com.example.alinnemes.moviesapp_version10.Utility.adapters.MyRecyclerAdapterForReviews;
+import com.example.alinnemes.moviesapp_version10.Utility.adapters.MyRecyclerAdapterForTrailers;
+import com.example.alinnemes.moviesapp_version10.Utility.adapters.RecyclerItemClickListener;
 import com.example.alinnemes.moviesapp_version10.Utility.adapters.TrailerListViewAdapter;
-import com.example.alinnemes.moviesapp_version10.Utility.manager.MovieManager;
+import com.example.alinnemes.moviesapp_version10.Utility.utilities.ViewUtility;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.activities.MainActivity;
 import com.example.alinnemes.moviesapp_version10.activities.SettingsActivity;
-import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
 import com.example.alinnemes.moviesapp_version10.model.movie.Movie;
 import com.example.alinnemes.moviesapp_version10.model.review.Review;
 import com.example.alinnemes.moviesapp_version10.model.trailer.Trailer;
+import com.example.alinnemes.moviesapp_version10.presenters.DetailPresenterImpl;
+import com.example.alinnemes.moviesapp_version10.views.DetailView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class DetailFragment extends Fragment implements ProcessListener {
+public class DetailFragment extends Fragment implements ProcessListener, DetailView {
 
     //views
     private ImageView favoriteMovieIV;
@@ -52,8 +56,8 @@ public class DetailFragment extends Fragment implements ProcessListener {
     private TextView trailersTV;
     private TextView reviewsTV;
     private ImageView moviePosterIV;
-    private ListView movieTrailersList;
-    private ListView movieReviewsList;
+    private RecyclerView movieTrailersList;
+    private RecyclerView movieReviewsList;
     private ProgressDialog pdLoading;
     private NestedScrollView layout;
     private CollapsingToolbarLayout collapsingToolbar;
@@ -61,10 +65,9 @@ public class DetailFragment extends Fragment implements ProcessListener {
     private ImageView movieToolbarBackDropIV;
     //data
     private Movie movie;
-    private ArrayList<Trailer> trailers;
-    private ArrayList<Review> reviews;
-    private MovieManager movieManager;
+    private DetailPresenterImpl detailPresenter = DetailPresenterImpl.getInstance();
     private int dominantColor;
+    private boolean needReviews = true;
 
     public DetailFragment() {
         setRetainInstance(true);
@@ -76,13 +79,13 @@ public class DetailFragment extends Fragment implements ProcessListener {
         if (movie != null) {
             this.onLoadEnded();
         }
-        movieManager = MovieManager.getInstance();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        movieManager.setProcessListener(null);
+        detailPresenter.settingListenerForManager(null);
+        detailPresenter.onDestroy();
     }
 
     @Override
@@ -90,13 +93,12 @@ public class DetailFragment extends Fragment implements ProcessListener {
         super.onCreate(savedInstanceState);
 
         setHasOptionsMenu(true);
-
-        movieManager = MovieManager.getInstance();
-        movieManager.setProcessListener(this);
+        detailPresenter.creatingNewManager();
+        detailPresenter.settingListenerForManager(this);
         pdLoading = new ProgressDialog(getActivity());
-
+        detailPresenter.setView(this);
         Intent intent = getActivity().getIntent();
-        movieManager.startDetailedMovieTask(getActivity(), intent.getExtras().getLong(MainActivity.MOVIE_OBJECT), DetailActivity.MOVIE_DETAIL_QUERTY, DetailActivity.MOVIE_FROM_DB);
+        detailPresenter.onRequestDetailMovie(getActivity().getApplicationContext(), intent.getExtras().getLong(MainActivity.MOVIE_OBJECT), DetailActivity.MOVIE_DETAIL_QUERTY, DetailActivity.MOVIE_FROM_DB);
     }
 
     @Override
@@ -123,27 +125,15 @@ public class DetailFragment extends Fragment implements ProcessListener {
         trailersTV.setVisibility(View.GONE);
         reviewsTV = (TextView) view.findViewById(R.id.reviewsTextView);
         reviewsTV.setVisibility(View.GONE);
-        movieTrailersList = (ListView) view.findViewById(R.id.movieTrailersListDETAILVIEW);
-        movieReviewsList = (ListView) view.findViewById(R.id.movieReviewsListDETAILVIEW);
+        movieTrailersList = (RecyclerView) view.findViewById(R.id.movieTrailersListDETAILVIEW);
+        movieReviewsList = (RecyclerView) view.findViewById(R.id.movieReviewsListDETAILVIEW);
         layout = (NestedScrollView) view.findViewById(R.id.DetailScrollView);
 
         favoriteMovieIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                MoviesDB moviesDB = new MoviesDB(getActivity());
-                moviesDB.open();
-                Movie movieToUpdate = moviesDB.getMovie(movie.getTitle());
-                if (movieToUpdate.isFavorite()) {
-                    Picasso.with(getActivity()).load(R.drawable.unfavorite_icon).into(favoriteMovieIV);
-                    moviesDB.updateMovie(movieToUpdate.getId(), movieToUpdate.getTitle(), movieToUpdate.getOverview(), movieToUpdate.getRelease_date(), movieToUpdate.getPoster_path(), movieToUpdate.getBackdrop_path(), movieToUpdate.getVote_average(), movieToUpdate.getRuntime(), movieToUpdate.getPopularity(), false);
-                    Toast.makeText(getActivity(), "Marked as unfavorite!", Toast.LENGTH_SHORT).show();
-                } else {
-                    Picasso.with(getActivity()).load(R.drawable.favorite_icon).into(favoriteMovieIV);
-                    moviesDB.updateMovie(movieToUpdate.getId(), movieToUpdate.getTitle(), movieToUpdate.getOverview(), movieToUpdate.getRelease_date(), movieToUpdate.getPoster_path(), movieToUpdate.getBackdrop_path(), movieToUpdate.getVote_average(), movieToUpdate.getRuntime(), movieToUpdate.getPopularity(), true);
-                    Toast.makeText(getActivity(), "Marked as favorite!", Toast.LENGTH_SHORT).show();
-                }
-                moviesDB.close();
+                detailPresenter.onPressedFavoriteIcon(getActivity().getApplicationContext(), movie);
             }
         });
 
@@ -179,23 +169,27 @@ public class DetailFragment extends Fragment implements ProcessListener {
     @Override
     public void onLoadEnded() {
         pdLoading.dismiss();
-        this.movie = movieManager.getDetailedMovie();
-        if (movie.getRuntime() == 0) {
-            movieManager.startDetailedMovieTask(getActivity().getApplicationContext(), movie.getId(), DetailActivity.MOVIE_DETAIL_QUERTY, null);
+        this.movie = detailPresenter.onLoadedDetailedMovie();
+        if (movie.getRuntime() == -1) {
+            detailPresenter.onRequestDetailMovie(getActivity().getApplicationContext(), movie.getId(), DetailActivity.MOVIE_DETAIL_QUERTY, null);
         }
-        if (movie.getRuntime() != 0 && movie.getTrailers() != null && movie.getTrailers().size() == 0) {
-            movieManager.startDetailedMovieTask(getActivity().getApplicationContext(), movie.getId(), DetailActivity.MOVIE_TRAILER_QUERY, null);
+        if (movie.getRuntime() != -1 && movie.getTrailers() != null && movie.getTrailers().size() == 0) {
+            detailPresenter.onRequestDetailMovie(getActivity().getApplicationContext(), movie.getId(), DetailActivity.MOVIE_TRAILER_QUERY, null);
         }
-        if (movie.getTrailers().size() != 0 && movie.getReviews() != null && movie.getReviews().size() == 0) {
-            ////STUPID METHOD!!!!!!!!
-            movieManager.startListingMovieReviewsById(getActivity().getApplicationContext(), movie.getId());
+        if (movie.getRuntime() != -1 && movie.getReviews() != null && movie.getReviews().size() == 0 && needReviews) {
+            needReviews = false;
+            detailPresenter.onRequestReviewsDetailerMovie(getActivity().getApplicationContext(), movie.getId());
         }
 
         if (movie != null) {
             setViews();
         }
         if (movie.getTrailers() != null && movie.getTrailers().size() != 0) {
-            setTrailers();
+            setTrailers(movie.getTrailers());
+        }
+
+        if (movie.getReviews() != null && movie.getReviews().size() != 0) {
+            setReviews(movie.getReviews());
         }
 
     }
@@ -218,7 +212,11 @@ public class DetailFragment extends Fragment implements ProcessListener {
         if (!movie.getBackdrop_path().contains("null")) {
             collapsingToolbar.setBackgroundColor(Color.BLACK);
         }
-        dominantColor = ViewUtility.getDominantColor(((BitmapDrawable) moviePosterIV.getDrawable()).getBitmap());
+        try {
+            dominantColor = ViewUtility.getDominantColor(((BitmapDrawable) moviePosterIV.getDrawable()).getBitmap());
+        } catch (Exception e) {
+            dominantColor = Color.WHITE;
+        }
 
         if (dominantColor > Color.LTGRAY) {
             releaseDateTV.setTextColor(Color.BLACK);
@@ -236,25 +234,26 @@ public class DetailFragment extends Fragment implements ProcessListener {
         }
     }
 
-    public void setTrailers() {
-        trailers = movie.getTrailers();
+    public void setTrailers(final ArrayList<Trailer> trailers) {
         if (trailers != null && trailers.size() != 0) {
             trailersTV.setVisibility(View.VISIBLE);
-            TrailerListViewAdapter adapter = new TrailerListViewAdapter(getActivity(), trailers);
+//            TrailerListViewAdapter adapter = new TrailerListViewAdapter(getActivity(), trailers);
+            MyRecyclerAdapterForTrailers adapterForTrailers = new MyRecyclerAdapterForTrailers(getActivity().getApplicationContext(),trailers);
+
             if (dominantColor > Color.LTGRAY) {
-                adapter.setTrailerTitleColorToBlack(true);
+                adapterForTrailers.setTrailerTitleColorToBlack(true);
                 trailersTV.setTextColor(Color.BLACK);
             }
-            movieTrailersList.setAdapter(adapter);
-            ViewUtility.justifyListViewHeightBasedOnChildren(movieTrailersList);
-            movieTrailersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-                public void onItemClick(AdapterView<?> parent, View v,
-                                        int position, long id) {
+            movieTrailersList.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+            movieTrailersList.setAdapter(adapterForTrailers);
+//            ViewUtility.justifyListViewHeightBasedOnChildren(movieTrailersList);
+            movieTrailersList.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
                     Trailer trailer = trailers.get(position);
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(DetailActivity.YOUTUBE_VIDEO_LINK + trailer.getKey())));
                 }
-            });
+            }));
         } else {
             trailersTV.setVisibility(View.GONE);
         }
@@ -264,15 +263,27 @@ public class DetailFragment extends Fragment implements ProcessListener {
 
         if (reviews != null && reviews.size() != 0) {
             reviewsTV.setVisibility(View.VISIBLE);
-            ReviewListViewAdapter adapter = new ReviewListViewAdapter(getActivity(), reviews);
+//            ReviewListViewAdapter adapter = new ReviewListViewAdapter(getActivity(), reviews);
+
+            final MyRecyclerAdapterForReviews adapterForReviews = new MyRecyclerAdapterForReviews(getActivity().getApplicationContext(), reviews);
             if (dominantColor > Color.LTGRAY) {
-                adapter.setColorToBlack(true);
+                adapterForReviews.setColorToBlack(true);
                 reviewsTV.setTextColor(Color.BLACK);
             }
-            movieReviewsList.setAdapter(adapter);
-            ViewUtility.justifyListViewHeightBasedOnChildren(movieReviewsList);
+            movieReviewsList.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+            movieReviewsList.setAdapter(adapterForReviews);
+//            ViewUtility.justifyListViewHeightBasedOnChildren(movieReviewsList);
         } else {
             reviewsTV.setVisibility(View.GONE);
         }
+    }
+
+
+    public void setFavoriteMovieIV(int imageResFavoriteMovieIV) {
+        Picasso.with(getActivity().getApplicationContext()).load(imageResFavoriteMovieIV).into(favoriteMovieIV);
+        if (imageResFavoriteMovieIV == R.drawable.favorite_icon) {
+            Toast.makeText(getActivity().getApplicationContext(), "Marked as favorite!", Toast.LENGTH_SHORT).show();
+        } else
+            Toast.makeText(getActivity().getApplicationContext(), "Marked as unfavorite!", Toast.LENGTH_SHORT).show();
     }
 }

@@ -14,18 +14,11 @@ public class DetailActivity extends AppCompatActivity {
     public static final String MOVIE_REVIEW_QUERY = "reviews";
     public static final String MOVIE_FROM_DB = "db";
     public static final String YOUTUBE_VIDEO_LINK = "http://www.youtube.com/watch?v=";
-    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-
-//        toolbar = (Toolbar) findViewById(R.id.detailToolbar);
-//        setSupportActionBar(toolbar);
-//        ActionBar actionBar = getSupportActionBar();
-//        actionBar.setDisplayHomeAsUpEnabled(true);
-
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()

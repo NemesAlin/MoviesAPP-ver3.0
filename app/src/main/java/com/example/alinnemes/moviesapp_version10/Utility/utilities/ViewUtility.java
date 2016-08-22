@@ -1,4 +1,4 @@
-package com.example.alinnemes.moviesapp_version10.Utility;
+package com.example.alinnemes.moviesapp_version10.Utility.utilities;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -20,7 +20,7 @@ public class ViewUtility {
             return;
         }
         ViewGroup vg = listView;
-        int totalHeight = 100;
+        int totalHeight = 50;
         for (int i = 0; i < adapter.getCount(); i++) {
             View listItem = adapter.getView(i, null, vg);
             listItem.measure(0, 0);

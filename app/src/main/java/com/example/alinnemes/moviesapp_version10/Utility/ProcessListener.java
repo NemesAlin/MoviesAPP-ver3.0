@@ -10,4 +10,6 @@ public interface ProcessListener {
     void onLoadEnded();
 
     void onLoadProgress(String msg);
+
+
 }

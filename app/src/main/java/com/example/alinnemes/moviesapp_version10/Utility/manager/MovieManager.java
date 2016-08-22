@@ -2,15 +2,15 @@ package com.example.alinnemes.moviesapp_version10.Utility.manager;
 
 import android.content.Context;
 
+import com.example.alinnemes.moviesapp_version10.presenters.DetailPresenterImpl;
 import com.example.alinnemes.moviesapp_version10.Utility.ProcessListener;
 import com.example.alinnemes.moviesapp_version10.Utility.tasks.DetailMovieTask;
+import com.example.alinnemes.moviesapp_version10.Utility.tasks.FavoriteMovieTask;
 import com.example.alinnemes.moviesapp_version10.Utility.tasks.FetchMovieTask;
 import com.example.alinnemes.moviesapp_version10.Utility.tasks.ListMovieFromDBTask;
 import com.example.alinnemes.moviesapp_version10.Utility.tasks.ListReviewsMovieFromDBTask;
 import com.example.alinnemes.moviesapp_version10.Utility.tasks.NowPlayingMoviesTask;
-import com.example.alinnemes.moviesapp_version10.fragments.DetailFragment;
 import com.example.alinnemes.moviesapp_version10.model.movie.Movie;
-import com.example.alinnemes.moviesapp_version10.model.review.Review;
 
 import java.util.ArrayList;
 
@@ -23,19 +23,15 @@ public class MovieManager {
     public static final String LIST_POPULAR = "popular";
     public static final String LIST_TOP_RATED = "top_rated";
     public static final String LIST_NOW_PLAYING = "now_playing";
-    private static MovieManager ourInstance = new MovieManager();
+    public static final String API_BASE_URL = "https://api.themoviedb.org/3/movie/";
+    public static final String apiKey_PARAM = "api_key";
+
     private ArrayList<Movie> movies;
     private Movie detailedMovie;
     private ProcessListener processListener;
+    private DetailPresenterImpl detailPresenter = DetailPresenterImpl.getInstance();
     private String param;
     private Context context;
-
-    public MovieManager() {
-    }
-
-    public static MovieManager getInstance() {
-        return ourInstance;
-    }
 
     public void startListingMovies(Context context, String param, boolean fetchFromNetwork) {
 
@@ -77,12 +73,6 @@ public class MovieManager {
         new ListReviewsMovieFromDBTask(context, this).execute(id);
     }
 
-    public void setReviews(ArrayList<Review> reviews) {
-        if (processListener instanceof DetailFragment) {
-            ((DetailFragment) processListener).setReviews(reviews);
-        }
-    }
-
     public ArrayList<Movie> getMoviesList() {
         return movies;
     }
@@ -118,6 +108,10 @@ public class MovieManager {
             this.processListener = processListener;
     }
 
+    public void favoriteMovie(Context context, Movie movie) {
+        new FavoriteMovieTask(this, context, movie).execute();
+    }
+
     public void onLoadStarted() {
         if (processListener != null) {
             processListener.onLoadStarted();
@@ -134,5 +128,9 @@ public class MovieManager {
             processListener.onLoadProgress(msg);
     }
 
+    public void onMarkedFavoriteMovie(int imageResource) {
+                detailPresenter.setFavoriteMovieIV(imageResource);
+
+    }
 
 }

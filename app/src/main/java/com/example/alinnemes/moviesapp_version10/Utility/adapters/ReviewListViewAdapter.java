@@ -40,7 +40,7 @@ public class ReviewListViewAdapter extends ArrayAdapter<Review> {
             //instance the newViewHolder to hold the references
             holder = new ViewHolder();
             convertView = LayoutInflater.from(context).inflate(R.layout.review_item_listview, parent, false);
-            holder.reviewAuthor = (TextView) convertView.findViewById(R.id.reviewAutor);
+            holder.reviewAuthor = (TextView) convertView.findViewById(R.id.reviewAuthor);
             holder.reviewContent = (TextView) convertView.findViewById(R.id.reviewContent);
 
             //set tag to remember in holder the references for the widgets :)

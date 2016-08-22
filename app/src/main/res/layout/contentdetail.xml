@@ -6,6 +6,8 @@
     android:focusable="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+    <!--android:fillViewport="true"-->
+
     <RelativeLayout
         android:id="@+id/relativeLayoutSCROLLABLE"
         android:layout_width="match_parent"
@@ -101,7 +103,7 @@
             android:textStyle="bold"
             android:typeface="normal" />
 
-        <ListView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/movieTrailersListDETAILVIEW"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -109,7 +111,7 @@
             android:fitsSystemWindows="true"
             android:paddingTop="16dp"
             android:textColor="@android:color/white"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+             />
 
 
         <TextView
@@ -128,14 +130,26 @@
             android:textStyle="bold"
             android:typeface="normal" />
 
-        <ListView
+
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/movieReviewsListDETAILVIEW"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/reviewsTextView"
-            android:fitsSystemWindows="true"
             android:paddingTop="16dp"
+            android:fitsSystemWindows="true"
+            android:clipToPadding="false"
             android:textColor="@android:color/white"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            />
+
+        <!--<ListView-->
+            <!--android:id="@+id/movieReviewsListDETAILVIEW"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_below="@id/reviewsTextView"-->
+            <!--android:fitsSystemWindows="true"-->
+            <!--android:fillViewport="true"-->
+           <!---->
+            <!--android:textColor="@android:color/white" />-->
     </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>

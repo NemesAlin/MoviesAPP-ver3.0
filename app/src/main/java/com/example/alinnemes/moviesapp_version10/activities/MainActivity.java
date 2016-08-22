@@ -55,11 +55,6 @@ public class MainActivity extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-//        if (savedInstanceState == null) {
-//            getSupportFragmentManager().beginTransaction()
-//                    .add(R.id.container, new PopularFragment())
-//                    .commit();
-//        }
     }
 
     private void setupViewPager(ViewPager viewPager) {

@@ -1,4 +1,4 @@
-package com.example.alinnemes.moviesapp_version10.Utility;
+package com.example.alinnemes.moviesapp_version10.Utility.utilities;
 
 import android.content.Context;
 import android.content.SharedPreferences;

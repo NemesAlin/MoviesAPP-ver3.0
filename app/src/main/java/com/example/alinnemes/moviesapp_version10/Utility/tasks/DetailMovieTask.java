@@ -6,12 +6,11 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.alinnemes.moviesapp_version10.BuildConfig;
-import com.example.alinnemes.moviesapp_version10.Utility.DataUtilityClass;
+import com.example.alinnemes.moviesapp_version10.Utility.utilities.DataUtilityClass;
 import com.example.alinnemes.moviesapp_version10.Utility.manager.MovieManager;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
 import com.example.alinnemes.moviesapp_version10.model.movie.Movie;
-import com.example.alinnemes.moviesapp_version10.model.review.Review;
 import com.example.alinnemes.moviesapp_version10.model.trailer.Trailer;
 
 import org.json.JSONArray;
@@ -62,13 +61,10 @@ public class DetailMovieTask extends AsyncTask<String, Void, Movie> {
         String moviesJsonSTRING;
 
         try {
-            final String API_BASE_URL = "https://api.themoviedb.org/3/movie/";
-            final String apiKey_PARAM = "api_key";
-
             //http://api.themoviedb.org/3/movie/id?api_key = {MY_API_KEY}
             //http://api.themoviedb.org/3/movie/id/videos?api_key = {MY_API_KEY}
             //http://api.themoviedb.org/3/movie/id/reviews?api_key = {MY_API_KEY}
-            Uri.Builder builtUri = Uri.parse(API_BASE_URL).buildUpon()
+            Uri.Builder builtUri = Uri.parse(MovieManager.API_BASE_URL).buildUpon()
                     .appendPath(params[0]);
             if (DataUtilityClass.isNumeric(params[0])) {
                 if (params.length > 1 && params[1].equals(DetailActivity.MOVIE_TRAILER_QUERY)) {
@@ -78,7 +74,7 @@ public class DetailMovieTask extends AsyncTask<String, Void, Movie> {
                     builtUri.appendPath("reviews");
                 }
             }
-            builtUri.appendQueryParameter(apiKey_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
+            builtUri.appendQueryParameter(MovieManager.apiKey_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
                     .build();
 
             URL url = new URL(builtUri.toString());
@@ -116,8 +112,6 @@ public class DetailMovieTask extends AsyncTask<String, Void, Movie> {
                     publishProgress();
                     if (params.length > 1 && params[1].equals(DetailActivity.MOVIE_TRAILER_QUERY)) {
                         movie = getTrailersDataFromJsonMovie(moviesJsonSTRING, params[0]);
-                    } else if (params.length > 1 && params[1].equals(DetailActivity.MOVIE_REVIEW_QUERY)) {
-                        movie = getReviewsDataFromJsonMovie(moviesJsonSTRING, params[0]);
                     }
                 }
             }
@@ -202,51 +196,6 @@ public class DetailMovieTask extends AsyncTask<String, Void, Movie> {
             movieToReturn.setTrailers(null);
         }
         return movieToReturn;
-    }
-
-    private Movie getReviewsDataFromJsonMovie(String moviesJsonSTRING, String params) throws JSONException {
-        final String OWN_ID = "id";
-        final String OWN_AUTHOR = "author";
-        final String OWN_CONTENT = "content";
-
-        MoviesDB moviesDB = new MoviesDB(mContext);
-        moviesDB.open();
-        Movie movieToReturn = null;
-        Review review;
-
-        JSONObject moviesJson = new JSONObject(moviesJsonSTRING);
-        JSONArray moviesResultsArray = moviesJson.getJSONArray("results");
-
-        for (int i = 0; i < moviesResultsArray.length(); i++) {
-
-            final String id;
-            final String author;
-            final String content;
-
-            JSONObject movieJSONObject = moviesResultsArray.getJSONObject(i);
-
-            id = movieJSONObject.getString(OWN_ID);
-            author = movieJSONObject.getString(OWN_AUTHOR);
-            content = movieJSONObject.getString(OWN_CONTENT);
-
-            review = moviesDB.getReview(id);
-
-            if (review == null) {//review doesn't exist, create it!
-                moviesDB.createReview(id, Long.parseLong(params), author, content);
-            } else if (!author.equals(review.getAuthor()) || !content.equals(review.getContent())) {
-                //review exist,update it if is different from the api key;
-                moviesDB.updateReview(id, author, content);
-            }
-        }
-
-
-        movieToReturn = moviesDB.getMovie(Long.parseLong(params));
-        moviesDB.close();
-        if (movieToReturn.getReviews().size() == 0) {
-            movieToReturn.setReviews(null);
-        }
-        return movieToReturn;
-
     }
 
     public Movie getMovieFromDB(long movieId) {
