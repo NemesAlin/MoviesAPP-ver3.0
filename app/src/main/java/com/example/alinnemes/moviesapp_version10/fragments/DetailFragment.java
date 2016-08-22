@@ -19,18 +19,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.alinnemes.moviesapp_version10.R;
 import com.example.alinnemes.moviesapp_version10.Utility.ProcessListener;
-import com.example.alinnemes.moviesapp_version10.Utility.adapters.MyRecyclerAdapter;
 import com.example.alinnemes.moviesapp_version10.Utility.adapters.MyRecyclerAdapterForReviews;
 import com.example.alinnemes.moviesapp_version10.Utility.adapters.MyRecyclerAdapterForTrailers;
 import com.example.alinnemes.moviesapp_version10.Utility.adapters.RecyclerItemClickListener;
-import com.example.alinnemes.moviesapp_version10.Utility.adapters.TrailerListViewAdapter;
 import com.example.alinnemes.moviesapp_version10.Utility.utilities.ViewUtility;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.activities.MainActivity;
@@ -237,8 +234,7 @@ public class DetailFragment extends Fragment implements ProcessListener, DetailV
     public void setTrailers(final ArrayList<Trailer> trailers) {
         if (trailers != null && trailers.size() != 0) {
             trailersTV.setVisibility(View.VISIBLE);
-//            TrailerListViewAdapter adapter = new TrailerListViewAdapter(getActivity(), trailers);
-            MyRecyclerAdapterForTrailers adapterForTrailers = new MyRecyclerAdapterForTrailers(getActivity().getApplicationContext(),trailers);
+            MyRecyclerAdapterForTrailers adapterForTrailers = new MyRecyclerAdapterForTrailers(getActivity().getApplicationContext(), trailers);
 
             if (dominantColor > Color.LTGRAY) {
                 adapterForTrailers.setTrailerTitleColorToBlack(true);
@@ -246,7 +242,6 @@ public class DetailFragment extends Fragment implements ProcessListener, DetailV
             }
             movieTrailersList.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
             movieTrailersList.setAdapter(adapterForTrailers);
-//            ViewUtility.justifyListViewHeightBasedOnChildren(movieTrailersList);
             movieTrailersList.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
@@ -263,7 +258,6 @@ public class DetailFragment extends Fragment implements ProcessListener, DetailV
 
         if (reviews != null && reviews.size() != 0) {
             reviewsTV.setVisibility(View.VISIBLE);
-//            ReviewListViewAdapter adapter = new ReviewListViewAdapter(getActivity(), reviews);
 
             final MyRecyclerAdapterForReviews adapterForReviews = new MyRecyclerAdapterForReviews(getActivity().getApplicationContext(), reviews);
             if (dominantColor > Color.LTGRAY) {
@@ -272,7 +266,6 @@ public class DetailFragment extends Fragment implements ProcessListener, DetailV
             }
             movieReviewsList.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
             movieReviewsList.setAdapter(adapterForReviews);
-//            ViewUtility.justifyListViewHeightBasedOnChildren(movieReviewsList);
         } else {
             reviewsTV.setVisibility(View.GONE);
         }
