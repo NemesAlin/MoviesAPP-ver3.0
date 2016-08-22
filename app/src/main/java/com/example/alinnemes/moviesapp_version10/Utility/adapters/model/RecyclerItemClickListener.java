@@ -1,4 +1,4 @@
-package com.example.alinnemes.moviesapp_version10.Utility.adapters;
+package com.example.alinnemes.moviesapp_version10.Utility.adapters.model;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

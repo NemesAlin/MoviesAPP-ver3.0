@@ -27,7 +27,7 @@ import com.example.alinnemes.moviesapp_version10.R;
 import com.example.alinnemes.moviesapp_version10.Utility.ProcessListener;
 import com.example.alinnemes.moviesapp_version10.Utility.adapters.MyRecyclerAdapterForReviews;
 import com.example.alinnemes.moviesapp_version10.Utility.adapters.MyRecyclerAdapterForTrailers;
-import com.example.alinnemes.moviesapp_version10.Utility.adapters.RecyclerItemClickListener;
+import com.example.alinnemes.moviesapp_version10.Utility.adapters.model.RecyclerItemClickListener;
 import com.example.alinnemes.moviesapp_version10.Utility.utilities.ViewUtility;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.activities.MainActivity;

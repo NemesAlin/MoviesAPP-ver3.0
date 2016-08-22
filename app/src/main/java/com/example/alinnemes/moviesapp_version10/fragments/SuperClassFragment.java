@@ -22,7 +22,7 @@ import com.example.alinnemes.moviesapp_version10.R;
 import com.example.alinnemes.moviesapp_version10.Utility.utilities.InternetUtilityClass;
 import com.example.alinnemes.moviesapp_version10.Utility.ProcessListener;
 import com.example.alinnemes.moviesapp_version10.Utility.adapters.MyRecyclerAdapter;
-import com.example.alinnemes.moviesapp_version10.Utility.adapters.RecyclerItemClickListener;
+import com.example.alinnemes.moviesapp_version10.Utility.adapters.model.RecyclerItemClickListener;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.activities.MainActivity;
 import com.example.alinnemes.moviesapp_version10.activities.SettingsActivity;
