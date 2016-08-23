@@ -1,4 +1,4 @@
-package com.example.alinnemes.moviesapp_version10.Utility.adapters;
+package com.example.alinnemes.moviesapp_version10.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -9,8 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.alinnemes.moviesapp_version10.MoviesApp;
 import com.example.alinnemes.moviesapp_version10.R;
-import com.example.alinnemes.moviesapp_version10.model.review.Review;
 import com.example.alinnemes.moviesapp_version10.model.trailer.Trailer;
 import com.squareup.picasso.Picasso;
 
@@ -25,8 +25,8 @@ public class MyRecyclerAdapterForTrailers extends RecyclerView.Adapter<MyRecycle
     private boolean trailerTitleColor = false;
     private ArrayList<Trailer> trailers;
 
-    public MyRecyclerAdapterForTrailers(Context context, ArrayList<Trailer> trailers) {
-        this.context = context;
+    public MyRecyclerAdapterForTrailers(ArrayList<Trailer> trailers) {
+        this.context = MoviesApp.getContext();
         this.trailers = trailers;
     }
 

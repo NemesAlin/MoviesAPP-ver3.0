@@ -1,10 +1,10 @@
-package com.example.alinnemes.moviesapp_version10.Utility.tasks;
+package com.example.alinnemes.moviesapp_version10.tasks;
 
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.example.alinnemes.moviesapp_version10.Utility.manager.MovieManager;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
+import com.example.alinnemes.moviesapp_version10.manager.MovieManager;
 import com.example.alinnemes.moviesapp_version10.model.movie.Movie;
 
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public class ListMovieFromDBTask extends AsyncTask<String, Void, ArrayList<Movie
     @Override
     protected void onPostExecute(ArrayList<Movie> movies) {
         super.onPostExecute(movies);
-        movieManager.setMoviesList(movies);
+        movieManager.onLoadedListOfMovies(movies);
         movieManager.onLoadEnded();
     }
 }

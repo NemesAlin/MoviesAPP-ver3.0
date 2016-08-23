@@ -7,14 +7,14 @@
         android:id="@+id/reviewAuthor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Large Text"
-        android:textColor="@android:color/white"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:layout_marginLeft="18dp"
-        android:layout_marginStart="18dp" />
+        android:layout_marginStart="18dp"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@android:color/white" />
 
     <TextView
         android:id="@+id/reviewContent"
@@ -25,10 +25,10 @@
         android:layout_below="@+id/reviewAuthor"
         android:layout_marginLeft="30dp"
         android:layout_marginStart="30dp"
-        android:paddingRight="16dp"
-        android:textColor="@android:color/white"
         android:inputType="textMultiLine"
+        android:paddingRight="16dp"
         android:paddingTop="@dimen/activity_vertical_margin"
         android:text="Small Text"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@android:color/white" />
 </RelativeLayout>

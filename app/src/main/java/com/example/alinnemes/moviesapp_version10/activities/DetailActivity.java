@@ -2,7 +2,6 @@ package com.example.alinnemes.moviesapp_version10.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
 import com.example.alinnemes.moviesapp_version10.R;
 import com.example.alinnemes.moviesapp_version10.fragments.DetailFragment;

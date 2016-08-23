@@ -1,6 +1,5 @@
-package com.example.alinnemes.moviesapp_version10.Utility.adapters;
+package com.example.alinnemes.moviesapp_version10.adapters;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -20,10 +19,8 @@ public class MyRecyclerAdapterForReviews extends RecyclerView.Adapter<MyRecycler
 
     boolean changeColor = false;
     private ArrayList<Review> reviews;
-    private Context ctx;
 
-    public MyRecyclerAdapterForReviews(Context ctx, ArrayList<Review> reviews) {
-        this.ctx = ctx;
+    public MyRecyclerAdapterForReviews(ArrayList<Review> reviews) {
         this.reviews = reviews;
     }
 

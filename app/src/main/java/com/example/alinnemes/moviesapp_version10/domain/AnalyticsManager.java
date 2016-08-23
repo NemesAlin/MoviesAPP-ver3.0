@@ -15,6 +15,6 @@ public class AnalyticsManager {
     }
 
     public void registerAppEnter() {
-        Toast.makeText(app, "Application enter", Toast.LENGTH_LONG).show();
+        Toast.makeText(app, "Welcome!", Toast.LENGTH_LONG).show();
     }
 }

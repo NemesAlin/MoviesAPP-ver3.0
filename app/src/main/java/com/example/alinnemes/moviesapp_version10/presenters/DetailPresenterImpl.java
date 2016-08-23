@@ -1,9 +1,7 @@
 package com.example.alinnemes.moviesapp_version10.presenters;
 
-import android.content.Context;
-
-import com.example.alinnemes.moviesapp_version10.views.DetailView;
 import com.example.alinnemes.moviesapp_version10.model.movie.Movie;
+import com.example.alinnemes.moviesapp_version10.views.DetailView;
 
 /**
  * Created by alin.nemes on 19-Aug-16.
@@ -13,49 +11,41 @@ public class DetailPresenterImpl extends MainPresenterImpl implements DetailPres
 
     private DetailView detailView;
 
-    private static DetailPresenterImpl instance;
-    public static DetailPresenterImpl getInstance(){
-        if (instance == null)
-        {
-            instance = new DetailPresenterImpl();
-        }
-        return instance;
+    public DetailPresenterImpl() {
+        super();
+        movieManager.setDetailPresenter(this);
     }
 
-    private DetailPresenterImpl() {
-    }
-
-    @Override
     public void setView(DetailView view) {
         detailView = view;
     }
 
-    @Override
-    public void onRequestDetailMovie(Context context, long idMovie, String param1, String param2) {
-        movieManager.startDetailedMovieTask(context, idMovie, param1, param2);
+    public void requestDetailMovie(long idMovie, String param1, String param2) {
+        movieManager.onRequestDetailMovie(idMovie, param1, param2);
     }
 
     @Override
-    public Movie onLoadedDetailedMovie() {
-        return movieManager.getDetailedMovie();
+    public void onListingDetails(Movie movie) {
+        detailView.listDetails(movie);
     }
 
-    @Override
-    public void onRequestReviewsDetailerMovie(Context context, long idMovie) {
-        movieManager.startListingMovieReviewsById(context,idMovie);
+    public void requestReviews(long idMovie) {
+        movieManager.onRequestMovieReviewsById(idMovie);
     }
 
-    @Override
-    public void onPressedFavoriteIcon(Context context, Movie movie) {
-        movieManager.favoriteMovie(context,movie);
-    }
-
-    public void setFavoriteMovieIV(int imageResFavoriteMovieIV){
-        detailView.setFavoriteMovieIV(imageResFavoriteMovieIV);
+    public void onIconClickListener(Movie movie) {
+        movieManager.updateFavoriteState(movie);
     }
 
     @Override
     public void onDestroy() {
         detailView = null;
+        movieManager.setProcessListener(null);
     }
+
+    @Override
+    public void onMarkedSuccesfull(boolean isFavorite) {
+        detailView.setFavoriteMovieIcon(isFavorite);
+    }
+
 }

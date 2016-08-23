@@ -1,4 +1,4 @@
-package com.example.alinnemes.moviesapp_version10.Utility.tasks;
+package com.example.alinnemes.moviesapp_version10.tasks;
 
 import android.content.Context;
 import android.net.Uri;
@@ -6,11 +6,12 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.alinnemes.moviesapp_version10.BuildConfig;
-import com.example.alinnemes.moviesapp_version10.Utility.utilities.DataUtilityClass;
-import com.example.alinnemes.moviesapp_version10.Utility.manager.MovieManager;
+import com.example.alinnemes.moviesapp_version10.MoviesApp;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
+import com.example.alinnemes.moviesapp_version10.manager.MovieManager;
 import com.example.alinnemes.moviesapp_version10.model.movie.Movie;
 import com.example.alinnemes.moviesapp_version10.model.review.Review;
+import com.example.alinnemes.moviesapp_version10.utilities.DataUtilityClass;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,8 +32,8 @@ public class ListReviewsMovieFromDBTask extends AsyncTask<Long, Void, Movie> {
     private Context mContext;
     private MovieManager movieManager;
 
-    public ListReviewsMovieFromDBTask(Context mContext, MovieManager movieManager) {
-        this.mContext = mContext;
+    public ListReviewsMovieFromDBTask(MovieManager movieManager) {
+        this.mContext = MoviesApp.getContext();
         this.movieManager = movieManager;
     }
 
@@ -42,7 +43,7 @@ public class ListReviewsMovieFromDBTask extends AsyncTask<Long, Void, Movie> {
             return null;
         }
 
-       Movie movie = null;
+        Movie movie = null;
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
         String moviesJsonSTRING;
@@ -88,7 +89,7 @@ public class ListReviewsMovieFromDBTask extends AsyncTask<Long, Void, Movie> {
             }
             moviesJsonSTRING = buffer.toString();
             if (DataUtilityClass.isNumeric(params[0].toString())) {
-                        movie = getReviewsDataFromJsonMovie(moviesJsonSTRING, params[0]);
+                movie = getReviewsDataFromJsonMovie(moviesJsonSTRING, params[0]);
             }
         } catch (IOException io) {
             Log.e("IOExpection", "Error ", io);
@@ -158,7 +159,7 @@ public class ListReviewsMovieFromDBTask extends AsyncTask<Long, Void, Movie> {
     @Override
     protected void onPostExecute(Movie movie) {
         super.onPostExecute(movie);
-        movieManager.setDetailedMovie(movie);
+        movieManager.onLoadedDetails(movie);
         movieManager.onLoadEnded();
     }
 }

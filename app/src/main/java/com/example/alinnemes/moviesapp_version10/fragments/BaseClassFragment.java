@@ -17,38 +17,41 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.alinnemes.moviesapp_version10.presenters.MainPresenterImpl;
+import com.example.alinnemes.moviesapp_version10.MoviesApp;
 import com.example.alinnemes.moviesapp_version10.R;
-import com.example.alinnemes.moviesapp_version10.Utility.utilities.InternetUtilityClass;
-import com.example.alinnemes.moviesapp_version10.Utility.ProcessListener;
-import com.example.alinnemes.moviesapp_version10.Utility.adapters.MyRecyclerAdapter;
-import com.example.alinnemes.moviesapp_version10.Utility.adapters.model.RecyclerItemClickListener;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.activities.MainActivity;
 import com.example.alinnemes.moviesapp_version10.activities.SettingsActivity;
 import com.example.alinnemes.moviesapp_version10.activities.SplashActivity;
+import com.example.alinnemes.moviesapp_version10.adapters.MyRecyclerAdapter;
+import com.example.alinnemes.moviesapp_version10.listeners.ProcessListener;
+import com.example.alinnemes.moviesapp_version10.listeners.RefreshListener;
 import com.example.alinnemes.moviesapp_version10.model.movie.Movie;
-import com.example.alinnemes.moviesapp_version10.views.MovieView;
+import com.example.alinnemes.moviesapp_version10.presenters.MainPresenterImpl;
+import com.example.alinnemes.moviesapp_version10.utilities.InternetUtilityClass;
+import com.example.alinnemes.moviesapp_version10.views.MainView;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
-import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
+import jp.wasabeef.recyclerview.animators.ScaleInLeftAnimator;
 
 /**
  * Created by alin.nemes on 16-Aug-16.
  */
-public class SuperClassFragment extends Fragment implements ProcessListener, MovieView {
+public class BaseClassFragment extends Fragment implements ProcessListener, MainView, RefreshListener {
 
     //Views
-    public RecyclerView recyclerView;
-    public ImageView informationImageView;
-    public TextView informationTextView;
-    public SwipeRefreshLayout mSwipeRefreshLayout;
-    public ProgressDialog pdLoading;
+    private RecyclerView recyclerView;
+    private ImageView informationImageView;
+    private TextView informationTextView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private ProgressDialog pdLoading;
     //array data
-    public ArrayList<Movie> movies;
-    public String param;
-    public MainPresenterImpl mainPresenter = new MainPresenterImpl();
+    private String param;
+    private ArrayList<Movie> savedMoviesListInstance;
+
+    private MainPresenterImpl mainPresenter = new MainPresenterImpl(this);
 
     @Override
     public void onResume() {
@@ -59,7 +62,7 @@ public class SuperClassFragment extends Fragment implements ProcessListener, Mov
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mainPresenter.settingListenerForManager(null);
+        mainPresenter.onDestroy();
         SplashActivity.fetchFromNetwork = false;
     }
 
@@ -72,8 +75,9 @@ public class SuperClassFragment extends Fragment implements ProcessListener, Mov
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        mainPresenter.creatingNewManager();
-        mainPresenter.settingListenerForManager(this);
+        mainPresenter.setProcessListener(this);
+        mainPresenter.setRefreshListener(this);
+
 
     }
 
@@ -83,7 +87,7 @@ public class SuperClassFragment extends Fragment implements ProcessListener, Mov
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.moviefragment_item, container, false);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refreshLayout);
@@ -93,38 +97,36 @@ public class SuperClassFragment extends Fragment implements ProcessListener, Mov
         pdLoading = new ProgressDialog(getActivity());
         pdLoading.setCancelable(false);
 
-        listMovies(param);
+        requestMovies(param);
 
         informationImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listMovies(param);
+                requestMovies(param);
             }
         });
 
-
-        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                Intent intent = new Intent(getActivity(), DetailActivity.class);
-                intent.putExtra(MainActivity.MOVIE_OBJECT, movies.get(position).getId());
-                startActivity(intent);
-            }
-        }));
-
+//        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(View view, int position) {
+//                Intent intent = new Intent(getActivity(), DetailActivity.class);
+//                intent.putExtra(MainActivity.MOVIE_OBJECT, savedMoviesListInstance.get(position).getId());
+//                startActivity(intent);
+//            }
+//        }));
         refreshContent();
         return rootView;
     }
 
 
-    public void listMovies(String param) {
+    public void requestMovies(String param) {
         if (InternetUtilityClass.isOnline(getActivity())) {
             informationImageView.setVisibility(View.GONE);
             informationTextView.setVisibility(View.GONE);
 //            if (movies != null && movies.size()!=0) {
 //                this.onLoadEnded();
 //            } else
-            mainPresenter.onRequestingMoviesList(getActivity().getApplicationContext(), param);
+            mainPresenter.onRequestingMoviesList(param);
 
         } else {
             showInformationToUser(getString(R.string.no_internet_connection), R.drawable.no_internet_connection);
@@ -146,28 +148,32 @@ public class SuperClassFragment extends Fragment implements ProcessListener, Mov
     }
 
     public void refreshContent() {
-        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary), getResources().getColor(R.color.switchColorAccent));
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(android.R.color.holo_blue_bright),
+                getResources().getColor(android.R.color.holo_green_light),
+                getResources().getColor(android.R.color.holo_orange_light),
+                getResources().getColor(android.R.color.holo_red_light));
         SwipeRefreshLayout.OnRefreshListener listener = new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        listMovies(param);
-                        mSwipeRefreshLayout.setRefreshing(false);
+                        SplashActivity.fetchFromNetwork = true;
+                        requestMovies(param);
                     }
-                }, 1500);
+                }, 3000);
             }
         };
         mSwipeRefreshLayout.setOnRefreshListener(listener);
     }
 
-    public void setGridView() {
+    @Override
+    public void listMovies(final ArrayList<Movie> movies) {
 
-        final MyRecyclerAdapter adapter = new MyRecyclerAdapter(movies, getContext());
+        final MyRecyclerAdapter adapter = new MyRecyclerAdapter(movies);
         adapter.notifyDataSetChanged();
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setItemAnimator(new SlideInUpAnimator());
+        recyclerView.setHasFixedSize(false);
+        recyclerView.setItemAnimator(new ScaleInLeftAnimator());
 
         if (movies != null) {
             if (movies.size() != 0) {
@@ -177,24 +183,34 @@ public class SuperClassFragment extends Fragment implements ProcessListener, Mov
         } else {
             showInformationToUser(getString(R.string.no_movies_to_show), R.drawable.sad_face);
         }
+
+        if (movies != null) {
+            savedMoviesListInstance = movies;
+        }
+        adapter.setOnItemClickListener(new MyRecyclerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent = new Intent(MoviesApp.getContext(), DetailActivity.class);
+                intent.putExtra(MainActivity.MOVIE_OBJECT, savedMoviesListInstance.get(position).getId());
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
     public void onLoadStarted() {
-        pdLoading.setMessage("\tLoading...");
+        pdLoading.setMessage(getString(R.string.loadingMsg));
         pdLoading.show();
     }
 
     @Override
     public void onLoadEnded() {
         pdLoading.dismiss();
-        movies = mainPresenter.onLoadedMoviesListFinished();
-        setGridView();
     }
 
     @Override
     public void onLoadProgress(String msg) {
-        pdLoading.setMessage("\t" + msg);
+        pdLoading.setMessage(String.format(Locale.US, getString(R.string.progressMsg), msg));
         pdLoading.show();
     }
 
@@ -210,4 +226,8 @@ public class SuperClassFragment extends Fragment implements ProcessListener, Mov
         this.param = param;
     }
 
+    @Override
+    public void endRefresh() {
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
 }

@@ -1,9 +1,9 @@
 package com.example.alinnemes.moviesapp_version10.fragments;
 
 
-import com.example.alinnemes.moviesapp_version10.Utility.manager.MovieManager;
+import com.example.alinnemes.moviesapp_version10.manager.MovieManager;
 
-public class FavoritesFragment extends SuperClassFragment {
+public class FavoritesFragment extends BaseClassFragment {
     public FavoritesFragment() {
         super.setParam(MovieManager.LIST_FAVORITES);
     }

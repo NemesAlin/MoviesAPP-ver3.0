@@ -111,7 +111,7 @@
             android:fitsSystemWindows="true"
             android:paddingTop="16dp"
             android:textColor="@android:color/white"
-             />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 
         <TextView
@@ -136,20 +136,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/reviewsTextView"
-            android:paddingTop="16dp"
-            android:fitsSystemWindows="true"
             android:clipToPadding="false"
+            android:fitsSystemWindows="true"
+            android:paddingTop="16dp"
             android:textColor="@android:color/white"
-            />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <!--<ListView-->
-            <!--android:id="@+id/movieReviewsListDETAILVIEW"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_below="@id/reviewsTextView"-->
-            <!--android:fitsSystemWindows="true"-->
-            <!--android:fillViewport="true"-->
-           <!---->
-            <!--android:textColor="@android:color/white" />-->
+        <!--android:id="@+id/movieReviewsListDETAILVIEW"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_below="@id/reviewsTextView"-->
+        <!--android:fitsSystemWindows="true"-->
+        <!--android:fillViewport="true"-->
+        <!---->
+        <!--android:textColor="@android:color/white" />-->
     </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>

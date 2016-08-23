@@ -1,4 +1,4 @@
-package com.example.alinnemes.moviesapp_version10.Utility.tasks;
+package com.example.alinnemes.moviesapp_version10.tasks;
 
 import android.content.Context;
 import android.net.Uri;
@@ -6,12 +6,13 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.alinnemes.moviesapp_version10.BuildConfig;
-import com.example.alinnemes.moviesapp_version10.Utility.utilities.DataUtilityClass;
-import com.example.alinnemes.moviesapp_version10.Utility.manager.MovieManager;
+import com.example.alinnemes.moviesapp_version10.MoviesApp;
 import com.example.alinnemes.moviesapp_version10.activities.DetailActivity;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
+import com.example.alinnemes.moviesapp_version10.manager.MovieManager;
 import com.example.alinnemes.moviesapp_version10.model.movie.Movie;
 import com.example.alinnemes.moviesapp_version10.model.trailer.Trailer;
+import com.example.alinnemes.moviesapp_version10.utilities.DataUtilityClass;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,8 +33,8 @@ public class DetailMovieTask extends AsyncTask<String, Void, Movie> {
     private Context mContext;
     private MovieManager movieManager;
 
-    public DetailMovieTask(Context mContext, MovieManager movieManager) {
-        this.mContext = mContext;
+    public DetailMovieTask(MovieManager movieManager) {
+        this.mContext = MoviesApp.getContext();
         this.movieManager = movieManager;
     }
 
@@ -213,7 +214,7 @@ public class DetailMovieTask extends AsyncTask<String, Void, Movie> {
     @Override
     protected void onPostExecute(Movie movie) {
         super.onPostExecute(movie);
-        movieManager.setDetailedMovie(movie);
+        movieManager.onLoadedDetails(movie);
         movieManager.onLoadEnded();
     }
 

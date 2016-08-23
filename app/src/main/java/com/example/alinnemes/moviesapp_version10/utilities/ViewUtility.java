@@ -1,4 +1,4 @@
-package com.example.alinnemes.moviesapp_version10.Utility.utilities;
+package com.example.alinnemes.moviesapp_version10.utilities;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
