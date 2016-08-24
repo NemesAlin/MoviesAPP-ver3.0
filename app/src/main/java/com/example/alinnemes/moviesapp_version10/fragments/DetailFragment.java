@@ -30,7 +30,7 @@ import com.example.alinnemes.moviesapp_version10.activities.MainActivity;
 import com.example.alinnemes.moviesapp_version10.activities.SettingsActivity;
 import com.example.alinnemes.moviesapp_version10.adapters.MyRecyclerAdapterForReviews;
 import com.example.alinnemes.moviesapp_version10.adapters.MyRecyclerAdapterForTrailers;
-import com.example.alinnemes.moviesapp_version10.adapters.model.RecyclerItemClickListener;
+import com.example.alinnemes.moviesapp_version10.listeners.OnItemClickListener;
 import com.example.alinnemes.moviesapp_version10.listeners.ProcessListener;
 import com.example.alinnemes.moviesapp_version10.model.movie.Movie;
 import com.example.alinnemes.moviesapp_version10.model.review.Review;
@@ -90,7 +90,6 @@ public class DetailFragment extends Fragment implements ProcessListener, DetailV
         super.onCreate(savedInstanceState);
 
         setHasOptionsMenu(true);
-
 
         detailPresenter.setProcessListener(this);
         detailPresenter.setView(this);
@@ -182,7 +181,6 @@ public class DetailFragment extends Fragment implements ProcessListener, DetailV
         favoriteMovieIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 detailPresenter.onIconClickListener(movie);
             }
         });
@@ -246,13 +244,14 @@ public class DetailFragment extends Fragment implements ProcessListener, DetailV
             }
             movieTrailersList.setLayoutManager(new LinearLayoutManager(MoviesApp.getContext()));
             movieTrailersList.setAdapter(adapterForTrailers);
-            movieTrailersList.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
+            movieTrailersList.setNestedScrollingEnabled(false);
+            adapterForTrailers.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
                     Trailer trailer = trailers.get(position);
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(DetailActivity.YOUTUBE_VIDEO_LINK + trailer.getKey())));
                 }
-            }));
+            });
         } else {
             trailersTV.setVisibility(View.GONE);
         }
@@ -270,6 +269,7 @@ public class DetailFragment extends Fragment implements ProcessListener, DetailV
             }
             movieReviewsList.setLayoutManager(new LinearLayoutManager(MoviesApp.getContext()));
             movieReviewsList.setAdapter(adapterForReviews);
+            movieReviewsList.setNestedScrollingEnabled(false);
         } else {
             reviewsTV.setVisibility(View.GONE);
         }

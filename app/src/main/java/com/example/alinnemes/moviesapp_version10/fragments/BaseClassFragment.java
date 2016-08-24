@@ -24,6 +24,7 @@ import com.example.alinnemes.moviesapp_version10.activities.MainActivity;
 import com.example.alinnemes.moviesapp_version10.activities.SettingsActivity;
 import com.example.alinnemes.moviesapp_version10.activities.SplashActivity;
 import com.example.alinnemes.moviesapp_version10.adapters.MyRecyclerAdapter;
+import com.example.alinnemes.moviesapp_version10.listeners.OnItemClickListener;
 import com.example.alinnemes.moviesapp_version10.listeners.ProcessListener;
 import com.example.alinnemes.moviesapp_version10.listeners.RefreshListener;
 import com.example.alinnemes.moviesapp_version10.model.movie.Movie;
@@ -106,14 +107,6 @@ public class BaseClassFragment extends Fragment implements ProcessListener, Main
             }
         });
 
-//        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(View view, int position) {
-//                Intent intent = new Intent(getActivity(), DetailActivity.class);
-//                intent.putExtra(MainActivity.MOVIE_OBJECT, savedMoviesListInstance.get(position).getId());
-//                startActivity(intent);
-//            }
-//        }));
         refreshContent();
         return rootView;
     }
@@ -123,13 +116,14 @@ public class BaseClassFragment extends Fragment implements ProcessListener, Main
         if (InternetUtilityClass.isOnline(getActivity())) {
             informationImageView.setVisibility(View.GONE);
             informationTextView.setVisibility(View.GONE);
-//            if (movies != null && movies.size()!=0) {
-//                this.onLoadEnded();
-//            } else
+
             mainPresenter.onRequestingMoviesList(param);
 
         } else {
             showInformationToUser(getString(R.string.no_internet_connection), R.drawable.no_internet_connection);
+            if(mSwipeRefreshLayout.isRefreshing()){
+                endRefresh();
+            }
         }
 
     }
@@ -175,19 +169,12 @@ public class BaseClassFragment extends Fragment implements ProcessListener, Main
         recyclerView.setHasFixedSize(false);
         recyclerView.setItemAnimator(new ScaleInLeftAnimator());
 
-        if (movies != null) {
-            if (movies.size() != 0) {
-                recyclerView.setAdapter(adapter);
-            } else
-                showInformationToUser(getString(R.string.no_movies_to_show), R.drawable.sad_face);
-        } else {
-            showInformationToUser(getString(R.string.no_movies_to_show), R.drawable.sad_face);
-        }
+        recyclerView.setAdapter(adapter);
 
         if (movies != null) {
             savedMoviesListInstance = movies;
         }
-        adapter.setOnItemClickListener(new MyRecyclerAdapter.OnItemClickListener() {
+        adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(MoviesApp.getContext(), DetailActivity.class);
@@ -195,6 +182,10 @@ public class BaseClassFragment extends Fragment implements ProcessListener, Main
                 startActivity(intent);
             }
         });
+    }
+
+    public void onErrorOccurred() {
+        showInformationToUser(getString(R.string.no_movies_to_show), R.drawable.sad_face);
     }
 
     @Override

@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.alinnemes.moviesapp_version10.MoviesApp;
 import com.example.alinnemes.moviesapp_version10.R;
+import com.example.alinnemes.moviesapp_version10.listeners.OnItemClickListener;
 import com.example.alinnemes.moviesapp_version10.model.trailer.Trailer;
 import com.squareup.picasso.Picasso;
 
@@ -21,6 +22,7 @@ import java.util.ArrayList;
  */
 public class MyRecyclerAdapterForTrailers extends RecyclerView.Adapter<MyRecyclerAdapterForTrailers.ViewHolder> {
 
+    OnItemClickListener mItemClickListener;
     private Context context;
     private boolean trailerTitleColor = false;
     private ArrayList<Trailer> trailers;
@@ -49,6 +51,7 @@ public class MyRecyclerAdapterForTrailers extends RecyclerView.Adapter<MyRecycle
             holder.trailerTitle.setTextColor(Color.BLACK);
         }
         holder.trailerTitle.setText(trailer.getName());
+        holder.itemView.setOnClickListener(holder);
         holder.itemView.setTag(trailer);
     }
 
@@ -57,7 +60,11 @@ public class MyRecyclerAdapterForTrailers extends RecyclerView.Adapter<MyRecycle
         return trailers.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
+        this.mItemClickListener = mItemClickListener;
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView playButton;
         TextView trailerTitle;
 
@@ -65,6 +72,13 @@ public class MyRecyclerAdapterForTrailers extends RecyclerView.Adapter<MyRecycle
             super(itemView);
             playButton = (ImageView) itemView.findViewById(R.id.playIconImageView);
             trailerTitle = (TextView) itemView.findViewById(R.id.trailerTitleView);
+        }
+
+        @Override
+        public void onClick(View view) {
+            if(mItemClickListener!=null){
+                mItemClickListener.onItemClick(view, getAdapterPosition());
+            }
         }
     }
 

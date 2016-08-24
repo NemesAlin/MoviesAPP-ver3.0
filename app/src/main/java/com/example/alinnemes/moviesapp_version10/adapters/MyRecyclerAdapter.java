@@ -9,13 +9,14 @@ import android.widget.ImageView;
 
 import com.example.alinnemes.moviesapp_version10.MoviesApp;
 import com.example.alinnemes.moviesapp_version10.R;
+import com.example.alinnemes.moviesapp_version10.listeners.OnItemClickListener;
 import com.example.alinnemes.moviesapp_version10.model.movie.Movie;
+import com.squareup.picasso.Picasso;
 
-it;
+import java.util.ArrayList;
 
 /**
- * Created by alin.nemes on 16-so;
- * mport com.squareup.picasso.PicasayLisimport java.util.ArrAug-16.
+ * Created by alin.nemes on 16-Aug-16.
  */
 public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.ViewHolder> {
 
@@ -23,17 +24,12 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Vi
     private ArrayList<Movie> movies;
     private Context ctx;
 
-    {
-
-        void onItemClick (View view,int position);
-    }
 
     public MyRecyclerAdapter(ArrayList<Movie> movies) {
         this.movies = movies;
         this.ctx = MoviesApp.getContext();
     }
 
-    nto(holder.moviePoster);
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -42,30 +38,28 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Vi
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(ViewHolder holder, int position) {
         Movie movie = movies.get(position);
 
         holder.moviePoster.setImageBitmap(null);
         Picasso.with(ctx).cancelRequest(holder.moviePoster);
-        Picasso.with(ctx).load(movie.getPoster_path()).i
-        setTag(movie);
+        Picasso.with(ctx).load(movie.getPoster_path()).into(holder.moviePoster);
+        holder.itemView.setOnClickListener(holder);
+        holder.itemView.setTag(movie);
     }
 
-    .
 
     @Override
     public int getItemCount() {
         return movies.size();
     }
 
-    holder.itemView.setOnClickListener(holder);
-    holder.itener
+
 
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
         this.mItemClickListener = mItemClickListener;
     }
 
-    public interface OnItemClickListemView
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ImageView moviePoster;
@@ -77,8 +71,6 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Vi
 
         @Override
         public void onClick(View view) {
-
-//            Toast.makeText(MoviesApp.getContext(), getAdapterPosition(), Toast.LENGTH_SHORT).show();
             if (mItemClickListener != null) {
                 mItemClickListener.onItemClick(view, getAdapterPosition());
             }

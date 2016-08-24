@@ -38,7 +38,13 @@ public class MainPresenterImpl implements MainPresenter {
 
     @Override
     public void onListingMovies(ArrayList<Movie> movies) {
-        mainView.listMovies(movies);
+        if (movies!=null) {
+            if (movies.size() !=0) {
+                mainView.listMovies(movies);
+            }else
+                mainView.onErrorOccurred();
+        }else
+            mainView.onErrorOccurred();
     }
 
     public void onRequestingMoviesList(String param) {

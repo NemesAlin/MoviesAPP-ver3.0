@@ -13,4 +13,6 @@ public interface MainView {
 
     void showInformationToUser(String msg, int img);
 
+    void onErrorOccurred();
+
 }
