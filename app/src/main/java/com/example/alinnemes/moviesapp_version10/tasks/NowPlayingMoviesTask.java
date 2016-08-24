@@ -58,6 +58,7 @@ public class NowPlayingMoviesTask extends AsyncTask<String, Void, ArrayList<Movi
         String moviesJsonSTRING;
 
         try {
+            //http://api.themoviedb.org/3/movie/now_playing?page=#&api_key = {MY_API_KEY}
             //http://api.themoviedb.org/3/movie/now_playing?api_key = {MY_API_KEY}
             Uri.Builder builtUri = Uri.parse(MovieManager.API_BASE_URL).buildUpon()
                     .appendPath(params[0]);

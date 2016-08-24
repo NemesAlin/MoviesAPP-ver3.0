@@ -151,24 +151,13 @@ public class DetailFragment extends Fragment implements ProcessListener, DetailV
     }
 
     @Override
-    public void onLoadStarted() {
-        pdLoading.setMessage("\tLoading...");
+    public void onLoadStarted(String msg) {
+        pdLoading.setMessage(String.format(Locale.US, getString(R.string.progressMsg), msg));
         pdLoading.show();
     }
 
     @Override
     public void listDetails(final Movie movie) {
-        if (movie.getRuntime() == -1) {
-            detailPresenter.requestDetailMovie(movie.getId(), DetailActivity.MOVIE_DETAIL_QUERTY, null);
-        }
-        if (movie.getRuntime() != -1 && movie.getTrailers() != null && movie.getTrailers().size() == 0) {
-            detailPresenter.requestDetailMovie(movie.getId(), DetailActivity.MOVIE_TRAILER_QUERY, null);
-        }
-        if (movie.getRuntime() != -1 && movie.getReviews() != null && movie.getReviews().size() == 0 && needReviews) {
-            needReviews = false;
-            detailPresenter.requestReviews(movie.getId());
-        }
-
         setViews(movie);
         if (movie.getTrailers() != null && movie.getTrailers().size() != 0) {
             setTrailers(movie.getTrailers());
@@ -193,10 +182,10 @@ public class DetailFragment extends Fragment implements ProcessListener, DetailV
         pdLoading.dismiss();
     }
 
+
     @Override
-    public void onLoadProgress(String msg) {
-        pdLoading.setMessage("\t" + msg);
-        pdLoading.show();
+    public void onLoadProgress(Movie movie) {
+        setViews(movie);
     }
 
     public void setViews(Movie movie) {

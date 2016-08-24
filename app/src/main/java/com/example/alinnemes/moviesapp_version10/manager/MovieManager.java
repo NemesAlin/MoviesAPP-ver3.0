@@ -118,9 +118,9 @@ public class MovieManager {
         new FavoriteMovieTask(this, MoviesApp.getContext(), movie).execute();
     }
 
-    public void onLoadStarted() {
+    public void onLoadStarted(String msg) {
         if (processListener != null) {
-            processListener.onLoadStarted();
+            processListener.onLoadStarted(msg);
         }
     }
 
@@ -129,9 +129,9 @@ public class MovieManager {
             processListener.onLoadEnded();
     }
 
-    public void onLoadProgress(String msg) {
+    public void onLoadProgress(Movie movie) {
         if (processListener != null)
-            processListener.onLoadProgress(msg);
+            processListener.onLoadProgress(movie);
     }
 
     public void onMarkedFavoriteMovie(boolean isFavorite) {

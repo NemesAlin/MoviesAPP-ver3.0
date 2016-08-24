@@ -22,7 +22,7 @@
     </string>
 
     <string name="pref_title_sorting">Sorting</string>
-    <string name="no_movies_to_show">No movies to show, try refresh...</string>
+    <string name="no_movies_to_show">No movies to show, try refresh…</string>
     <string-array name="pref_sorting_list_title">
         <item>Popular</item>
         <item>Top Rated</item>
@@ -36,7 +36,8 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="trailers">Trailers:</string>
     <string name="reviews">Reviews:</string>
-    <string name="loadingMsg">\tLoading...</string>
+    <string name="loadingMsg">\tLoading…</string>
     <string name="progressMsg">\t%s</string>
+    <string name="getting_movie_data_msg">Getting movie data…</string>
 
 </resources>

@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.example.alinnemes.moviesapp_version10.BuildConfig;
 import com.example.alinnemes.moviesapp_version10.MoviesApp;
+import com.example.alinnemes.moviesapp_version10.R;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
 import com.example.alinnemes.moviesapp_version10.manager.MovieManager;
 import com.example.alinnemes.moviesapp_version10.model.movie.Movie;
@@ -39,7 +40,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        movieManager.onLoadStarted();
+        movieManager.onLoadStarted(MoviesApp.getContext().getString(R.string.loadingMsg));
     }
 
     @Override

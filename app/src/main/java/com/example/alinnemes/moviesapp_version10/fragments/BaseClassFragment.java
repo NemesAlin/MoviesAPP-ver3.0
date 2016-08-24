@@ -189,8 +189,8 @@ public class BaseClassFragment extends Fragment implements ProcessListener, Main
     }
 
     @Override
-    public void onLoadStarted() {
-        pdLoading.setMessage(getString(R.string.loadingMsg));
+    public void onLoadStarted(String msg) {
+        pdLoading.setMessage(String.format(Locale.US, getString(R.string.progressMsg), msg));
         pdLoading.show();
     }
 
@@ -200,10 +200,10 @@ public class BaseClassFragment extends Fragment implements ProcessListener, Main
     }
 
     @Override
-    public void onLoadProgress(String msg) {
-        pdLoading.setMessage(String.format(Locale.US, getString(R.string.progressMsg), msg));
-        pdLoading.show();
+    public void onLoadProgress(Movie movie) {
+
     }
+
 
     public void showInformationToUser(String msg, int img) {
         recyclerView.setVisibility(View.GONE);
