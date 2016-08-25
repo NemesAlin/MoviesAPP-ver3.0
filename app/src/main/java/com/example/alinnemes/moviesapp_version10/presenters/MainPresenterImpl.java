@@ -1,6 +1,5 @@
 package com.example.alinnemes.moviesapp_version10.presenters;
 
-import com.example.alinnemes.moviesapp_version10.activities.SplashActivity;
 import com.example.alinnemes.moviesapp_version10.listeners.ProcessListener;
 import com.example.alinnemes.moviesapp_version10.listeners.RefreshListener;
 import com.example.alinnemes.moviesapp_version10.manager.MovieManager;
@@ -38,12 +37,12 @@ public class MainPresenterImpl implements MainPresenter {
 
     @Override
     public void onListingMovies(ArrayList<Movie> movies) {
-        if (movies!=null) {
-            if (movies.size() !=0) {
+        if (movies != null) {
+            if (movies.size() != 0) {
                 mainView.listMovies(movies);
-            }else
+            } else
                 mainView.onErrorOccurred();
-        }else
+        } else
             mainView.onErrorOccurred();
     }
 
@@ -53,8 +52,8 @@ public class MainPresenterImpl implements MainPresenter {
     }
 
 
-    public void onRequestingMoviesList(String param,int page) {
-        movieManager.startListingMovies(param,page, SplashActivity.fetchFromNetwork);
+    public void onRequestingMoviesList(String param, int page) {
+        movieManager.startListingMovies(param, page);
     }
 
     @Override

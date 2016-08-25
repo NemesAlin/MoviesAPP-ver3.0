@@ -34,7 +34,7 @@ public class MovieManager {
     private MainPresenter mainPresenter;
     private String param;
 
-    public void startListingMovies(String param, int page, boolean fetchFromNetwork) {
+    public void startListingMovies(String param, int page) {
 
         this.param = param;
 
@@ -59,20 +59,12 @@ public class MovieManager {
         }
     }
 
-    public void startListingNowPlayingMovies(String param, int page) {
-        new FetchNowPlayingMoviesTask(this).execute(param, String.valueOf(page));
-    }
-
     public void startListingMoreMovies(String param, int page) {
         new FetchMoreMoviesTask(this).execute(param, String.valueOf(page));
     }
 
     public void onRequestDetailMovie(long id, String param, String fromDB) {
         new DetailMovieTask(this).execute(String.valueOf(id), param, fromDB);
-    }
-
-    public void onRequestMovieReviewsById(long id) {
-        new ListReviewsMovieFromDBTask(this).execute(id);
     }
 
     public void onLoadedListOfMovies(ArrayList<Movie> movies) {

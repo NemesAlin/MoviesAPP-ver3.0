@@ -29,10 +29,6 @@ public class DetailPresenterImpl extends MainPresenterImpl implements DetailPres
         detailView.listDetails(movie);
     }
 
-    public void requestReviews(long idMovie) {
-        movieManager.onRequestMovieReviewsById(idMovie);
-    }
-
     public void onIconClickListener(Movie movie) {
         movieManager.updateFavoriteState(movie);
     }
