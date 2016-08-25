@@ -7,6 +7,8 @@ import android.util.Log;
 
 import com.example.alinnemes.moviesapp_version10.BuildConfig;
 import com.example.alinnemes.moviesapp_version10.MoviesApp;
+import com.example.alinnemes.moviesapp_version10.R;
+import com.example.alinnemes.moviesapp_version10.activities.SplashActivity;
 import com.example.alinnemes.moviesapp_version10.data.MoviesDB;
 import com.example.alinnemes.moviesapp_version10.manager.MovieManager;
 import com.example.alinnemes.moviesapp_version10.model.movie.Movie;
@@ -37,6 +39,15 @@ public class FetchMoreMoviesTask extends AsyncTask<String,Void,ArrayList<Movie>>
     public FetchMoreMoviesTask(MovieManager movieManager) {
         this.mContext = MoviesApp.getContext();
         this.movieManager = movieManager;
+    }
+
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        if (SplashActivity.fetchFromNetwork) {
+            movieManager.onLoadStarted(MoviesApp.getContext().getString(R.string.loadingMsg));
+        }
     }
 
     @Override

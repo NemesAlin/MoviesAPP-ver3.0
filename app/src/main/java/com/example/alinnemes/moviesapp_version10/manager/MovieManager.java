@@ -30,11 +30,8 @@ public class MovieManager {
     private RefreshListener refreshListener;
     private DetailPresenter detailPresenter;
     private MainPresenter mainPresenter;
-    private String param;
 
     public void startListingMovies(String param, int page) {
-
-        this.param = param;
 
         switch (param) {
             case LIST_POPULAR:
