@@ -184,6 +184,6 @@ public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
         super.onPostExecute(movies);
         movieManager.onLoadEnded();
         movieManager.onResfreshEnded();
-        movieManager.startListingFromDB();
+        movieManager.startListingFavoriteMoviesFromDB();
     }
 }

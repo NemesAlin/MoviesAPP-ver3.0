@@ -9,9 +9,7 @@ import com.example.alinnemes.moviesapp_version10.presenters.MainPresenter;
 import com.example.alinnemes.moviesapp_version10.tasks.DetailMovieTask;
 import com.example.alinnemes.moviesapp_version10.tasks.FavoriteMovieTask;
 import com.example.alinnemes.moviesapp_version10.tasks.FetchMoreMoviesTask;
-import com.example.alinnemes.moviesapp_version10.tasks.FetchNowPlayingMoviesTask;
-import com.example.alinnemes.moviesapp_version10.tasks.ListMovieFromDBTask;
-import com.example.alinnemes.moviesapp_version10.tasks.ListReviewsMovieFromDBTask;
+import com.example.alinnemes.moviesapp_version10.tasks.ListFavoriteMoviesFromDBTask;
 
 import java.util.ArrayList;
 
@@ -38,20 +36,15 @@ public class MovieManager {
 
         this.param = param;
 
-//        if (fetchFromNetwork) {
-//            new FetchMovieTask(this).execute(LIST_POPULAR);
-//            new FetchMovieTask(this).execute(LIST_TOP_RATED);
-//        }
-
         switch (param) {
             case LIST_POPULAR:
                 startListingMoreMovies(param, page);
                 break;
             case LIST_TOP_RATED:
                 startListingMoreMovies(param, page);
-                    break;
+                break;
             case LIST_FAVORITES:
-                startListingFromDB();
+                startListingFavoriteMoviesFromDB();
                 break;
             case LIST_NOW_PLAYING:
                 startListingMoreMovies(param, page);
@@ -75,18 +68,8 @@ public class MovieManager {
         mainPresenter.onListingMoreMovies(moreMovies);
     }
 
-    public void startListingFromDB() {
-        switch (param) {
-            case LIST_FAVORITES:
-                new ListMovieFromDBTask(MoviesApp.getContext(), this).execute(LIST_FAVORITES);
-                break;
-            case LIST_POPULAR:
-                new ListMovieFromDBTask(MoviesApp.getContext(), this).execute(LIST_POPULAR);
-                break;
-            case LIST_TOP_RATED:
-                new ListMovieFromDBTask(MoviesApp.getContext(), this).execute(LIST_TOP_RATED);
-                break;
-        }
+    public void startListingFavoriteMoviesFromDB() {
+        new ListFavoriteMoviesFromDBTask(MoviesApp.getContext(), this).execute(LIST_FAVORITES);
     }
 
     public void onLoadedDetails(Movie movie) {

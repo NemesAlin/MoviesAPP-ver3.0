@@ -12,12 +12,12 @@ import java.util.ArrayList;
 /**
  * Created by alin.nemes on 09-Aug-16.
  */
-public class ListMovieFromDBTask extends AsyncTask<String, Void, ArrayList<Movie>> {
+public class ListFavoriteMoviesFromDBTask extends AsyncTask<String, Void, ArrayList<Movie>> {
 
     private Context mContext;
     private MovieManager movieManager;
 
-    public ListMovieFromDBTask(Context mContext, MovieManager movieManager) {
+    public ListFavoriteMoviesFromDBTask(Context mContext, MovieManager movieManager) {
         this.mContext = mContext;
         this.movieManager = movieManager;
     }
