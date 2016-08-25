@@ -8,7 +8,7 @@ import com.example.alinnemes.moviesapp_version10.presenters.DetailPresenter;
 import com.example.alinnemes.moviesapp_version10.presenters.MainPresenter;
 import com.example.alinnemes.moviesapp_version10.tasks.DetailMovieTask;
 import com.example.alinnemes.moviesapp_version10.tasks.FavoriteMovieTask;
-import com.example.alinnemes.moviesapp_version10.tasks.FetchMoreMoviesTask;
+import com.example.alinnemes.moviesapp_version10.tasks.FetchMovieTask;
 import com.example.alinnemes.moviesapp_version10.tasks.ListFavoriteMoviesFromDBTask;
 
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class MovieManager {
     }
 
     public void startListingMoreMovies(String param, int page) {
-        new FetchMoreMoviesTask(this).execute(param, String.valueOf(page));
+        new FetchMovieTask(this).execute(param, String.valueOf(page));
     }
 
     public void onRequestDetailMovie(long id, String param, String fromDB) {

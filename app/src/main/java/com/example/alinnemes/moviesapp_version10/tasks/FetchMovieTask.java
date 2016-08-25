@@ -30,13 +30,13 @@ import java.util.ArrayList;
 /**
  * Created by alin.nemes on 25-Aug-16.
  */
-public class FetchMoreMoviesTask extends AsyncTask<String,Void,ArrayList<Movie>>{
+public class FetchMovieTask extends AsyncTask<String,Void,ArrayList<Movie>>{
 
     private Context mContext;
     private MovieManager movieManager;
     private int page;
 
-    public FetchMoreMoviesTask(MovieManager movieManager) {
+    public FetchMovieTask(MovieManager movieManager) {
         this.mContext = MoviesApp.getContext();
         this.movieManager = movieManager;
     }
