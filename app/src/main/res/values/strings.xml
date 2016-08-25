@@ -39,5 +39,6 @@
     <string name="loadingMsg">\tLoading…</string>
     <string name="progressMsg">\t%s</string>
     <string name="getting_movie_data_msg">Getting movie data…</string>
+    <string name="unknown">Unknown</string>
 
 </resources>

@@ -8,10 +8,10 @@ import com.example.alinnemes.moviesapp_version10.presenters.DetailPresenter;
 import com.example.alinnemes.moviesapp_version10.presenters.MainPresenter;
 import com.example.alinnemes.moviesapp_version10.tasks.DetailMovieTask;
 import com.example.alinnemes.moviesapp_version10.tasks.FavoriteMovieTask;
-import com.example.alinnemes.moviesapp_version10.tasks.FetchMovieTask;
+import com.example.alinnemes.moviesapp_version10.tasks.FetchMoreMoviesTask;
+import com.example.alinnemes.moviesapp_version10.tasks.FetchNowPlayingMoviesTask;
 import com.example.alinnemes.moviesapp_version10.tasks.ListMovieFromDBTask;
 import com.example.alinnemes.moviesapp_version10.tasks.ListReviewsMovieFromDBTask;
-import com.example.alinnemes.moviesapp_version10.tasks.NowPlayingMoviesTask;
 
 import java.util.ArrayList;
 
@@ -26,6 +26,7 @@ public class MovieManager {
     public static final String LIST_NOW_PLAYING = "now_playing";
     public static final String API_BASE_URL = "https://api.themoviedb.org/3/movie/";
     public static final String apiKey_PARAM = "api_key";
+    public static final String page = "page";
 
     private ProcessListener processListener;
     private RefreshListener refreshListener;
@@ -33,35 +34,37 @@ public class MovieManager {
     private MainPresenter mainPresenter;
     private String param;
 
-    public void startListingMovies(String param, boolean fetchFromNetwork) {
+    public void startListingMovies(String param, int page, boolean fetchFromNetwork) {
 
         this.param = param;
 
-        if (fetchFromNetwork) {
-            new FetchMovieTask(this).execute(LIST_POPULAR);
-            new FetchMovieTask(this).execute(LIST_TOP_RATED);
-        }
+//        if (fetchFromNetwork) {
+//            new FetchMovieTask(this).execute(LIST_POPULAR);
+//            new FetchMovieTask(this).execute(LIST_TOP_RATED);
+//        }
 
         switch (param) {
             case LIST_POPULAR:
-                if (!fetchFromNetwork)
-                    startListingFromDB();
+                startListingMoreMovies(param, page);
                 break;
             case LIST_TOP_RATED:
-                if (!fetchFromNetwork)
-                    startListingFromDB();
-                break;
+                startListingMoreMovies(param, page);
+                    break;
             case LIST_FAVORITES:
                 startListingFromDB();
                 break;
             case LIST_NOW_PLAYING:
-                startListingNowPlayingMovies(param);
+                startListingMoreMovies(param, page);
                 break;
         }
     }
 
-    public void startListingNowPlayingMovies(String param) {
-        new NowPlayingMoviesTask(this).execute(param);
+    public void startListingNowPlayingMovies(String param, int page) {
+        new FetchNowPlayingMoviesTask(this).execute(param, String.valueOf(page));
+    }
+
+    public void startListingMoreMovies(String param, int page) {
+        new FetchMoreMoviesTask(this).execute(param, String.valueOf(page));
     }
 
     public void onRequestDetailMovie(long id, String param, String fromDB) {
@@ -74,6 +77,10 @@ public class MovieManager {
 
     public void onLoadedListOfMovies(ArrayList<Movie> movies) {
         mainPresenter.onListingMovies(movies);
+    }
+
+    public void onLoadedMoreMovies(ArrayList<Movie> moreMovies) {
+        mainPresenter.onListingMoreMovies(moreMovies);
     }
 
     public void startListingFromDB() {

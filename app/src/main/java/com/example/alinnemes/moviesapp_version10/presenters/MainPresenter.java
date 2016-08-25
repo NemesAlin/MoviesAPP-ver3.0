@@ -11,6 +11,8 @@ public interface MainPresenter {
 
     void onListingMovies(ArrayList<Movie> movies);
 
+    void onListingMoreMovies(ArrayList<Movie> moreMovies);
+
     void onDestroy();
 
 }

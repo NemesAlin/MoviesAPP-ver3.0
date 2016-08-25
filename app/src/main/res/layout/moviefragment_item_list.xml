@@ -1,7 +1,27 @@
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/posterImageView"
-    android:layout_width="match_parent"
-    android:layout_height="200dp"
-    android:layout_gravity="left|top"
-    android:scaleType="fitXY" />
 
+
+
+<!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
+    <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/posterImageView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_gravity="start|top"
+        android:scaleType="fitXY"
+    />
+
+<!--<TextView-->
+    <!--android:id="@+id/myImageViewText"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignLeft="@+id/posterImageView"-->
+    <!--android:layout_alignTop="@+id/posterImageView"-->
+    <!--android:layout_alignRight="@+id/posterImageView"-->
+    <!--android:layout_alignBottom="@+id/posterImageView"-->
+    <!--android:layout_margin="1dp"-->
+    <!--android:gravity="center"-->
+    <!--android:text="Hello"-->
+    <!--android:textColor="#000000" />-->
+<!--</RelativeLayout>-->

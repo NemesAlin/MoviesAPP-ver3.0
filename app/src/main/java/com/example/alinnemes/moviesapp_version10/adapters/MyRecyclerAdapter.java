@@ -43,7 +43,12 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Vi
 
         holder.moviePoster.setImageBitmap(null);
         Picasso.with(ctx).cancelRequest(holder.moviePoster);
-        Picasso.with(ctx).load(movie.getPoster_path()).into(holder.moviePoster);
+        if (!movie.getPoster_path().contains("null")) {
+            Picasso.with(ctx).load(movie.getPoster_path()).into(holder.moviePoster);
+        } else {
+            Picasso.with(ctx).load(R.drawable.picture_not_yet_available).into(holder.moviePoster);
+        }
+
         holder.itemView.setOnClickListener(holder);
         holder.itemView.setTag(movie);
     }

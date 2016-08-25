@@ -3,6 +3,7 @@ package com.example.alinnemes.moviesapp_version10.fragments;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -39,6 +40,8 @@ import com.example.alinnemes.moviesapp_version10.presenters.DetailPresenterImpl;
 import com.example.alinnemes.moviesapp_version10.utilities.ViewUtility;
 import com.example.alinnemes.moviesapp_version10.views.DetailView;
 import com.squareup.picasso.Picasso;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -193,9 +196,17 @@ public class DetailFragment extends Fragment implements ProcessListener, DetailV
         collapsingToolbar.setTitle(movie.getTitle());
         releaseDateTV.setText(movie.getRelease_date());
         voteAverageTV.setText(String.format(Locale.US, "%.2f/10", movie.getVote_average()));
-        runTimeTV.setText(String.format(Locale.US, "%dmin", movie.getRuntime()));
+        if (movie.getRuntime()!=0 && movie.getRuntime()!=-1) {
+            runTimeTV.setText(String.format(Locale.US, "%dmin", movie.getRuntime()));
+        }
         movieOverviewTV.setText(movie.getOverview());
-        Picasso.with(getActivity()).load(movie.getPoster_path()).into(moviePosterIV);
+        if (!movie.getPoster_path().contains("null")) {
+            Picasso.with(getActivity()).load(movie.getPoster_path()).into(moviePosterIV);
+        }else{
+            Picasso.with(getActivity()).load(R.drawable.image_coming_soon).into(moviePosterIV);
+
+
+        }
         Picasso.with(getActivity()).load(movie.getBackdrop_path()).into(movieToolbarBackDropIV);
         if (!movie.getBackdrop_path().contains("null")) {
             collapsingToolbar.setBackgroundColor(Color.BLACK);

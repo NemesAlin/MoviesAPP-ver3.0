@@ -28,12 +28,13 @@ import java.util.ArrayList;
 /**
  * Created by alin.nemes on 12-Aug-16.
  */
-public class NowPlayingMoviesTask extends AsyncTask<String, Void, ArrayList<Movie>> {
+public class FetchNowPlayingMoviesTask extends AsyncTask<String, Void, ArrayList<Movie>> {
 
     private Context mContext;
     private MovieManager movieManager;
+    private int page;
 
-    public NowPlayingMoviesTask(MovieManager movieManager) {
+    public FetchNowPlayingMoviesTask(MovieManager movieManager) {
         this.mContext = MoviesApp.getContext();
         this.movieManager = movieManager;
     }
@@ -56,12 +57,15 @@ public class NowPlayingMoviesTask extends AsyncTask<String, Void, ArrayList<Movi
         BufferedReader reader = null;
 
         String moviesJsonSTRING;
+        page = Integer.parseInt(params[1]);
+
 
         try {
             //http://api.themoviedb.org/3/movie/now_playing?page=#&api_key = {MY_API_KEY}
             //http://api.themoviedb.org/3/movie/now_playing?api_key = {MY_API_KEY}
             Uri.Builder builtUri = Uri.parse(MovieManager.API_BASE_URL).buildUpon()
                     .appendPath(params[0]);
+            builtUri.appendQueryParameter(MovieManager.page, params[1]);
             builtUri.appendQueryParameter(MovieManager.apiKey_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
                     .build();
 
@@ -178,7 +182,11 @@ public class NowPlayingMoviesTask extends AsyncTask<String, Void, ArrayList<Movi
     @Override
     protected void onPostExecute(ArrayList<Movie> movies) {
         super.onPostExecute(movies);
-        movieManager.onLoadedListOfMovies(movies);
+        if (page == 1) {
+            movieManager.onLoadedListOfMovies(movies);
+        } else {
+            movieManager.onLoadedMoreMovies(movies);
+        }
         movieManager.onLoadEnded();
     }
 }

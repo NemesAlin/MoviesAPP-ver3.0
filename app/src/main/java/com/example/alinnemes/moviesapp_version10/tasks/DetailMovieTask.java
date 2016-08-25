@@ -170,11 +170,14 @@ public class DetailMovieTask extends AsyncTask<String, Movie, Movie> {
 
         JSONObject moviesJson = new JSONObject(moviesJsonSTRING);
 
-        runtime = moviesJson.getInt(OWN_RUNTIME);
+        try {
+            runtime = moviesJson.getInt(OWN_RUNTIME);
+        } catch (JSONException e) {
+            runtime = -1;
+        }
         Movie movie = moviesDB.getMovie(Long.parseLong(params));
         moviesDB.updateMovie(movie.getId(), movie.getTitle(), movie.getOverview(), movie.getRelease_date(), movie.getPoster_path(), movie.getBackdrop_path(), movie.getVote_average(), runtime, movie.getPopularity(), movie.isFavorite());
-        Movie movieToReturn = moviesDB.getMovie(Long.parseLong(params));
-        return movieToReturn;
+        return moviesDB.getMovie(Long.parseLong(params));
     }
 
     private Movie getTrailersDataFromJsonMovie(String moviesJsonSTRING, String params) throws JSONException {

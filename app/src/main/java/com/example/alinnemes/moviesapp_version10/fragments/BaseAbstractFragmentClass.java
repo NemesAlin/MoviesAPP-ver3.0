@@ -40,17 +40,18 @@ import jp.wasabeef.recyclerview.animators.ScaleInLeftAnimator;
 /**
  * Created by alin.nemes on 16-Aug-16.
  */
-public class BaseClassFragment extends Fragment implements ProcessListener, MainView, RefreshListener {
+public abstract class BaseAbstractFragmentClass extends Fragment implements ProcessListener, MainView, RefreshListener {
 
     //Views
-    private RecyclerView recyclerView;
+    public RecyclerView recyclerView;
     private ImageView informationImageView;
     private TextView informationTextView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ProgressDialog pdLoading;
     //array data
-    private String param;
-    private ArrayList<Movie> savedMoviesListInstance;
+    public String param;
+    public MyRecyclerAdapter adapter;
+    public ArrayList<Movie> savedMoviesListInstance = new ArrayList<>();
 
     private MainPresenterImpl mainPresenter = new MainPresenterImpl(this);
 
@@ -91,6 +92,7 @@ public class BaseClassFragment extends Fragment implements ProcessListener, Main
                              final Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.moviefragment_item, container, false);
 
+
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refreshLayout);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         informationImageView = (ImageView) rootView.findViewById(R.id.noInternetIcon);
@@ -98,12 +100,12 @@ public class BaseClassFragment extends Fragment implements ProcessListener, Main
         pdLoading = new ProgressDialog(getActivity());
         pdLoading.setCancelable(false);
 
-        requestMovies(param);
+        requestMovies(param, 1);
 
         informationImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                requestMovies(param);
+                requestMovies(param, 1);
             }
         });
 
@@ -112,16 +114,16 @@ public class BaseClassFragment extends Fragment implements ProcessListener, Main
     }
 
 
-    public void requestMovies(String param) {
-        if (InternetUtilityClass.isOnline(getActivity())) {
+    public void requestMovies(String param, int page) {
+        if (InternetUtilityClass.isOnline(MoviesApp.getContext())) {
             informationImageView.setVisibility(View.GONE);
             informationTextView.setVisibility(View.GONE);
 
-            mainPresenter.onRequestingMoviesList(param);
+            mainPresenter.onRequestingMoviesList(param, page);
 
         } else {
             showInformationToUser(getString(R.string.no_internet_connection), R.drawable.no_internet_connection);
-            if(mSwipeRefreshLayout.isRefreshing()){
+            if (mSwipeRefreshLayout.isRefreshing()) {
                 endRefresh();
             }
         }
@@ -153,7 +155,7 @@ public class BaseClassFragment extends Fragment implements ProcessListener, Main
                     @Override
                     public void run() {
                         SplashActivity.fetchFromNetwork = true;
-                        requestMovies(param);
+                        requestMovies(param, 1);
                     }
                 }, 3000);
             }
@@ -183,6 +185,10 @@ public class BaseClassFragment extends Fragment implements ProcessListener, Main
             }
         });
     }
+
+    @Override
+    public abstract void loadMoreMovies(ArrayList<Movie> moreMovies);
+
 
     public void onErrorOccurred() {
         showInformationToUser(getString(R.string.no_movies_to_show), R.drawable.sad_face);

@@ -11,6 +11,8 @@ public interface MainView {
 
     void listMovies(ArrayList<Movie> movies);
 
+    void loadMoreMovies(ArrayList<Movie> moreMovies);
+
     void showInformationToUser(String msg, int img);
 
     void onErrorOccurred();

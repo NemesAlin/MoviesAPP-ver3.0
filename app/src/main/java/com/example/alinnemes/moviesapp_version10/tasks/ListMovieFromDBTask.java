@@ -31,7 +31,7 @@ public class ListMovieFromDBTask extends AsyncTask<String, Void, ArrayList<Movie
         MoviesDB moviesDB = new MoviesDB(mContext);
         moviesDB.open();
 
-        ArrayList<Movie> movies = new ArrayList<Movie>();
+        ArrayList<Movie> movies = new ArrayList<>();
         if (params[0].equals(MovieManager.LIST_FAVORITES)) {
             movies = moviesDB.getFavoriteMovies();
         }
@@ -49,6 +49,7 @@ public class ListMovieFromDBTask extends AsyncTask<String, Void, ArrayList<Movie
     protected void onPostExecute(ArrayList<Movie> movies) {
         super.onPostExecute(movies);
         movieManager.onLoadedListOfMovies(movies);
+        movieManager.onResfreshEnded();
         movieManager.onLoadEnded();
     }
 }

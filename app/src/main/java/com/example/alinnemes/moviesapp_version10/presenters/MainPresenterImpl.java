@@ -47,8 +47,14 @@ public class MainPresenterImpl implements MainPresenter {
             mainView.onErrorOccurred();
     }
 
-    public void onRequestingMoviesList(String param) {
-        movieManager.startListingMovies(param, SplashActivity.fetchFromNetwork);
+    @Override
+    public void onListingMoreMovies(ArrayList<Movie> moreMovies) {
+        mainView.loadMoreMovies(moreMovies);
+    }
+
+
+    public void onRequestingMoviesList(String param,int page) {
+        movieManager.startListingMovies(param,page, SplashActivity.fetchFromNetwork);
     }
 
     @Override
