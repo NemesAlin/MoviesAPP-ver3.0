@@ -22,20 +22,6 @@ import jp.wasabeef.recyclerview.animators.ScaleInLeftAnimator;
  */
 public class BaseConcreteFragmentClass extends BaseAbstractFragmentClass {
 
-    public void loadMoreMovies(ArrayList<Movie> moreMovies) {
-        int cursorSize = adapter.getItemCount();
-        for (int i = 0; i < savedMoviesListInstance.size(); i++) {
-            for (int j = 0; j < moreMovies.size(); j++) {
-                if (savedMoviesListInstance.get(i).getId() == moreMovies.get(j).getId()) {
-                    moreMovies.remove(j);
-                }
-            }
-        }
-        savedMoviesListInstance.addAll(moreMovies);
-        adapter.notifyDataSetChanged();
-        adapter.notifyItemRangeChanged(cursorSize, savedMoviesListInstance.size() - 1);
-    }
-
     @Override
     public void listMovies(final ArrayList<Movie> movies) {
 
@@ -68,4 +54,12 @@ public class BaseConcreteFragmentClass extends BaseAbstractFragmentClass {
             }
         });
     }
+
+    public void loadMoreMovies(ArrayList<Movie> moreMovies) {
+        int cursorSize = adapter.getItemCount();
+        savedMoviesListInstance.addAll(moreMovies);
+        adapter.notifyItemRangeChanged(cursorSize, savedMoviesListInstance.size() - 1);
+        adapter.notifyDataSetChanged();
+    }
+
 }

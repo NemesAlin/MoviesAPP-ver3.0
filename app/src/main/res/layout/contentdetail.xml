@@ -65,9 +65,9 @@
             android:drawableStart="@mipmap/runtime_icon"
             android:gravity="center"
             android:paddingTop="10dp"
+            android:text="@string/unknown"
             android:textColor="@android:color/white"
             android:textSize="16sp"
-            android:text="@string/unknown"
             android:textStyle="bold|italic" />
 
         <TextView
@@ -88,13 +88,16 @@
             android:id="@+id/favoriteMovieDETAILVIEW"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/moviePosterImageViewDETAILVIEW"
+            android:layout_alignEnd="@+id/voteAverageDETAILVIEW"
             android:layout_alignLeft="@+id/voteAverageDETAILVIEW"
+            android:layout_alignRight="@+id/voteAverageDETAILVIEW"
             android:layout_alignStart="@+id/voteAverageDETAILVIEW"
             android:layout_below="@+id/voteAverageDETAILVIEW"
-            android:paddingTop="16dp"
-            android:layout_alignBottom="@+id/moviePosterImageViewDETAILVIEW"
-            android:layout_alignRight="@+id/voteAverageDETAILVIEW"
-            android:layout_alignEnd="@+id/voteAverageDETAILVIEW" />
+            android:paddingStart="50dp"
+            android:paddingLeft="50dp"
+            android:paddingEnd="16dp"
+            android:paddingRight="16dp"/>
 
         <TextView
             android:id="@+id/movieOverviewDETAILVIEW"
