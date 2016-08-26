@@ -4,23 +4,30 @@
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
-
-    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/refreshLayout"
+    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/progre"
         android:orientation="horizontal">
 
-        <com.example.alinnemes.moviesapp_version10.adapters.model.AutoFitRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:columnWidth="150dp"
-            android:fitsSystemWindows="true" />
+        <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/refreshLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+            <com.example.alinnemes.moviesapp_version10.adapters.model.AutoFitRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/recyclerView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:columnWidth="150dp"
+                android:fitsSystemWindows="false"
+                android:scrollbarStyle="insideOverlay"
+                android:scrollbars="vertical" />
 
+        </android.support.v4.widget.SwipeRefreshLayout>
+    </android.support.design.widget.CoordinatorLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -43,6 +50,16 @@
             android:gravity="center"
             android:text="@string/no_internet_connection_tap_to_refresh"
             android:textAppearance="?android:attr/textAppearanceLarge" />
+        <ProgressBar
+            android:id="@+id/footerLoadingProgressBar"
+            style="@android:style/Widget.Holo.ProgressBar"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:indeterminate="true" />
     </RelativeLayout>
+
 
 </android.support.design.widget.CoordinatorLayout>

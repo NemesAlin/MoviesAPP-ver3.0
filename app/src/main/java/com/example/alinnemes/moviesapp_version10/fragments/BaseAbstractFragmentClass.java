@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.alinnemes.moviesapp_version10.MoviesApp;
@@ -48,6 +49,7 @@ public abstract class BaseAbstractFragmentClass extends Fragment implements Proc
     private TextView informationTextView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ProgressDialog pdLoading;
+    public ProgressBar progressBar;
     //array data
     public String param;
     public MyRecyclerAdapter adapter;
@@ -97,6 +99,8 @@ public abstract class BaseAbstractFragmentClass extends Fragment implements Proc
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         informationImageView = (ImageView) rootView.findViewById(R.id.noInternetIcon);
         informationTextView = (TextView) rootView.findViewById(R.id.noInternettextView);
+        progressBar = (ProgressBar) rootView.findViewById(R.id.footerLoadingProgressBar);
+        progressBar.setVisibility(View.GONE);
         pdLoading = new ProgressDialog(getActivity());
         pdLoading.setCancelable(false);
 

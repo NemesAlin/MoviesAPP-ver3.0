@@ -50,12 +50,16 @@ public class BaseConcreteFragmentClass extends BaseAbstractFragmentClass {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
                 Log.e("SCROLL", "END REACHED!!!, Page: " + page + " , TotalItems: " + totalItemsCount);
+//                adapter.showLoading(true);
+                progressBar.setVisibility(View.VISIBLE);
                 requestMovies(param, page);
             }
         });
     }
 
     public void loadMoreMovies(ArrayList<Movie> moreMovies) {
+        progressBar.setVisibility(View.GONE);
+//        adapter.showLoading(false);
         int cursorSize = adapter.getItemCount();
         savedMoviesListInstance.addAll(moreMovies);
         adapter.notifyItemRangeChanged(cursorSize, savedMoviesListInstance.size() - 1);

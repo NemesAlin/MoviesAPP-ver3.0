@@ -98,6 +98,7 @@ public class DetailFragment extends Fragment implements ProcessListener, DetailV
         detailPresenter.setView(this);
 
         pdLoading = new ProgressDialog(getActivity());
+        pdLoading.setCancelable(false);
         Intent intent = getActivity().getIntent();
         detailPresenter.requestDetailMovie(intent.getExtras().getLong(MainActivity.MOVIE_OBJECT), DetailActivity.MOVIE_DETAIL_QUERTY, DetailActivity.MOVIE_FROM_DB);
     }

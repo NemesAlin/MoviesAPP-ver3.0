@@ -15,14 +15,15 @@ import com.example.alinnemes.moviesapp_version10.listeners.OnItemClickListener;
 import com.example.alinnemes.moviesapp_version10.model.movie.Movie;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 /**
  * Created by alin.nemes on 16-Aug-16.
  */
-public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.ViewHolder> {
+public class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final int VIEWTYPE_ITEM = 1;
+    private static final int VIEWTYPE_LOADER = 2;
 
     OnItemClickListener mItemClickListener;
     private ArrayList<Movie> movies;
@@ -36,27 +37,43 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Vi
 
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.moviefragment_item_list, parent, false);
-        return new ViewHolder(v);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == VIEWTYPE_LOADER) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.loader_item_layout, parent, false);
+            return new LoaderViewHolder(v);
+        } else if (viewType == VIEWTYPE_ITEM) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.moviefragment_item_list, parent, false);
+            return new ItemsViewHolder(v);
+
+        }
+        throw new IllegalArgumentException("Invalid ViewType: " + viewType);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        Movie movie = movies.get(position);
-
-        holder.movieTextPoster.setText("");
-        holder.moviePoster.setImageBitmap(null);
-        Picasso.with(ctx).cancelRequest(holder.moviePoster);
-        if (!movie.getPoster_path().contains("null")) {
-            Picasso.with(ctx).load(movie.getPoster_path()).into(holder.moviePoster);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        // Loader ViewHolder
+        if (holder instanceof LoaderViewHolder) {
+            LoaderViewHolder loaderViewHolder = (LoaderViewHolder) holder;
+            if (showLoader) {
+                loaderViewHolder.mProgressBar.setVisibility(View.VISIBLE);
+            } else {
+                loaderViewHolder.mProgressBar.setVisibility(View.GONE);
+            }
         } else {
-//            Picasso.with(ctx).load(R.drawable.picture_not_yet_available).into(holder.moviePoster);
-            holder.movieTextPoster.setText(movie.getTitle());
-        }
+            Movie movie = movies.get(position);
+            ItemsViewHolder itemsViewHolder = (ItemsViewHolder) holder;
+            itemsViewHolder.movieTextPoster.setText("");
+            itemsViewHolder.moviePoster.setImageBitmap(null);
+            Picasso.with(ctx).cancelRequest(itemsViewHolder.moviePoster);
+            if (!movie.getPoster_path().contains("null")) {
+                Picasso.with(ctx).load(movie.getPoster_path()).into(itemsViewHolder.moviePoster);
+            } else {
+                itemsViewHolder.movieTextPoster.setText(movie.getTitle());
+            }
 
-        holder.itemView.setOnClickListener(holder);
-        holder.itemView.setTag(movie);
+            holder.itemView.setOnClickListener(itemsViewHolder);
+            holder.itemView.setTag(movie);
+        }
     }
 
 
@@ -65,19 +82,33 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Vi
         return movies.size();
     }
 
+    @Override
+    public int getItemViewType(int position) {
 
+        // loader can't be at position 0
+        // loader can only be at the last position
+        if (position != 0 && position == getItemCount() - 1 ) {
+            return VIEWTYPE_LOADER;
+        }
+
+        return VIEWTYPE_ITEM;
+    }
+
+    public void showLoading(boolean status) {
+        showLoader = status;
+    }
 
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
         this.mItemClickListener = mItemClickListener;
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ItemsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ImageView moviePoster;
         public TextView movieTextPoster;
-        public ProgressBar mProgressBar;
 
-        public ViewHolder(View itemView) {
+
+        public ItemsViewHolder(View itemView) {
             super(itemView);
             moviePoster = (ImageView) itemView.findViewById(R.id.posterImageView);
             movieTextPoster = (TextView) itemView.findViewById(R.id.imageViewText);
@@ -88,6 +119,15 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Vi
             if (mItemClickListener != null) {
                 mItemClickListener.onItemClick(view, getAdapterPosition());
             }
+        }
+    }
+
+    public class LoaderViewHolder extends RecyclerView.ViewHolder {
+        public ProgressBar mProgressBar;
+
+        public LoaderViewHolder(View itemView) {
+            super(itemView);
+            mProgressBar = (ProgressBar) itemView.findViewById(R.id.footerLoadingProgressBar);
         }
     }
 

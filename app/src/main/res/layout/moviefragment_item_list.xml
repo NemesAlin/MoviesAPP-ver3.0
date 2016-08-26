@@ -14,14 +14,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/posterImageView"
+        android:layout_alignStart="@+id/posterImageView"
         android:layout_alignTop="@+id/posterImageView"
         android:layout_alignRight="@+id/posterImageView"
+        android:layout_alignEnd="@+id/posterImageView"
         android:layout_alignBottom="@+id/posterImageView"
         android:layout_margin="1dp"
         android:gravity="center"
         android:textColor="#000000"
-        android:textSize="25dp"
+        android:textSize="25sp"
         android:textStyle="bold" />
 
+    <LinearLayout
+    android:id="@+id/progre"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:layout_centerHorizontal="true"
+    android:orientation="horizontal">
+
+
+    </LinearLayout>
 
 </RelativeLayout>
