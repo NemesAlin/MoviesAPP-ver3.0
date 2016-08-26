@@ -3,8 +3,14 @@ package com.example.alinnemes.moviesapp_version10.adapters.model;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ListView;
+
+import com.example.alinnemes.moviesapp_version10.R;
 
 /**
  * Created by alin.nemes on 17-Aug-16.
@@ -37,8 +43,12 @@ public class AutoFitRecyclerView extends RecyclerView {
             columnWidth = array.getDimensionPixelSize(0, -1);
             array.recycle();
         }
-
         manager = new GridLayoutManager(getContext(), 2, GridLayoutManager.VERTICAL, false);
+        if (isInEditMode()) {
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.loader_item_layout,null);
+//            manager.addView(view);
+        }
+
         setLayoutManager(manager);
     }
 

@@ -20,9 +20,9 @@
                 android:id="@+id/recyclerView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:clipToPadding="false"
+                android:clipToPadding="true"
                 android:columnWidth="150dp"
-                android:fitsSystemWindows="false"
+                android:fitsSystemWindows="true"
                 android:scrollbarStyle="insideOverlay"
                 android:scrollbars="vertical" />
 
@@ -50,15 +50,7 @@
             android:gravity="center"
             android:text="@string/no_internet_connection_tap_to_refresh"
             android:textAppearance="?android:attr/textAppearanceLarge" />
-        <ProgressBar
-            android:id="@+id/footerLoadingProgressBar"
-            style="@android:style/Widget.Holo.ProgressBar"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
-            android:indeterminate="true" />
+
     </RelativeLayout>
 
 

@@ -3,6 +3,7 @@ package com.example.alinnemes.moviesapp_version10.tasks;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.util.Log;
 
 import com.example.alinnemes.moviesapp_version10.BuildConfig;
@@ -161,8 +162,21 @@ public class FetchMovieTask extends AsyncTask<String,Void,ArrayList<Movie>>{
             title = movieJSONObject.getString(OWN_TITLE);
             overview = movieJSONObject.getString(OWN_OVERVIEW);
             release_date = movieJSONObject.getString(OWN_RELEASEDATE);
-            poster_path = String.format("http://image.tmdb.org/t/p/w342%s", movieJSONObject.getString(OWN_POSTER_PATH));
-            backdrop_path = String.format("http://image.tmdb.org/t/p/w500%s", movieJSONObject.getString(OWN_BACKDROP_PATH));
+
+            switch (Build.VERSION.SDK_INT){
+                case Build.VERSION_CODES.LOLLIPOP:
+                    poster_path = String.format("http://image.tmdb.org/t/p/w342%s", movieJSONObject.getString(OWN_POSTER_PATH));
+                    backdrop_path = String.format("http://image.tmdb.org/t/p/w500%s", movieJSONObject.getString(OWN_BACKDROP_PATH));
+                    break;
+                case Build.VERSION_CODES.KITKAT:
+                    poster_path = String.format("http://image.tmdb.org/t/p/w185%s", movieJSONObject.getString(OWN_POSTER_PATH));
+                    backdrop_path = String.format("http://image.tmdb.org/t/p/w300%s", movieJSONObject.getString(OWN_BACKDROP_PATH));
+                    break;
+                default:
+                    poster_path = String.format("http://image.tmdb.org/t/p/w185%s", movieJSONObject.getString(OWN_POSTER_PATH));
+                    backdrop_path = String.format("http://image.tmdb.org/t/p/w300%s", movieJSONObject.getString(OWN_BACKDROP_PATH));
+                    break;
+            }
             vote_average = movieJSONObject.getDouble(OWN_VOTEAVERAGE);
             popularity = movieJSONObject.getDouble(OWN_POPULARITY);
 

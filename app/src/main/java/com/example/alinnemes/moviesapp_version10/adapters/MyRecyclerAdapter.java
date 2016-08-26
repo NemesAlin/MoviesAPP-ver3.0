@@ -22,8 +22,8 @@ import java.util.ArrayList;
  */
 public class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final int VIEWTYPE_ITEM = 1;
-    private static final int VIEWTYPE_LOADER = 2;
+    public static final int VIEWTYPE_ITEM = 1;
+    public static final int VIEWTYPE_LOADER = 2;
 
     OnItemClickListener mItemClickListener;
     private ArrayList<Movie> movies;
@@ -87,7 +87,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         // loader can't be at position 0
         // loader can only be at the last position
-        if (position != 0 && position == getItemCount() - 1 ) {
+        if (position != 0 && position == getItemCount() - 1) {
             return VIEWTYPE_LOADER;
         }
 

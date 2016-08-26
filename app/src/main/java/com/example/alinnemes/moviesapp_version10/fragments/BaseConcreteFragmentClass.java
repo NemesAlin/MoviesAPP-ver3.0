@@ -45,21 +45,36 @@ public class BaseConcreteFragmentClass extends BaseAbstractFragmentClass {
         });
 
         GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
+//        LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                switch(adapter.getItemViewType(position)){
+                    case MyRecyclerAdapter.VIEWTYPE_LOADER:
+                        return 2;
+                    case MyRecyclerAdapter.VIEWTYPE_ITEM:
+                        return 1; //number of columns of the grid
+                    default:
+                        return -1;
+                }
+            }
+        });
 
         recyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(gridLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
                 Log.e("SCROLL", "END REACHED!!!, Page: " + page + " , TotalItems: " + totalItemsCount);
-//                adapter.showLoading(true);
-                progressBar.setVisibility(View.VISIBLE);
+                adapter.showLoading(true);
+//                progressBar.setVisibility(View.VISIBLE);
                 requestMovies(param, page);
             }
         });
     }
 
     public void loadMoreMovies(ArrayList<Movie> moreMovies) {
-        progressBar.setVisibility(View.GONE);
-//        adapter.showLoading(false);
+//        progressBar.setVisibility(View.GONE);
+        adapter.showLoading(false);
         int cursorSize = adapter.getItemCount();
         savedMoviesListInstance.addAll(moreMovies);
         adapter.notifyItemRangeChanged(cursorSize, savedMoviesListInstance.size() - 1);
