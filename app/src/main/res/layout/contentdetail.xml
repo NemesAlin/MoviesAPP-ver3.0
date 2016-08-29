@@ -14,8 +14,8 @@
 
         <ImageView
             android:id="@+id/moviePosterImageViewDETAILVIEW"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="150dp"
+            android:layout_height="200dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
@@ -23,7 +23,6 @@
             android:layout_marginStart="25dp"
             android:layout_marginTop="25dp"
             android:scaleType="fitXY" />
-
 
 
         <TextView
@@ -37,10 +36,12 @@
             android:layout_toRightOf="@+id/moviePosterImageViewDETAILVIEW"
             android:drawableLeft="@mipmap/release_date_icon"
             android:drawableStart="@mipmap/release_date_icon"
+            android:drawingCacheQuality="auto"
             android:gravity="center"
+            android:scaleType="fitXY"
             android:textColor="@android:color/white"
             android:textIsSelectable="true"
-            android:textSize="20sp" />
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/runtimeDETAILVIEW"
@@ -51,6 +52,7 @@
             android:layout_below="@+id/release_dateDETAILVIEW"
             android:drawableLeft="@mipmap/runtime_icon"
             android:drawableStart="@mipmap/runtime_icon"
+            android:drawingCacheQuality="auto"
             android:gravity="center"
             android:paddingTop="10dp"
             android:text="@string/unknown"
@@ -67,6 +69,7 @@
             android:layout_below="@+id/runtimeDETAILVIEW"
             android:drawableLeft="@mipmap/vote_average_icon"
             android:drawableStart="@mipmap/vote_average_icon"
+            android:drawingCacheQuality="auto"
             android:gravity="center"
             android:paddingTop="16dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -75,17 +78,15 @@
         <ImageView
             android:id="@+id/favoriteMovieDETAILVIEW"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/moviePosterImageViewDETAILVIEW"
+            android:layout_height="60dp"
             android:layout_alignEnd="@+id/voteAverageDETAILVIEW"
             android:layout_alignLeft="@+id/voteAverageDETAILVIEW"
             android:layout_alignRight="@+id/voteAverageDETAILVIEW"
             android:layout_alignStart="@+id/voteAverageDETAILVIEW"
             android:layout_below="@+id/voteAverageDETAILVIEW"
-            android:paddingStart="50dp"
-            android:paddingLeft="50dp"
             android:paddingEnd="16dp"
-            android:paddingRight="16dp"/>
+            android:paddingRight="16dp"
+            android:paddingTop="16dp" />
 
         <TextView
             android:id="@+id/movieOverviewDETAILVIEW"
@@ -95,9 +96,7 @@
             android:layout_alignStart="@+id/moviePosterImageViewDETAILVIEW"
             android:layout_below="@+id/favoriteMovieDETAILVIEW"
             android:paddingRight="16dp"
-            android:paddingLeft="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="25dp"
+            android:paddingTop="16dp"
             android:textAlignment="inherit"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/white" />
@@ -157,14 +156,5 @@
             android:textColor="@android:color/white"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-        <!--<ListView-->
-        <!--android:id="@+id/movieReviewsListDETAILVIEW"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_below="@id/reviewsTextView"-->
-        <!--android:fitsSystemWindows="true"-->
-        <!--android:fillViewport="true"-->
-        <!---->
-        <!--android:textColor="@android:color/white" />-->
     </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>

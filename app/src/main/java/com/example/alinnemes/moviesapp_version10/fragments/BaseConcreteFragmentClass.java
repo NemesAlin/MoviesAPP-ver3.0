@@ -44,22 +44,7 @@ public class BaseConcreteFragmentClass extends BaseAbstractFragmentClass {
             }
         });
 
-        GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
-//        LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-
-        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                switch(adapter.getItemViewType(position)){
-                    case MyRecyclerAdapter.VIEWTYPE_LOADER:
-                        return 2;
-                    case MyRecyclerAdapter.VIEWTYPE_ITEM:
-                        return 1; //number of columns of the grid
-                    default:
-                        return -1;
-                }
-            }
-        });
+        gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
 
         recyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(gridLayoutManager) {
             @Override
@@ -70,6 +55,22 @@ public class BaseConcreteFragmentClass extends BaseAbstractFragmentClass {
                 requestMovies(param, page);
             }
         });
+
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                switch (adapter.getItemViewType(position)) {
+                    case MyRecyclerAdapter.VIEWTYPE_LOADER:
+                        return 2;
+                    case MyRecyclerAdapter.VIEWTYPE_ITEM:
+                        return 1; //number of columns of the grid
+                    default:
+                        return -1;
+                }
+            }
+        });
+
+
     }
 
     public void loadMoreMovies(ArrayList<Movie> moreMovies) {

@@ -114,7 +114,7 @@ public class MovieManager {
     }
 
     public void onMarkedFavoriteMovie(boolean isFavorite) {
-        detailPresenter.onMarkedSuccesfull(isFavorite);
+        detailPresenter.onMarkedSuccessful(isFavorite);
     }
 
     public void onResfreshEnded() {

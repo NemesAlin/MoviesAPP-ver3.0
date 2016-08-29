@@ -6,7 +6,7 @@ import com.example.alinnemes.moviesapp_version10.model.movie.Movie;
 
 import java.util.ArrayList;
 
-public  class FavoritesFragment extends BaseAbstractFragmentClass {
+public class FavoritesFragment extends BaseAbstractFragmentClass {
     public FavoritesFragment() {
         super.setParam(MovieManager.LIST_FAVORITES);
     }

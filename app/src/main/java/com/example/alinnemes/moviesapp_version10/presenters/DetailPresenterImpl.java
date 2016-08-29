@@ -40,7 +40,7 @@ public class DetailPresenterImpl extends MainPresenterImpl implements DetailPres
     }
 
     @Override
-    public void onMarkedSuccesfull(boolean isFavorite) {
+    public void onMarkedSuccessful(boolean isFavorite) {
         detailView.setFavoriteMovieIcon(isFavorite);
     }
 

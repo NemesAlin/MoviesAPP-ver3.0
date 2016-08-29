@@ -11,7 +11,7 @@ public interface ProcessListener {
 
     void onLoadEnded();
 
-     void onLoadProgress(Movie movie);
+    void onLoadProgress(Movie movie);
 
 
 }

@@ -9,7 +9,7 @@ public interface DetailPresenter {
 
     void onListingDetails(Movie movie);
 
-    void onMarkedSuccesfull(boolean isFavorite);
+    void onMarkedSuccessful(boolean isFavorite);
 
 
 }

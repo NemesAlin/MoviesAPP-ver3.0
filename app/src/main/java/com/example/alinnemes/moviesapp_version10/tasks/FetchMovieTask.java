@@ -31,7 +31,7 @@ import java.util.ArrayList;
 /**
  * Created by alin.nemes on 25-Aug-16.
  */
-public class FetchMovieTask extends AsyncTask<String,Void,ArrayList<Movie>>{
+public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
 
     private Context mContext;
     private MovieManager movieManager;
@@ -162,20 +162,12 @@ public class FetchMovieTask extends AsyncTask<String,Void,ArrayList<Movie>>{
             title = movieJSONObject.getString(OWN_TITLE);
             overview = movieJSONObject.getString(OWN_OVERVIEW);
             release_date = movieJSONObject.getString(OWN_RELEASEDATE);
-
-            switch (Build.VERSION.SDK_INT){
-                case Build.VERSION_CODES.LOLLIPOP:
-                    poster_path = String.format("http://image.tmdb.org/t/p/w342%s", movieJSONObject.getString(OWN_POSTER_PATH));
-                    backdrop_path = String.format("http://image.tmdb.org/t/p/w500%s", movieJSONObject.getString(OWN_BACKDROP_PATH));
-                    break;
-                case Build.VERSION_CODES.KITKAT:
-                    poster_path = String.format("http://image.tmdb.org/t/p/w185%s", movieJSONObject.getString(OWN_POSTER_PATH));
-                    backdrop_path = String.format("http://image.tmdb.org/t/p/w300%s", movieJSONObject.getString(OWN_BACKDROP_PATH));
-                    break;
-                default:
-                    poster_path = String.format("http://image.tmdb.org/t/p/w185%s", movieJSONObject.getString(OWN_POSTER_PATH));
-                    backdrop_path = String.format("http://image.tmdb.org/t/p/w300%s", movieJSONObject.getString(OWN_BACKDROP_PATH));
-                    break;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                poster_path = String.format("http://image.tmdb.org/t/p/w342%s", movieJSONObject.getString(OWN_POSTER_PATH));
+                backdrop_path = String.format("http://image.tmdb.org/t/p/w500%s", movieJSONObject.getString(OWN_BACKDROP_PATH));
+            } else {
+                poster_path = String.format("http://image.tmdb.org/t/p/w185%s", movieJSONObject.getString(OWN_POSTER_PATH));
+                backdrop_path = String.format("http://image.tmdb.org/t/p/w300%s", movieJSONObject.getString(OWN_BACKDROP_PATH));
             }
             vote_average = movieJSONObject.getDouble(OWN_VOTEAVERAGE);
             popularity = movieJSONObject.getDouble(OWN_POPULARITY);
@@ -184,7 +176,7 @@ public class FetchMovieTask extends AsyncTask<String,Void,ArrayList<Movie>>{
 
             movies.add(new Movie(id, title, overview, release_date, poster_path, backdrop_path, vote_average, -1, popularity, false, new ArrayList<Trailer>(), new ArrayList<Review>()));
 
-            movie = moviesDB.getMovie(title);
+            movie = moviesDB.getMovie(id);
             if (movie == null) {//movie do not exist in the personal DB, add it
                 moviesDB.createMovie(id, title, overview, release_date, poster_path, backdrop_path, vote_average, -1, popularity, false);
             } else if (!title.equals(movie.getTitle()) || !overview.equals(movie.getOverview()) || !release_date.equals(movie.getRelease_date()) || !poster_path.equals(movie.getPoster_path()) || !backdrop_path.equals(movie.getBackdrop_path()) || vote_average != movie.getVote_average() || popularity != movie.getPopularity()) {
@@ -207,5 +199,6 @@ public class FetchMovieTask extends AsyncTask<String,Void,ArrayList<Movie>>{
         }
         movieManager.onResfreshEnded();
         movieManager.onLoadEnded();
+        SplashActivity.fetchFromNetwork = false;
     }
 }

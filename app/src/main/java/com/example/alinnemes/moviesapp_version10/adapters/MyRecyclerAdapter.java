@@ -24,11 +24,10 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public static final int VIEWTYPE_ITEM = 1;
     public static final int VIEWTYPE_LOADER = 2;
-
+    protected boolean showLoader;
     OnItemClickListener mItemClickListener;
     private ArrayList<Movie> movies;
     private Context ctx;
-    protected boolean showLoader;
 
     public MyRecyclerAdapter(ArrayList<Movie> movies) {
         this.movies = movies;
@@ -64,11 +63,13 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             ItemsViewHolder itemsViewHolder = (ItemsViewHolder) holder;
             itemsViewHolder.movieTextPoster.setText("");
             itemsViewHolder.moviePoster.setImageBitmap(null);
+            itemsViewHolder.movieTextPoster.setBackgroundResource(0);
             Picasso.with(ctx).cancelRequest(itemsViewHolder.moviePoster);
             if (!movie.getPoster_path().contains("null")) {
                 Picasso.with(ctx).load(movie.getPoster_path()).into(itemsViewHolder.moviePoster);
             } else {
                 itemsViewHolder.movieTextPoster.setText(movie.getTitle());
+                itemsViewHolder.movieTextPoster.setBackgroundResource(R.drawable.simple_border);
             }
 
             holder.itemView.setOnClickListener(itemsViewHolder);

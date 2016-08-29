@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,16 +45,16 @@ public abstract class BaseAbstractFragmentClass extends Fragment implements Proc
 
     //Views
     public RecyclerView recyclerView;
-    private ImageView informationImageView;
-    private TextView informationTextView;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private ProgressDialog pdLoading;
+    public GridLayoutManager gridLayoutManager;
     //    public ProgressBar progressBar;
     //array data
     public String param;
     public MyRecyclerAdapter adapter;
     public ArrayList<Movie> savedMoviesListInstance = new ArrayList<>();
-
+    private ImageView informationImageView;
+    private TextView informationTextView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private ProgressDialog pdLoading;
     private MainPresenterImpl mainPresenter = new MainPresenterImpl(this);
 
     @Override
@@ -119,6 +120,7 @@ public abstract class BaseAbstractFragmentClass extends Fragment implements Proc
         if (InternetUtilityClass.isOnline(MoviesApp.getContext())) {
             informationImageView.setVisibility(View.GONE);
             informationTextView.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
 
             mainPresenter.onRequestingMoviesList(param, page);
 
@@ -157,6 +159,11 @@ public abstract class BaseAbstractFragmentClass extends Fragment implements Proc
                     public void run() {
                         SplashActivity.fetchFromNetwork = true;
                         requestMovies(param, 1);
+                        savedMoviesListInstance.clear();
+                        recyclerView.setAdapter(null);
+                        adapter = null;
+                        recyclerView.clearOnScrollListeners();
+
                     }
                 }, 3000);
             }

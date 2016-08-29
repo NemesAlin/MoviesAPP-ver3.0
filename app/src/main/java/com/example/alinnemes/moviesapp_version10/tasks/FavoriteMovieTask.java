@@ -29,7 +29,7 @@ public class FavoriteMovieTask extends AsyncTask<Void, Void, Boolean> {
         Boolean isFavorite;
         MoviesDB moviesDB = new MoviesDB(context);
         moviesDB.open();
-        Movie movieToUpdate = moviesDB.getMovie(movie.getTitle());
+        Movie movieToUpdate = moviesDB.getMovie(movie.getId());
         if (movieToUpdate.isFavorite()) {
             moviesDB.updateMovie(movieToUpdate.getId(), movieToUpdate.getTitle(), movieToUpdate.getOverview(), movieToUpdate.getRelease_date(), movieToUpdate.getPoster_path(), movieToUpdate.getBackdrop_path(), movieToUpdate.getVote_average(), movieToUpdate.getRuntime(), movieToUpdate.getPopularity(), !movieToUpdate.isFavorite());
             isFavorite = false;

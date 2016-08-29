@@ -76,7 +76,7 @@ public class MyRecyclerAdapterForTrailers extends RecyclerView.Adapter<MyRecycle
 
         @Override
         public void onClick(View view) {
-            if(mItemClickListener!=null){
+            if (mItemClickListener != null) {
                 mItemClickListener.onItemClick(view, getAdapterPosition());
             }
         }
