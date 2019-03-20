@@ -80,7 +80,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-        return movies.size();
+        return movies.size() + 1;
     }
 
     @Override

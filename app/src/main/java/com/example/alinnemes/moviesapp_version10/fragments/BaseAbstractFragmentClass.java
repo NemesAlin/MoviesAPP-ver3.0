@@ -53,7 +53,7 @@ public abstract class BaseAbstractFragmentClass extends Fragment implements Proc
     public ArrayList<Movie> savedMoviesListInstance = new ArrayList<>();
     private ImageView informationImageView;
     private TextView informationTextView;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+    public SwipeRefreshLayout mSwipeRefreshLayout;
     private ProgressDialog pdLoading;
     private MainPresenterImpl mainPresenter = new MainPresenterImpl(this);
 
@@ -174,7 +174,7 @@ public abstract class BaseAbstractFragmentClass extends Fragment implements Proc
     @Override
     public void listMovies(final ArrayList<Movie> movies) {
 
-        final MyRecyclerAdapter adapter = new MyRecyclerAdapter(movies);
+        adapter = new MyRecyclerAdapter(movies);
         adapter.notifyDataSetChanged();
         recyclerView.setHasFixedSize(false);
         recyclerView.setItemAnimator(new ScaleInLeftAnimator());
