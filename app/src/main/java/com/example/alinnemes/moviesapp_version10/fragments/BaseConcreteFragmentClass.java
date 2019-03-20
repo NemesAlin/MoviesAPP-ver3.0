@@ -24,6 +24,7 @@ public class BaseConcreteFragmentClass extends BaseAbstractFragmentClass {
 
     @Override
     public void listMovies(final ArrayList<Movie> movies) {
+
         adapter = new MyRecyclerAdapter(movies);
 
         recyclerView.setHasFixedSize(false);
@@ -54,6 +55,7 @@ public class BaseConcreteFragmentClass extends BaseAbstractFragmentClass {
                 requestMovies(param, page);
             }
         });
+
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
